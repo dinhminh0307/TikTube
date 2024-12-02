@@ -33,4 +33,8 @@ public class LoginService {
             }
         });
     }
+
+    public FirebaseUser getCurrentUser() {
+        return loginRepository.getCurrentUser();
+    }
 }

@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onLoginSuccess(FirebaseUser user) {
                             Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
 
                         @Override

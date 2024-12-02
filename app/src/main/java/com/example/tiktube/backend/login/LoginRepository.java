@@ -38,4 +38,9 @@ public class LoginRepository {
                     }
                 });
     }
+
+    public FirebaseUser getCurrentUser() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        return currentUser;
+    }
 }
