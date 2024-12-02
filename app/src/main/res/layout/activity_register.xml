@@ -55,7 +55,6 @@
             android:backgroundTint="@color/purple"
             android:padding="12dp"
             android:text="Peter Parker"
-            android:focusable="false"
             android:textColor="@color/black" />
 
         <!-- Email Input -->
@@ -69,7 +68,6 @@
             android:backgroundTint="@color/purple"
             android:padding="12dp"
             android:text="user123@gmail.com"
-            android:focusable="false"
             android:textColor="@color/black" />
 
         <!-- Password Input -->
@@ -90,7 +88,6 @@
                 android:backgroundTint="@color/purple"
                 android:padding="12dp"
                 android:textColor="@color/black"
-                android:focusable="false"
                 android:text="•••••" />
 
             <ImageView
