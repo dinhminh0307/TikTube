@@ -25,6 +25,6 @@ public class ProfileActivity extends AppCompatActivity {
         userNEmail = intent.getStringExtra("user");
         nameID = findViewById(R.id.nameID);
         nameID.setText(userNEmail);
-        //FirebaseAuth.getInstance().signOut(); call to signout temp
+        FirebaseAuth.getInstance().signOut(); //call to signout temp
     }
 }

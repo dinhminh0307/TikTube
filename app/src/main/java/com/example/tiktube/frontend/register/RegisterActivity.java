@@ -7,9 +7,11 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.navigation.NavController;
@@ -31,19 +33,40 @@ public class RegisterActivity extends AppCompatActivity {
 
     Button finishBtn;
 
+    ImageView passwordToggle;
+
+    boolean pwdVisible = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         signUpAPI = new SignUpAPI(this);
-
+        togglePassword();
         onFinishButtonClicked();
+    }
+
+    private void togglePassword() {
+        passwordToggle = findViewById(R.id.passwordToggle);
+        passwordInput = findViewById(R.id.passwordInput);
+        passwordToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pwdVisible = !pwdVisible;
+                if(pwdVisible) {
+                    passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                } else {
+                    passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                }
+            }
+        });
     }
 
     private void onFinishButtonClicked() {
         nameInput = findViewById(R.id.nameInput);
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
+
         finishBtn = findViewById(R.id.finishButton);
 
         finishBtn.setOnClickListener(new View.OnClickListener() {
