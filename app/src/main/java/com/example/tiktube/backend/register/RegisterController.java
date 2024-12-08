@@ -9,7 +9,7 @@ public class RegisterController {
         registerService = new RegisterService(context);
     }
 
-    public void register(String email, String password) throws Exception{
-        registerService.register(email, password);
+    public void register(String email, String password, String name, String phoneNumber) throws Exception{
+        registerService.register(email, password, name, phoneNumber);
     }
 }

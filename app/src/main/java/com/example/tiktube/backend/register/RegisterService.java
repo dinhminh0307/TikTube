@@ -20,8 +20,8 @@ public class RegisterService {
         this.context = context;
     }
 
-    public void register(String email, String password) {
-        registerRepository.signUp(email, password, new SignUpCallback() {
+    public void register(String email, String password, String name, String phoneNumber) {
+        registerRepository.SignUp(email, password, name, phoneNumber, new SignUpCallback() {
             @Override
             public void onSuccess(FirebaseUser user) {
                 Toast.makeText(context, "User created successfully: " + user.getEmail(), Toast.LENGTH_SHORT).show();
