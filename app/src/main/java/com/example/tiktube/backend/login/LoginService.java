@@ -2,9 +2,11 @@ package com.example.tiktube.backend.login;
 
 import android.util.Log;
 
+import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.callbacks.LoginCallback;
 import com.example.tiktube.backend.callbacks.LoginResultCallback;
 import com.example.tiktube.backend.exceptions.InvalidCredentialException;
+import com.example.tiktube.backend.models.User;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -34,7 +36,7 @@ public class LoginService {
         });
     }
 
-    public FirebaseUser getCurrentUser() {
-        return loginRepository.getCurrentUser();
+    public User getCurrentUser(GetUserCallback callback) {
+        return loginRepository.getCurrentUser(callback);
     }
 }

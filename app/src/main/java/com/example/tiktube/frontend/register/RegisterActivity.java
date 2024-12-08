@@ -28,6 +28,8 @@ public class RegisterActivity extends AppCompatActivity {
     SignUpAPI signUpAPI;
 
     EditText nameInput;
+
+    EditText phoneNumberInput;
     EditText emailInput;
     EditText passwordInput;
 
@@ -66,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
         nameInput = findViewById(R.id.nameInput);
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
-
+        phoneNumberInput = findViewById(R.id.phoneNumberInput);
         finishBtn = findViewById(R.id.finishButton);
 
         finishBtn.setOnClickListener(new View.OnClickListener() {
@@ -74,8 +76,9 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = emailInput.getText().toString().trim();
                 String password = passwordInput.getText().toString().trim();
-
-                if (email.isEmpty() || password.isEmpty()) {
+                String phoneNum = phoneNumberInput.getText().toString().trim();
+                String name = nameInput.getText().toString().trim();
+                if (email.isEmpty() || password.isEmpty() || phoneNum.isEmpty() || name.isEmpty()) {
                     Toast.makeText(RegisterActivity.this, "Email and password cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -86,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 try {
-                    signUpAPI.register(email, password);
+                    signUpAPI.register(email, password, name, phoneNum);
                 } catch (Exception e) {
                     Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }

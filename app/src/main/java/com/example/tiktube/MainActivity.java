@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.tiktube.api.AuthAPI;
+import com.example.tiktube.backend.callbacks.GetUserCallback;
+import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.login.LoginActivity;
 import com.example.tiktube.frontend.profile.ProfileActivity;
 import com.example.tiktube.frontend.register.RegisterActivity;
@@ -11,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -43,14 +46,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = authAPI.getCurrentUser();
-        if(currentUser != null){
-            Intent intent = new Intent(this, ProfileActivity.class);
-            intent.putExtra("user", currentUser.getEmail());
-            startActivity(intent);
-        }
+
+        // Check if user is signed in and update UI accordingly.
+        authAPI.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                Log.d("Login", "User retrieved: " + user.getName());
+                if (user != null) {
+                    // Navigate to ProfileActivity
+                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    intent.putExtra("user", user);
+                    startActivity(intent);
+                    finish(); // Optional: Finish MainActivity to prevent going back
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("Login", "Error: " + e.getMessage());
+                // Remain in the current activity (MainActivity)
+            }
+        });
     }
+
 
     private void onSignUpButtonClicked() {
         signUpBtn = findViewById(R.id.signUpButton);

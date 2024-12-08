@@ -11,20 +11,21 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ProfileActivity extends AppCompatActivity {
     TextView nameID;
-    String userNEmail;
+    User userData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
         Intent intent = getIntent();
-        userNEmail = intent.getStringExtra("user");
+        userData = getIntent().getParcelableExtra("user");
         nameID = findViewById(R.id.nameID);
-        nameID.setText(userNEmail);
+        nameID.setText(userData.getName());
         FirebaseAuth.getInstance().signOut(); //call to signout temp
     }
 }

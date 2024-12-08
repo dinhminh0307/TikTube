@@ -17,8 +17,8 @@ public class SignUpAPI {
         this.registerController = new RegisterController(context);
     }
 
-    public void register(String email, String password) throws Exception{
-        registerController.register(email, password);
+    public void register(String email, String password, String name, String phoneNumber) throws Exception{
+        registerController.register(email, password, name, phoneNumber);
     }
 
     public void login(String email, String password, LoginResultCallback callback) throws  Exception {
