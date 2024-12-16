@@ -9,6 +9,7 @@ import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.login.LoginActivity;
 import com.example.tiktube.frontend.profile.ProfileActivity;
 import com.example.tiktube.frontend.register.RegisterActivity;
+import com.example.tiktube.frontend.search.SearchActivity;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Button signUpBtn;
 
     AuthAPI authAPI;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
 
         onSignUpButtonClicked();
         onLoginButtonClicked();
+
+        Button btnTestSearch = findViewById(R.id.btnTestSearch);
+
+        btnTestSearch.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override
