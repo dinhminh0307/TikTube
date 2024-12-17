@@ -5,147 +5,208 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
-        <!-- Profile Icon -->
+        <!-- Menu Icon -->
         <ImageView
-            android:id="@+id/profilePicture"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="24dp"
-            android:src="@drawable/profile_placeholder"
-            android:scaleType="centerCrop"
-            android:background="@drawable/circle_background" />
+            android:id="@+id/menuIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_menu" />
 
-        <!-- Username -->
+        <!-- Public Account Text -->
         <TextView
-            android:id="@+id/username"
+            android:id="@+id/publicAccount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@peterparker123"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="public account"
             android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textSize="12sp" />
 
-        <!-- Stats Row -->
+        <!-- Profile Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_below="@id/publicAccount"
+            android:orientation="vertical"
             android:gravity="center"
-            android:layout_marginTop="12dp">
+            android:padding="16dp">
 
+            <!-- Profile Icon -->
+            <ImageView
+                android:id="@+id/profilePicture"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="24dp"
+                android:src="@drawable/profile_placeholder"
+                android:scaleType="centerCrop"
+                android:background="@drawable/circle_background" />
+
+            <!-- Username -->
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@peterparker123"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Stats Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="12dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="89"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Following"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="131298"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Followers"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1M"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Likes"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Edit and Share Buttons -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginEnd="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+
+                <Button
+                    android:id="@+id/editProfileBtn"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:text="89"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:text="Edit profile"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/black" />
+
+                <Button
+                    android:id="@+id/downloadVideo"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:text="Following"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
+                    android:layout_marginStart="8dp"
+                    android:text="Download Video"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
-            <LinearLayout
+            <!-- Bio Section -->
+            <TextView
+                android:id="@+id/bioText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginEnd="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="131298"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Followers"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
+                android:layout_marginTop="16dp"
+                android:text="I heard about it, and I did see it. And it’s a photoshop"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+            <!-- Section Tabs -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/ic_video"
+                     />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/ic_lock"
+                />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/ic_bookmark"
+                  />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/ic_heart"
+                    />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <!-- Video Section -->
+            <GridView
+                android:id="@+id/videoGrid"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1M"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Likes"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
+                android:numColumns="3"
+                android:verticalSpacing="8dp"
+                android:horizontalSpacing="8dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/black" />
         </LinearLayout>
-
-        <!-- Edit and Share Buttons -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp">
-
-            <Button
-                android:id="@+id/editProfileBtn"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:text="Edit profile"
-                android:backgroundTint="@color/white"
-                android:textColor="@color/black" />
-
-            <Button
-                android:id="@+id/shareProfileBtn"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="Share profile"
-                android:backgroundTint="@color/white"
-                android:textColor="@color/black" />
-        </LinearLayout>
-
-        <!-- Bio Section -->
-        <TextView
-            android:id="@+id/bioText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="I heard about it, and I did see it. And it’s a photoshop"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:gravity="center" />
-
-        <!-- Video Section -->
-        <GridView
-            android:id="@+id/videoGrid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:numColumns="3"
-            android:verticalSpacing="8dp"
-            android:horizontalSpacing="8dp"
-            android:layout_marginTop="16dp"
-            android:background="@color/black" />
-    </LinearLayout>
+    </RelativeLayout>
 </ScrollView>
