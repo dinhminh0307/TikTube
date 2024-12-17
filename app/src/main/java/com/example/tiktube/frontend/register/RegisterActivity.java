@@ -1,13 +1,17 @@
 package com.example.tiktube.frontend.register;
 
+import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.tiktube.api.SignUpAPI;
+import com.example.tiktube.MainActivity;
+import com.example.tiktube.backend.callbacks.SignUpCallback;
+import com.example.tiktube.backend.register.RegisterController;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,10 +26,14 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.tiktube.databinding.ActivityRegisterBinding;
 
 import com.example.tiktube.R;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    SignUpAPI signUpAPI;
+    RegisterController registerController;
 
     EditText nameInput;
 
@@ -43,7 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        signUpAPI = new SignUpAPI(this);
+        registerController = new RegisterController(this);
         togglePassword();
         onFinishButtonClicked();
     }
@@ -89,9 +97,37 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 try {
-                    signUpAPI.register(email, password, name, phoneNum);
+                    registerController.register(email, password, name, phoneNum, new SignUpCallback() {
+                        @Override
+                        public void onSuccess(FirebaseUser user) {
+                            Toast.makeText(RegisterActivity.this, "User created successfully: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                            Log.d("RegisterService", "User: " + user.getEmail());
+                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            Log.d("RegisterActivity", "Navigating to MainActivity and finishing activity");
+                            finish();
+                        }
+
+                        @Override
+                        public void onFailure(Exception exception) {
+                            if (exception != null) {
+                                if (exception instanceof FirebaseAuthWeakPasswordException) {
+                                    Toast.makeText(RegisterActivity.this, "Password too weak. Must be at least 6 characters.", Toast.LENGTH_SHORT).show();
+                                } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
+                                    Toast.makeText(RegisterActivity.this, "Invalid email format.", Toast.LENGTH_SHORT).show();
+                                } else if (exception instanceof FirebaseAuthUserCollisionException) {
+                                    Toast.makeText(RegisterActivity.this, "This email is already registered.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(RegisterActivity.this, "Registration failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(RegisterActivity.this, "Unknown error occurred.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 } catch (Exception e) {
-                    Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    throw new RuntimeException(e);
                 }
             }
         });

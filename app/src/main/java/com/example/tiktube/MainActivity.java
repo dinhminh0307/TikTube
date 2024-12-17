@@ -3,8 +3,9 @@ package com.example.tiktube;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.tiktube.api.AuthAPI;
+
 import com.example.tiktube.backend.callbacks.GetUserCallback;
+import com.example.tiktube.backend.login.LoginController;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.login.LoginActivity;
 import com.example.tiktube.frontend.profile.ProfileActivity;
@@ -32,14 +33,14 @@ public class MainActivity extends AppCompatActivity {
     Button loginBtn;
     Button signUpBtn;
 
-    AuthAPI authAPI;
+    LoginController loginController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_main);
-        authAPI = new AuthAPI();
+        loginController = new LoginController();
 
         onSignUpButtonClicked();
         onLoginButtonClicked();
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         // Check if user is signed in and update UI accordingly.
-        authAPI.getCurrentUser(new GetUserCallback() {
+        loginController.getCurrentUser(new GetUserCallback() {
             @Override
             public void onSuccess(User user) {
                 Log.d("Login", "User retrieved: " + user.getName());

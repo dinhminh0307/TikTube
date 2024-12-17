@@ -22,6 +22,8 @@ public class LoginRepository {
 
     private FirebaseFirestore db;
 
+    private static String userId;
+
     public LoginRepository() {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -47,10 +49,14 @@ public class LoginRepository {
                 });
     }
 
+    public String getUserId() {
+        return this.userId;
+    }
+
     public User getCurrentUser(GetUserCallback callback) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            String userId = currentUser.getUid();
+            userId = currentUser.getUid();
             db.collection("users").document(userId).get()
                     .addOnSuccessListener(document -> {
                         if (document.exists()) {

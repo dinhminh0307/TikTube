@@ -39,4 +39,8 @@ public class LoginService {
     public User getCurrentUser(GetUserCallback callback) {
         return loginRepository.getCurrentUser(callback);
     }
+
+    public String getUserUID() {
+        return  loginRepository.getUserId();
+    }
 }

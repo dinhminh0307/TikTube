@@ -24,8 +24,8 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         Intent intent = getIntent();
         userData = getIntent().getParcelableExtra("user");
-        nameID = findViewById(R.id.nameID);
+        nameID = findViewById(R.id.username);
         nameID.setText(userData.getName());
-        FirebaseAuth.getInstance().signOut(); //call to signout temp
+//        FirebaseAuth.getInstance().signOut(); //call to signout temp
     }
 }

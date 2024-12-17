@@ -20,4 +20,8 @@ public class LoginController {
     public User getCurrentUser(GetUserCallback callback) {
         return loginService.getCurrentUser(callback);
     }
+
+    public String getUserUID() {
+        return loginService.getUserUID();
+    }
 }

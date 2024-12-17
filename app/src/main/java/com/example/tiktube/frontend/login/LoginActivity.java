@@ -12,9 +12,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.example.tiktube.R;
-import com.example.tiktube.api.SignUpAPI;
+
 import com.example.tiktube.backend.callbacks.LoginResultCallback;
 import com.example.tiktube.backend.exceptions.InvalidCredentialException;
+import com.example.tiktube.backend.login.LoginController;
 import com.example.tiktube.frontend.register.RegisterActivity;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -24,13 +25,13 @@ public class LoginActivity extends AppCompatActivity {
 
     Button loginButton;
 
-    SignUpAPI signUpAPI;
+    LoginController loginController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-        signUpAPI = new SignUpAPI(this);
+        loginController = new LoginController();
 
         onLoginButtonClicked();
     }
@@ -57,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 try {
-                    signUpAPI.login(email, password, new LoginResultCallback() {
+                    loginController.login(email, password, new LoginResultCallback() {
                         @Override
                         public void onLoginSuccess(FirebaseUser user) {
                             Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT).show();

@@ -20,32 +20,8 @@ public class RegisterService {
         this.context = context;
     }
 
-    public void register(String email, String password, String name, String phoneNumber) {
-        registerRepository.SignUp(email, password, name, phoneNumber, new SignUpCallback() {
-            @Override
-            public void onSuccess(FirebaseUser user) {
-                Toast.makeText(context, "User created successfully: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                Log.d("RegisterService", "User: " + user.getEmail());
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                if (exception != null) {
-                    if (exception instanceof FirebaseAuthWeakPasswordException) {
-                        Toast.makeText(context, "Password too weak. Must be at least 6 characters.", Toast.LENGTH_SHORT).show();
-                    } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
-                        Toast.makeText(context, "Invalid email format.", Toast.LENGTH_SHORT).show();
-                    } else if (exception instanceof FirebaseAuthUserCollisionException) {
-                        Toast.makeText(context, "This email is already registered.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, "Registration failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(context, "Unknown error occurred.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+    public void register(String email, String password, String name, String phoneNumber, SignUpCallback cb) {
+        registerRepository.SignUp(email, password, name, phoneNumber, cb);
     }
-
 
 }
