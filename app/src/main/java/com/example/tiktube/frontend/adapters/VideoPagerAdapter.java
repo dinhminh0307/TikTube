@@ -2,6 +2,7 @@ package com.example.tiktube.frontend.adapters;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,7 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.callbacks.DataFetchCallback;
+import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
+import com.example.tiktube.backend.users.UserController;
 
 import java.util.List;
 
@@ -22,9 +26,11 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
     private List<Video> videos;
     private Context context;
 
+    private UserController userController;
     public VideoPagerAdapter(Context context, List<Video> videos) {
         this.context = context;
         this.videos = videos;
+        userController = new UserController();
     }
 
     @NonNull
@@ -33,6 +39,7 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
         View view = LayoutInflater.from(context).inflate(R.layout.item_video, parent, false);
         return new VideoViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
@@ -47,7 +54,17 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
         holder.videoView.setOnCompletionListener(mp -> mp.start()); // Loop video
 
         // Set Video Metadata
-        holder.username.setText(video.getOwner());
+        userController.getUserById(video.getOwner(), new DataFetchCallback<User>() {
+            @Override
+            public void onSuccess(List<User> data) {
+                holder.username.setText(data.get(0).getName());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.d("VidepPagerAdapter", "fail to get username: " + e.getMessage());
+            }
+        });
         holder.description.setText(video.getTitle());
 
         // Set Touch Listener for Pause/Resume

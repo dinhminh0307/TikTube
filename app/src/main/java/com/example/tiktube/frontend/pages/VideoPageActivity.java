@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -11,9 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.login.LoginController;
+import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.users.UserController;
 import com.example.tiktube.frontend.adapters.VideoPagerAdapter;
@@ -50,13 +53,17 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private List<Video> videoDataList = new ArrayList<>();
 
+    private ImageView profileIcon;
+
+    User user ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_page);
         userController = new UserController();
         loginController = new LoginController();
-
+        user = getIntent().getParcelableExtra("user");
         // Set up Google Sign-In options
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -74,6 +81,22 @@ public class VideoPageActivity extends AppCompatActivity {
         uploadIcon.setOnClickListener(view -> signInToGoogleDrive());
 
         fetchAllVideo();
+
+        //setup component button
+        onProfileImageClicked();
+    }
+
+    private void onProfileImageClicked() {
+        profileIcon = findViewById(R.id.profileIcon);
+
+        profileIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(VideoPageActivity.this, ProfileActivity.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
+            }
+        });
     }
 
     // Step 1: Start Google Sign-In

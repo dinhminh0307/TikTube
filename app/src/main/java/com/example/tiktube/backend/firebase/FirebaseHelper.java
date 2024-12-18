@@ -8,7 +8,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class FirebaseHelper {
     private FirebaseFirestore firestore;
@@ -41,23 +43,47 @@ public class FirebaseHelper {
                 });
     }
 
-    public void findAll(String collection, DataFetchCallback<Video> callback) {
+    public <T> void findAll(String collection, Class<T> type, DataFetchCallback<T> callback) {
         firestore.collection(collection)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
-                    List<Video> vids = new ArrayList<>();
+                    List<T> results = new ArrayList<>();
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        Video vid = doc.toObject(Video.class);
-                        if (vid != null) {
-                            vids.add(vid);
+                        T obj = doc.toObject(type);
+                        if (obj != null) {
+                            results.add(obj);
                         }
                     }
                     // Notify success with the fetched data
-                    callback.onSuccess(vids);
+                    callback.onSuccess(results);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public <T> void findByID(String uid, String collection, Class<T> type, DataFetchCallback<T> callback) {
+        firestore.collection(collection)
+                .document(uid)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        T result = documentSnapshot.toObject(type); // Parse the document to the specified type
+                        if (result != null) {
+                            callback.onSuccess(Collections.singletonList(result)); // Wrap the result in a list for the callback
+                        } else {
+                            Log.d("Firestore", "Failed to parse document with ID: " + uid);
+                            callback.onFailure(new NullPointerException("Parsed document is null"));
+                        }
+                    } else {
+                        Log.d("Firestore", "No objecte found with ID: " + uid);
+                        callback.onFailure(new IllegalArgumentException("No document found with ID: " + uid));
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    // Notify failure
+                    Log.e("Firestore", "Error finding donation site", e);
                     callback.onFailure(e);
                 });
     }
+
+
+
 }
