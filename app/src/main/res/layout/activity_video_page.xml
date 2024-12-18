@@ -1,141 +1,71 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Top Navigation Bar -->
+    <LinearLayout
+        android:id="@+id/topNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:background="@color/black">
+
+        <TextView
+            android:id="@+id/following"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Following"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:padding="10dp" />
+
+        <TextView
+            android:id="@+id/forYou"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="For You"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="10dp" />
+    </LinearLayout>
+
     <!-- ViewPager2 for Scrollable Video Content -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- Overlay Layout for Video UI -->
-    <RelativeLayout
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp">
+        android:layout_below="@id/topNav"
+        android:layout_above="@id/bottomNav" />
 
-        <!-- Top Navigation Bar -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal">
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
 
-            <TextView
-                android:id="@+id/following"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Following"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:padding="10dp"/>
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_home"
+            android:layout_weight="1" />
 
-            <TextView
-                android:id="@+id/forYou"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="For You"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:padding="10dp"/>
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/uploadIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_upload"
+            android:layout_weight="1" />
 
-        <!-- Bottom Navigation Bar -->
-        <LinearLayout
-            android:id="@+id/bottomNav"
-            android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_home"
-                android:layout_weight="1"/>
-
-            <ImageView
-                android:id="@+id/uploadIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_upload"
-                android:layout_weight="1"/>
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/profile_placeholder"
-                android:layout_weight="1"/>
-        </LinearLayout>
-
-        <!-- Like, Comment, and Share Buttons -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_heart"
-                android:contentDescription="Like Button"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="12M"
-                android:textColor="#FFFFFF"/>
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_comment"
-                android:contentDescription="Comment Button"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1907"
-                android:textColor="#FFFFFF"/>
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_share"
-                android:contentDescription="Share Button"/>
-        </LinearLayout>
-
-        <!-- Video Description -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <TextView
-                android:id="@+id/username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Marvel Studio"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Check the latest trailer #Thunderbolts!"
-                android:textColor="#FFFFFF"/>
-        </LinearLayout>
-
-    </RelativeLayout>
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/profile_placeholder"
+            android:layout_weight="1" />
+    </LinearLayout>
 </RelativeLayout>

@@ -9,18 +9,20 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.login.LoginController;
 import com.example.tiktube.backend.models.Video;
-import com.example.tiktube.backend.users.UserService;
+import com.example.tiktube.backend.users.UserController;
+import com.example.tiktube.frontend.adapters.VideoPagerAdapter;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -29,6 +31,7 @@ import com.google.api.services.drive.model.Permission;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class VideoPageActivity extends AppCompatActivity {
 
@@ -39,16 +42,21 @@ public class VideoPageActivity extends AppCompatActivity {
     private Drive googleDriveService;
     private GoogleSignInClient googleSignInClient;
 
-    private UserService userService;
-
+    private UserController userController;
     private LoginController loginController;
+
+    private ViewPager2 viewPager2;
+    private VideoPagerAdapter videoPagerAdapter;
+
+    private List<Video> videoDataList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_page);
-        userService = new UserService();
+        userController = new UserController();
         loginController = new LoginController();
+
         // Set up Google Sign-In options
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -57,9 +65,15 @@ public class VideoPageActivity extends AppCompatActivity {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
+        // Set up ViewPager2
+        viewPager2 = findViewById(R.id.viewPager);
+        viewPager2.setOrientation(ViewPager2.ORIENTATION_VERTICAL); // Enable vertical scrolling
+
         // Set click listener for upload icon
         ImageView uploadIcon = findViewById(R.id.uploadIcon);
         uploadIcon.setOnClickListener(view -> signInToGoogleDrive());
+
+        fetchAllVideo();
     }
 
     // Step 1: Start Google Sign-In
@@ -91,7 +105,7 @@ public class VideoPageActivity extends AppCompatActivity {
             credential.setSelectedAccount(account.getAccount());
 
             googleDriveService = new Drive.Builder(
-                    new com.google.api.client.http.javanet.NetHttpTransport(), // Use this instead of newTrustedTransport
+                    new com.google.api.client.http.javanet.NetHttpTransport(),
                     GsonFactory.getDefaultInstance(),
                     credential)
                     .setApplicationName("Google Drive Upload")
@@ -103,7 +117,6 @@ public class VideoPageActivity extends AppCompatActivity {
             Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     // Step 3: Open File Picker to Select Video
     private void openFilePicker() {
@@ -117,37 +130,29 @@ public class VideoPageActivity extends AppCompatActivity {
     private void uploadVideoToGoogleDrive() {
         new Thread(() -> {
             try {
-                // Open input stream for the selected video
                 InputStream inputStream = getContentResolver().openInputStream(videoUri);
 
-                // Set metadata for the file
                 File metadata = new File();
                 metadata.setName("uploaded_video.mp4");
 
-                // Create the upload content
                 com.google.api.client.http.InputStreamContent mediaContent =
                         new com.google.api.client.http.InputStreamContent("video/mp4", inputStream);
 
-                // Upload the file
                 File uploadedFile = googleDriveService.files().create(metadata, mediaContent)
                         .setFields("id, webViewLink")
                         .execute();
 
-                // Make the file public
                 String fileId = uploadedFile.getId();
+                String fileLink = "https://drive.google.com/uc?id=" + fileId + "&export=download";
                 makeFilePublic(fileId);
 
-                // Retrieve the public link
-                String fileLink = uploadedFile.getWebViewLink();
                 runOnUiThread(() -> {
                     uploadVideoToFirebase(fileLink);
                     Toast.makeText(this, "Upload Successful! Public Link: " + fileLink, Toast.LENGTH_LONG).show();
                     Log.d("GoogleDrive", "Public Link: " + fileLink);
-
                 });
 
             } catch (Exception e) {
-
                 Log.e("GoogleDrive", "Error uploading file", e);
                 runOnUiThread(() -> Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show());
             }
@@ -155,18 +160,16 @@ public class VideoPageActivity extends AppCompatActivity {
     }
 
     private void uploadVideoToFirebase(String link) {
-        Video vid = new Video("hello", link, loginController.getUserUID(), "12h", new ArrayList<String>(), new ArrayList<String>());
-        userService.uploadVideo(vid);
+        Video vid = new Video("hello", link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
+        userController.uploadVideo(vid);
     }
+
     private void makeFilePublic(String fileId) {
         new Thread(() -> {
             try {
-                // Create a permission object
                 Permission permission = new Permission();
-                permission.setType("anyone"); // Allow access to anyone
-                permission.setRole("reader"); // Role: viewer (read-only)
-
-                // Add the permission to the file
+                permission.setType("anyone");
+                permission.setRole("reader");
                 googleDriveService.permissions().create(fileId, permission).execute();
 
                 runOnUiThread(() -> Toast.makeText(this, "File is now public!", Toast.LENGTH_SHORT).show());
@@ -176,4 +179,50 @@ public class VideoPageActivity extends AppCompatActivity {
         }).start();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        viewPager2 = null;
+        videoPagerAdapter = null;
+        googleDriveService = null;
+        Log.d("VideoPageActivity", "Activity destroyed");
+    }
+
+    // Fetch all videos and set up adapter
+    private void fetchAllVideo() {
+        userController.getAllVideo(new DataFetchCallback<Video>() {
+            @Override
+            public void onSuccess(List<Video> data) {
+                runOnUiThread(() -> {
+                    if (!isFinishing() && !isDestroyed()) {
+                        if (data != null && !data.isEmpty()) {
+                            videoDataList.clear();
+                            videoDataList.addAll(data);
+
+                            // Set up adapter
+                            if (videoPagerAdapter == null) {
+                                videoPagerAdapter = new VideoPagerAdapter(VideoPageActivity.this, videoDataList);
+                                viewPager2.setAdapter(videoPagerAdapter);
+                            } else {
+                                videoPagerAdapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            Log.d("VideoPageActivity", "No videos found");
+                            Toast.makeText(VideoPageActivity.this, "No videos available", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                runOnUiThread(() -> {
+                    if (!isFinishing() && !isDestroyed()) {
+                        Log.d("VideoPageActivity", "Failed to fetch videos: " + e.getMessage());
+                        Toast.makeText(VideoPageActivity.this, "Failed to load videos", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
 }

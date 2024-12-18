@@ -2,8 +2,13 @@ package com.example.tiktube.backend.firebase;
 
 import android.util.Log;
 
+import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.models.Video;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FirebaseHelper {
     private FirebaseFirestore firestore;
@@ -33,6 +38,26 @@ public class FirebaseHelper {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("Firestore", "Error updating field " + fieldName + " for site: " + Id, e);
+                });
+    }
+
+    public void findAll(String collection, DataFetchCallback<Video> callback) {
+        firestore.collection(collection)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Video> vids = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Video vid = doc.toObject(Video.class);
+                        if (vid != null) {
+                            vids.add(vid);
+                        }
+                    }
+                    // Notify success with the fetched data
+                    callback.onSuccess(vids);
+                })
+                .addOnFailureListener(e -> {
+                    // Notify failure
+                    callback.onFailure(e);
                 });
     }
 }
