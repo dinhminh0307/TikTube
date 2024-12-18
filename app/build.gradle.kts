@@ -34,6 +34,10 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packagingOptions {
+        exclude("META-INF/DEPENDENCIES")
+    }
 }
 
 dependencies {
@@ -67,4 +71,12 @@ dependencies {
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-auth")
+    // Add YouTube Android Player API
+//    implementation("com.google.android.youtube:youtube-android-player-api:1.2.2")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation("com.google.android.gms:play-services-auth:21.1.1")
+    implementation("com.google.api-client:google-api-client-android:1.31.5")
+    implementation("com.google.apis:google-api-services-drive:v3-rev197-1.25.0")
+    implementation("com.google.http-client:google-http-client-gson:1.42.3")
+
 }

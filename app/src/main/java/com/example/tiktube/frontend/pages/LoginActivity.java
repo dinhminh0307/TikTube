@@ -1,4 +1,4 @@
-package com.example.tiktube.frontend.login;
+package com.example.tiktube.frontend.pages;
 
 import android.os.Bundle;
 import android.view.View;
@@ -8,15 +8,11 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 import com.example.tiktube.R;
 
 import com.example.tiktube.backend.callbacks.LoginResultCallback;
-import com.example.tiktube.backend.exceptions.InvalidCredentialException;
 import com.example.tiktube.backend.login.LoginController;
-import com.example.tiktube.frontend.register.RegisterActivity;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package com.example.tiktube.frontend.register;
+package com.example.tiktube.frontend.pages;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 import com.example.tiktube.MainActivity;
 import com.example.tiktube.backend.callbacks.SignUpCallback;
 import com.example.tiktube.backend.register.RegisterController;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,13 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.tiktube.databinding.ActivityRegisterBinding;
 
 import com.example.tiktube.R;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;

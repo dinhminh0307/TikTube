@@ -1,15 +1,8 @@
 package com.example.tiktube.backend.register;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.tiktube.backend.callbacks.SignUpCallback;
-import com.example.tiktube.frontend.register.RegisterActivity;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterService {
     RegisterRepository registerRepository;

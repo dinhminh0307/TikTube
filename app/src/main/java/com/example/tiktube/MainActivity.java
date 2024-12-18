@@ -7,11 +7,11 @@ import android.os.Bundle;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.login.LoginController;
 import com.example.tiktube.backend.models.User;
-import com.example.tiktube.frontend.login.LoginActivity;
-import com.example.tiktube.frontend.profile.ProfileActivity;
-import com.example.tiktube.frontend.register.RegisterActivity;
+import com.example.tiktube.frontend.pages.LoginActivity;
+import com.example.tiktube.frontend.pages.ProfileActivity;
+import com.example.tiktube.frontend.pages.RegisterActivity;
+import com.example.tiktube.frontend.pages.VideoPageActivity;
 import com.example.tiktube.frontend.search.SearchActivity;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,14 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.tiktube.databinding.ActivityMainBinding;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Login", "User retrieved: " + user.getName());
                 if (user != null) {
                     // Navigate to ProfileActivity
-                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    Intent intent = new Intent(MainActivity.this, VideoPageActivity.class);
                     intent.putExtra("user", user);
                     startActivity(intent);
                     finish(); // Optional: Finish MainActivity to prevent going back
