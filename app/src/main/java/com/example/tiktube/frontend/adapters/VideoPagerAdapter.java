@@ -17,7 +17,7 @@ import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
-import com.example.tiktube.backend.users.UserController;
+import com.example.tiktube.backend.controllers.UserController;
 
 import java.util.List;
 

@@ -12,13 +12,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
-import com.example.tiktube.backend.login.LoginController;
+import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
-import com.example.tiktube.backend.users.UserController;
+import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.frontend.adapters.VideoPagerAdapter;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;

@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.example.tiktube.MainActivity;
 import com.example.tiktube.backend.callbacks.SignUpCallback;
-import com.example.tiktube.backend.register.RegisterController;
+import com.example.tiktube.backend.controllers.RegisterController;
 
 import androidx.appcompat.app.AppCompatActivity;
 

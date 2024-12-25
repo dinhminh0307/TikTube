@@ -5,10 +5,9 @@ import android.os.Bundle;
 
 
 import com.example.tiktube.backend.callbacks.GetUserCallback;
-import com.example.tiktube.backend.login.LoginController;
+import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.pages.LoginActivity;
-import com.example.tiktube.frontend.pages.ProfileActivity;
 import com.example.tiktube.frontend.pages.RegisterActivity;
 import com.example.tiktube.frontend.pages.VideoPageActivity;
 import com.example.tiktube.frontend.search.SearchActivity;

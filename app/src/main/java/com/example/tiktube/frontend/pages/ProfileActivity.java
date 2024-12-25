@@ -2,6 +2,8 @@ package com.example.tiktube.frontend.pages;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -12,6 +14,8 @@ import com.example.tiktube.backend.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
     TextView nameID;
+
+    ImageView menuIcon;
     User userData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +24,26 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         Intent intent = getIntent();
         userData = getIntent().getParcelableExtra("user");
-        nameID = findViewById(R.id.username);
+        setUpComponent();
         nameID.setText(userData.getName());
-//        FirebaseAuth.getInstance().signOut(); //call to signout temp
+
+        // on click
+        onMenuIconClicked();
+    }
+
+    private void setUpComponent() {
+        menuIcon = findViewById(R.id.menuIcon);
+        nameID = findViewById(R.id.username);
+    }
+
+    private void onMenuIconClicked() {
+        menuIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, SettingActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }

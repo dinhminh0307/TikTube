@@ -1,4 +1,4 @@
-package com.example.tiktube.backend.login;
+package com.example.tiktube.backend.services;
 
 import android.util.Log;
 
@@ -6,19 +6,20 @@ import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.callbacks.LoginCallback;
 import com.example.tiktube.backend.callbacks.LoginResultCallback;
 import com.example.tiktube.backend.exceptions.InvalidCredentialException;
+import com.example.tiktube.backend.firebase.FirebaseHelper;
 import com.example.tiktube.backend.models.User;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginService {
-    LoginRepository loginRepository;
+    FirebaseHelper firebaseHelper;
 
     public LoginService() {
-        loginRepository = new LoginRepository();
+        firebaseHelper = new FirebaseHelper();
     }
 
     public void login(String email, String password, LoginResultCallback resultCallback) throws Exception{
-        loginRepository.login(email, password, new LoginCallback() {
+        firebaseHelper.login(email, password, new LoginCallback() {
             @Override
             public void onSuccess(FirebaseUser user) {
                 Log.d("RegisterService", "User: " + user.getEmail());
@@ -37,10 +38,14 @@ public class LoginService {
     }
 
     public User getCurrentUser(GetUserCallback callback) {
-        return loginRepository.getCurrentUser(callback);
+        return firebaseHelper.getCurrentUser(callback);
     }
 
     public String getUserUID() {
-        return  loginRepository.getUserId();
+        return  firebaseHelper.getUserId();
+    }
+
+    public void userSignOut() {
+        this.firebaseHelper.userSignOut();
     }
 }

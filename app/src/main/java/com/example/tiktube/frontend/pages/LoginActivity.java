@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.tiktube.R;
 
 import com.example.tiktube.backend.callbacks.LoginResultCallback;
-import com.example.tiktube.backend.login.LoginController;
+import com.example.tiktube.backend.controllers.LoginController;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {

@@ -5,21 +5,28 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.google.firebase.auth.FirebaseUser;
+import java.util.ArrayList;
+import java.util.List;
 
 public class User implements Parcelable {
     private String name;
     private String phoneNumber;
     private String email;
+    private String imageUrl;
+    private List<String> ownVideo;
+    private List<String> interactedVideo;
 
     // Default constructor (required for Firestore)
     public User() {}
 
     // Constructor
-    public User(String name, String phoneNumber, String email) {
+    public User(String name, String phoneNumber, String email, String imageUrl, List<String> ownVideo, List<String> interactedVideo) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.imageUrl = imageUrl;
+        this.ownVideo = ownVideo;
+        this.interactedVideo = interactedVideo;
     }
 
     // Getters and setters
@@ -47,17 +54,47 @@ public class User implements Parcelable {
         this.email = email;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public List<String> getOwnVideo() {
+        return ownVideo;
+    }
+
+    public void setOwnVideo(List<String> ownVideo) {
+        this.ownVideo = ownVideo;
+    }
+
+    public List<String> getInteractedVideo() {
+        return interactedVideo;
+    }
+
+    public void setInteractedVideo(List<String> interactedVideo) {
+        this.interactedVideo = interactedVideo;
+    }
+
     public void setUser(User currentUser) {
         this.email = currentUser.getEmail();
         this.phoneNumber = currentUser.getPhoneNumber();
         this.name = currentUser.getName();
+        this.imageUrl = currentUser.getImageUrl();
+        this.ownVideo = currentUser.getOwnVideo();
+        this.interactedVideo = currentUser.getInteractedVideo();
     }
 
     // Parcelable implementation
     protected User(Parcel in) {
         name = in.readString();
-        email = in.readString();
         phoneNumber = in.readString();
+        email = in.readString();
+        imageUrl = in.readString();
+        ownVideo = in.createStringArrayList();
+        interactedVideo = in.createStringArrayList();
     }
 
     @Override
@@ -68,8 +105,11 @@ public class User implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(email);
         dest.writeString(phoneNumber);
+        dest.writeString(email);
+        dest.writeString(imageUrl);
+        dest.writeStringList(ownVideo);
+        dest.writeStringList(interactedVideo);
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -84,4 +124,3 @@ public class User implements Parcelable {
         }
     };
 }
-

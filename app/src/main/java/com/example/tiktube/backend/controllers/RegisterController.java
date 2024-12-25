@@ -1,8 +1,9 @@
-package com.example.tiktube.backend.register;
+package com.example.tiktube.backend.controllers;
 
 import android.content.Context;
 
 import com.example.tiktube.backend.callbacks.SignUpCallback;
+import com.example.tiktube.backend.services.RegisterService;
 
 public class RegisterController {
     RegisterService registerService;

@@ -1,10 +1,9 @@
-package com.example.tiktube.backend.login;
+package com.example.tiktube.backend.controllers;
 
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.callbacks.LoginResultCallback;
-import com.example.tiktube.backend.exceptions.InvalidCredentialException;
 import com.example.tiktube.backend.models.User;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.tiktube.backend.services.LoginService;
 
 public class LoginController {
     LoginService loginService;
@@ -23,5 +22,10 @@ public class LoginController {
 
     public String getUserUID() {
         return loginService.getUserUID();
+    }
+
+
+    public void userSignOut() {
+        this.loginService.userSignOut();
     }
 }
