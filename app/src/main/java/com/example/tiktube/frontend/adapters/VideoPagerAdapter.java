@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
+import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.models.LikeVideo;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.controllers.UserController;
@@ -30,10 +32,13 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
     private Context context;
 
     private UserController userController;
+
+    private LoginController loginController;
     public VideoPagerAdapter(Context context, List<Video> videos) {
         this.context = context;
         this.videos = videos;
         userController = new UserController();
+        loginController = new LoginController();
     }
 
     @NonNull
@@ -89,7 +94,17 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
             dialogFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), "CommentsDialog");
         });
 
+        onVideoLikeButtonClicked(holder, video);
+    }
 
+    private void onVideoLikeButtonClicked(VideoViewHolder holder, Video video) {
+        holder.likeVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LikeVideo likeVideo = new LikeVideo(loginController.getUserUID(), video.getUid(), "Just Now");
+                userController.userLikeVideo(video, likeVideo);
+            }
+        });
     }
 
 
@@ -103,7 +118,7 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
         VideoView videoView;
         TextView username, description;
 
-        ImageView comment;
+        ImageView comment, likeVideo;
 
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -111,6 +126,7 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
             username = itemView.findViewById(R.id.username);
             description = itemView.findViewById(R.id.description);
             comment = itemView.findViewById(R.id.comment);
+            likeVideo = itemView.findViewById(R.id.likeVideo);
         }
     }
 }

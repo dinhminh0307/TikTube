@@ -7,12 +7,14 @@ import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.firebase.FirebaseHelper;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.models.Interaction;
+import com.example.tiktube.backend.models.LikeVideo;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.utils.UidGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserService {
     FirebaseHelper firebaseHelper;
@@ -21,16 +23,21 @@ public class UserService {
 
     private InteractionService interactionService;
 
+    private LikeService likeService;
+
     private VideoService videoService;
 
     private String video_collection = "videos";
 
     private String users_collection = "users";
+
+    private String interaction_collections = "interactions";
     public UserService() {
         firebaseHelper = new FirebaseHelper();
         loginController = new LoginController();
         interactionService = new InteractionService();
         videoService = new VideoService();
+        likeService = new LikeService();
     }
 
 
@@ -135,6 +142,50 @@ public class UserService {
             public void onFailure(Exception e) {
                 Log.e("User Service", "Error adding interaction: " + e.getMessage());
                 cb.onFailure(e);
+            }
+        });
+    }
+
+
+
+
+    public void userLikeVideo(Video video, LikeVideo likeVideo) {
+        likeVideo.setUid(UidGenerator.generateUID());
+        likeService.createLike(likeVideo, new DataFetchCallback<String>() {
+            @Override
+            public void onSuccess(List<String> data) {
+                // add like video in the users data
+                getUserById(loginController.getUserUID(), new DataFetchCallback<User>() {
+                    @Override
+                    public void onSuccess(List<User> data) {
+                        List<String> currentUserLikes = new ArrayList<>();
+                        currentUserLikes.addAll(data.get(0).getLikesVideo());
+
+                        currentUserLikes.add(likeVideo.getUid());
+
+                        firebaseHelper.updateField(loginController.getUserUID(),
+                                users_collection,
+                                "likesVideo",
+                                currentUserLikes
+                                );
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                    }
+                });
+
+                // add likes in video
+                List<String> currentVideoLike = new ArrayList<>();
+                currentVideoLike.addAll(video.getLikes());
+                currentVideoLike.add(likeVideo.getUid());
+                videoService.updateVideoLikesFields(video.getUid(), currentVideoLike);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
             }
         });
     }

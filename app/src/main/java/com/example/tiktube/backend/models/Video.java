@@ -1,4 +1,3 @@
-// Video class with UID field
 package com.example.tiktube.backend.models;
 
 import android.os.Parcel;
@@ -14,6 +13,7 @@ public class Video implements Parcelable {
     private String timeStamps;
     private List<String> viewers;
     private List<String> interactions;
+    private List<String> likes; // New likesVideo field
 
     // Constructor
     public Video(String uid, String title, String videoURL, String owner, String timeStamps, List<String> viewers, List<String> interactions) {
@@ -24,6 +24,7 @@ public class Video implements Parcelable {
         this.timeStamps = timeStamps;
         this.viewers = viewers;
         this.interactions = interactions;
+
     }
 
     // Default Constructor (required for Firebase and serialization libraries)
@@ -39,6 +40,7 @@ public class Video implements Parcelable {
         timeStamps = in.readString();
         viewers = in.createStringArrayList();
         interactions = in.createStringArrayList();
+        likes = in.createStringArrayList(); // Parcelable integration for likesVideo
     }
 
     @Override
@@ -50,6 +52,7 @@ public class Video implements Parcelable {
         dest.writeString(timeStamps);
         dest.writeStringList(viewers);
         dest.writeStringList(interactions);
+        dest.writeStringList(likes); // Write likesVideo to Parcel
     }
 
     @Override
@@ -124,5 +127,13 @@ public class Video implements Parcelable {
 
     public void setInteractions(List<String> interactions) {
         this.interactions = interactions;
+    }
+
+    public List<String> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<String> likes) {
+        this.likes = likes;
     }
 }

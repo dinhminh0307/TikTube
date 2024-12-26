@@ -60,19 +60,19 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
         });
 
 
-        // Update like button state
-        if (interaction.isLiked()) {
-            holder.likeButton.setImageResource(R.drawable.ic_like_filled); // Replace with your filled like icon
-        } else {
-            holder.likeButton.setImageResource(R.drawable.ic_like); // Replace with your default like icon
-        }
-
-        // Handle like button click
-        holder.likeButton.setOnClickListener(v -> {
-            boolean isLiked = !interaction.isLiked();
-            interaction.setLiked(isLiked);
-            notifyItemChanged(position); // Refresh the item
-        });
+//        // Update like button state
+//        if (interaction.isLiked()) {
+//            holder.likeButton.setImageResource(R.drawable.ic_like_filled); // Replace with your filled like icon
+//        } else {
+//            holder.likeButton.setImageResource(R.drawable.ic_like); // Replace with your default like icon
+//        }
+//
+//        // Handle like button click
+//        holder.likeButton.setOnClickListener(v -> {
+//            boolean isLiked = !interaction.isLiked();
+//            interaction.setLiked(isLiked);
+//            notifyItemChanged(position); // Refresh the item
+//        });
     }
 
     @Override

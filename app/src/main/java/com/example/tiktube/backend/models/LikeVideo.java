@@ -1,35 +1,24 @@
-// Interaction class with UID field
 package com.example.tiktube.backend.models;
 
-public class Interaction {
-    private String uid; // UID field
+public class LikeVideo {
+
+    private String uid;
     private String ownerUID;
     private String videoUID;
-    private String comment;
     private String timeStamp;
 
     // Constructor
-    public Interaction(String uid, String ownerUID, String videoUID, String comment, String timeStamp) {
-        this.uid = uid;
+    public LikeVideo(String ownerUID, String videoUID, String timeStamp) {
         this.ownerUID = ownerUID;
         this.videoUID = videoUID;
-        this.comment = comment;
         this.timeStamp = timeStamp;
     }
 
-    // Default constructor (required for serialization)
-    public Interaction() {
+    // Default Constructor (required for serialization)
+    public LikeVideo() {
     }
 
     // Getters
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
     public String getOwnerUID() {
         return ownerUID;
     }
@@ -38,10 +27,13 @@ public class Interaction {
         return videoUID;
     }
 
-    public String getComment() {
-        return comment;
+    public String getUid() {
+        return this.uid;
     }
 
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
     public String getTimeStamp() {
         return timeStamp;
@@ -55,11 +47,6 @@ public class Interaction {
     public void setVideoUID(String videoUID) {
         this.videoUID = videoUID;
     }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
 
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;

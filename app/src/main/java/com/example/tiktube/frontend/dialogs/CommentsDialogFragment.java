@@ -49,6 +49,8 @@ public class CommentsDialogFragment extends DialogFragment {
 
     private Video video;
 
+    private boolean isLiked = false;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,7 +129,7 @@ public class CommentsDialogFragment extends DialogFragment {
         sendButton.setOnClickListener(v -> {
             String newComment = commentInput.getText().toString().trim();
             if (!newComment.isEmpty()) {
-                Interaction newInteraction = new Interaction(UidGenerator.generateUID(), loginController.getUserUID(), video.getUid(), newComment, true, "Just now");
+                Interaction newInteraction = new Interaction(UidGenerator.generateUID(), loginController.getUserUID(), video.getUid(), newComment, "Just now");
                 userController.userInteraction(newInteraction, video, newInteraction.getUid(), new DataFetchCallback<String>() {
                     @Override
                     public void onSuccess(List<String> data) {

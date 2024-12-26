@@ -1,4 +1,3 @@
-// User class with UID field
 package com.example.tiktube.backend.models;
 
 import android.os.Parcel;
@@ -17,6 +16,7 @@ public class User implements Parcelable {
     private String imageUrl;
     private List<String> ownVideo;
     private List<String> interactedVideo;
+    private List<String> likesVideo; // New likesVideo field
 
     // Default constructor (required for Firestore)
     public User() {}
@@ -89,13 +89,23 @@ public class User implements Parcelable {
         this.interactedVideo = interactedVideo;
     }
 
+    public List<String> getLikesVideo() {
+        return likesVideo;
+    }
+
+    public void setLikesVideo(List<String> likesVideo) {
+        this.likesVideo = likesVideo;
+    }
+
     public void setUser(User currentUser) {
-        this.email = currentUser.getEmail();
-        this.phoneNumber = currentUser.getPhoneNumber();
+        this.uid = currentUser.getUid();
         this.name = currentUser.getName();
+        this.phoneNumber = currentUser.getPhoneNumber();
+        this.email = currentUser.getEmail();
         this.imageUrl = currentUser.getImageUrl();
         this.ownVideo = currentUser.getOwnVideo();
         this.interactedVideo = currentUser.getInteractedVideo();
+        this.likesVideo = currentUser.getLikesVideo();
     }
 
     // Parcelable implementation
@@ -107,6 +117,7 @@ public class User implements Parcelable {
         imageUrl = in.readString();
         ownVideo = in.createStringArrayList();
         interactedVideo = in.createStringArrayList();
+        likesVideo = in.createStringArrayList(); // Parcelable integration for likesVideo
     }
 
     @Override
@@ -123,6 +134,7 @@ public class User implements Parcelable {
         dest.writeString(imageUrl);
         dest.writeStringList(ownVideo);
         dest.writeStringList(interactedVideo);
+        dest.writeStringList(likesVideo); // Write likesVideo to Parcel
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

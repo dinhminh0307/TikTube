@@ -37,4 +37,12 @@ public class VideoService {
             }
         });
     }
+
+    public void getVideoByUID(String id, DataFetchCallback<Video> video) {
+        firebaseHelper.findByID(id, video_collection, Video.class, video);
+    }
+
+    public void updateVideoLikesFields(String id, Object value) {
+        firebaseHelper.updateField(id, video_collection, "likes", value);
+    }
 }
