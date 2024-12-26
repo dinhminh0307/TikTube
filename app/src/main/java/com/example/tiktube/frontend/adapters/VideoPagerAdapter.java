@@ -7,10 +7,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
@@ -18,6 +20,7 @@ import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.frontend.dialogs.CommentsDialogFragment;
 
 import java.util.List;
 
@@ -62,7 +65,7 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
 
             @Override
             public void onFailure(Exception e) {
-                Log.d("VidepPagerAdapter", "fail to get username: " + e.getMessage());
+                Log.d("VideoPagerAdapter", "Failed to get username: " + e.getMessage());
             }
         });
         holder.description.setText(video.getTitle());
@@ -70,19 +73,24 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
         // Set Touch Listener for Pause/Resume
         holder.videoView.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                // Toggle play/pause
                 if (holder.videoView.isPlaying()) {
                     holder.videoView.pause();
                 } else {
                     holder.videoView.start();
                 }
-
-                // Call performClick for accessibility
-                v.performClick();
+                v.performClick(); // For accessibility
             }
-            return true; // Indicate the touch event is consumed
+            return true;
         });
+
+        // Open CommentsDialogFragment on comment icon click
+        holder.comment.setOnClickListener(v -> {
+            CommentsDialogFragment dialogFragment = new CommentsDialogFragment();
+            dialogFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), "CommentsDialog");
+        });
+
     }
+
 
     @Override
     public int getItemCount() {
@@ -94,11 +102,14 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
         VideoView videoView;
         TextView username, description;
 
+        ImageView comment;
+
         public VideoViewHolder(@NonNull View itemView) {
             super(itemView);
             videoView = itemView.findViewById(R.id.videoView);
             username = itemView.findViewById(R.id.username);
             description = itemView.findViewById(R.id.description);
+            comment = itemView.findViewById(R.id.comment);
         }
     }
 }
