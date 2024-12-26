@@ -1,8 +1,13 @@
+// Video class with UID field
 package com.example.tiktube.backend.models;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.List;
 
-public class Video {
+public class Video implements Parcelable {
+    private String uid; // UID field
     private String title;
     private String videoURL;
     private String owner;
@@ -11,7 +16,8 @@ public class Video {
     private List<String> interactions;
 
     // Constructor
-    public Video(String title, String videoURL, String owner, String timeStamps, List<String> viewers, List<String> interactions) {
+    public Video(String uid, String title, String videoURL, String owner, String timeStamps, List<String> viewers, List<String> interactions) {
+        this.uid = uid;
         this.title = title;
         this.videoURL = videoURL;
         this.owner = owner;
@@ -20,11 +26,58 @@ public class Video {
         this.interactions = interactions;
     }
 
-    // Default Constructor (optional, required for Firebase and serialization libraries)
+    // Default Constructor (required for Firebase and serialization libraries)
     public Video() {
     }
 
+    // Parcelable Implementation
+    protected Video(Parcel in) {
+        uid = in.readString();
+        title = in.readString();
+        videoURL = in.readString();
+        owner = in.readString();
+        timeStamps = in.readString();
+        viewers = in.createStringArrayList();
+        interactions = in.createStringArrayList();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uid);
+        dest.writeString(title);
+        dest.writeString(videoURL);
+        dest.writeString(owner);
+        dest.writeString(timeStamps);
+        dest.writeStringList(viewers);
+        dest.writeStringList(interactions);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Video> CREATOR = new Creator<Video>() {
+        @Override
+        public Video createFromParcel(Parcel in) {
+            return new Video(in);
+        }
+
+        @Override
+        public Video[] newArray(int size) {
+            return new Video[size];
+        }
+    };
+
     // Getters and Setters
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
     public String getTitle() {
         return title;
     }

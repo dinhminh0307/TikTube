@@ -10,11 +10,13 @@ import com.example.tiktube.backend.callbacks.LoginCallback;
 import com.example.tiktube.backend.callbacks.SignUpCallback;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
+import com.example.tiktube.backend.utils.UidGenerator;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -38,21 +40,23 @@ public class FirebaseHelper {
         mAuth = FirebaseAuth.getInstance();
     }
 
-    public void create(String collections, Object obj, DataFetchCallback<String> cb) {
-        // Add the data to the specified Firestore collection
+    public void create(String collections, String customUID, Object obj, DataFetchCallback<String> cb) {
+        // Add the data to the specified Firestore collection with a custom UID
         firestore.collection(collections)
-                .add(obj)
-                .addOnSuccessListener(documentReference -> {
-                    // Pass the document ID (UID) to the callback
-                    cb.onSuccess(Collections.singletonList(documentReference.getId()));
-                    Log.d("Firestore", "Object added with ID: " + documentReference.getId());
+                .document(customUID) // Use the custom UID
+                .set(obj) // Set the object in the document
+                .addOnSuccessListener(aVoid -> {
+                    // Pass the custom UID to the callback
+                    cb.onSuccess(Collections.singletonList(customUID));
+                    Log.d("Firestore", "Object added with custom UID: " + customUID);
                 })
                 .addOnFailureListener(e -> {
                     // Notify failure with the exception
-                    Log.e("Firestore", "Error adding object", e);
+                    Log.e("Firestore", "Error adding object with custom UID", e);
                     cb.onFailure(e);
                 });
     }
+
 
 
 
@@ -216,7 +220,8 @@ public class FirebaseHelper {
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             if (firebaseUser != null) {
                                 // Create a User object
-                                User user = new User(name, phoneNumber, email, "", new ArrayList<>(), new ArrayList<>());
+                                String userUid = UidGenerator.generateUID();
+                                User user = new User(userUid, name, phoneNumber, email, "", new ArrayList<>(), new ArrayList<>());
 
                                 // Save the User object to Firestore
                                 firestore.collection("users").document(firebaseUser.getUid())
@@ -241,4 +246,8 @@ public class FirebaseHelper {
                     }
                 });
     }
+
+   public FirebaseFirestore getFirestore() {
+        return firestore;
+   }
 }

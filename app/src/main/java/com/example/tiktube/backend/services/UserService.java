@@ -6,8 +6,10 @@ import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.firebase.FirebaseHelper;
 import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.models.Interaction;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
+import com.example.tiktube.backend.utils.UidGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +19,23 @@ public class UserService {
 
     LoginController loginController;
 
+    private InteractionService interactionService;
+
+    private VideoService videoService;
+
     private String video_collection = "videos";
 
     private String users_collection = "users";
     public UserService() {
         firebaseHelper = new FirebaseHelper();
         loginController = new LoginController();
+        interactionService = new InteractionService();
+        videoService = new VideoService();
     }
 
+
     public void uploadVideo(Video vid) {
-        firebaseHelper.create(video_collection, vid, new DataFetchCallback<String>() {
+        firebaseHelper.create(video_collection, vid.getUid(), vid, new DataFetchCallback<String>() {
             @Override
             public void onSuccess(List<String> data) {
                 String vidUID = data.get(0);
@@ -80,4 +89,56 @@ public class UserService {
     public void getUserById(String id, DataFetchCallback<User> cb) {
         firebaseHelper.findByID(id, users_collection, User.class, cb);
     }
+
+    public void userInteraction(Interaction interaction, Video video, String customUID, DataFetchCallback<String> cb) {
+        // Add interaction to Firestore
+        interactionService.addInteraction(interaction, customUID, new DataFetchCallback<String>() {
+            @Override
+            public void onSuccess(List<String> interactionUID) {
+                // Update the video's interaction list
+                videoService.videoAddInteraction(video);
+
+                // Add the video to the user's interactedVideo list
+                loginController.getCurrentUser(new GetUserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        List<String> interactedVideos = user.getInteractedVideo();
+                        if (interactedVideos == null) {
+                            interactedVideos = new ArrayList<>();
+                        }
+
+                        // Ensure the video UID is added only once
+                        if (!interactedVideos.contains(video.getUid())) {
+                            interactedVideos.add(video.getUid());
+                        }
+
+                        // Update the user's interactedVideo field in Firestore
+                        firebaseHelper.updateField(
+                                loginController.getUserUID(),
+                                users_collection,
+                                "interactedVideo",
+                                interactedVideos
+                        );
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("User Service", "Error fetching current user: " + e.getMessage());
+                    }
+                });
+
+                // Forward success callback
+                cb.onSuccess(interactionUID);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("User Service", "Error adding interaction: " + e.getMessage());
+                cb.onFailure(e);
+            }
+        });
+    }
+
+
+
 }

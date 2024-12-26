@@ -1,6 +1,8 @@
+// Interaction class with UID field
 package com.example.tiktube.backend.models;
 
 public class Interaction {
+    private String uid; // UID field
     private String ownerUID;
     private String videoUID;
     private String comment;
@@ -8,7 +10,8 @@ public class Interaction {
     private String timeStamp;
 
     // Constructor
-    public Interaction(String ownerUID, String videoUID, String comment, boolean isLiked, String timeStamp) {
+    public Interaction(String uid, String ownerUID, String videoUID, String comment, boolean isLiked, String timeStamp) {
+        this.uid = uid;
         this.ownerUID = ownerUID;
         this.videoUID = videoUID;
         this.comment = comment;
@@ -21,6 +24,14 @@ public class Interaction {
     }
 
     // Getters
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
     public String getOwnerUID() {
         return ownerUID;
     }

@@ -18,6 +18,7 @@ import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.backend.utils.UidGenerator;
 import com.example.tiktube.frontend.adapters.VideoPagerAdapter;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -182,7 +183,7 @@ public class VideoPageActivity extends AppCompatActivity {
     }
 
     private void uploadVideoToFirebase(String link) {
-        Video vid = new Video("hello", link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
+        Video vid = new Video(UidGenerator.generateUID(), "hello", link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
         userController.uploadVideo(vid);
     }
 

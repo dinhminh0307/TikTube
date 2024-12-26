@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.callbacks.DataFetchCallback;
+import com.example.tiktube.backend.controllers.InteractionController;
+import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.backend.controllers.VideoController;
 import com.example.tiktube.backend.models.Interaction;
+import com.example.tiktube.backend.models.Video;
+import com.example.tiktube.backend.utils.UidGenerator;
 import com.example.tiktube.frontend.adapters.CommentsAdapter;
 
 import java.util.ArrayList;
@@ -31,10 +39,28 @@ public class CommentsDialogFragment extends DialogFragment {
     private List<Interaction> commentsList = new ArrayList<>();
     private CommentsAdapter adapter;
 
-    public static CommentsDialogFragment newInstance(String videoId) {
+    private UserController userController;
+
+    private LoginController loginController;
+
+    private InteractionController interactionController;
+
+    private VideoController videoController;
+
+    private Video video;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            video = getArguments().getParcelable("video");
+        }
+    }
+
+    public static CommentsDialogFragment newInstance(Video video) {
         CommentsDialogFragment fragment = new CommentsDialogFragment();
         Bundle args = new Bundle();
-        args.putString("videoId", videoId);
+        args.putParcelable("video", video); // Video must implement Parcelable
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,30 +83,65 @@ public class CommentsDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.comment_dialog, container, false);
 
+        loginController = new LoginController();
+        userController = new UserController();
+        videoController = new VideoController();
+        interactionController = new InteractionController();
         commentsRecyclerView = view.findViewById(R.id.comments_recycler_view);
         commentInput = view.findViewById(R.id.comment_input);
         sendButton = view.findViewById(R.id.send_button);
 
-        commentsList.add(new Interaction("User", "ok", "DM", true, "Just now"));
-        commentsList.add(new Interaction("User", "ok", "DM", true, "Just now"));
-        commentsList.add(new Interaction("User", "ok", "DM", true, "Just now"));
 
-        // Initialize RecyclerView
-        adapter = new CommentsAdapter(commentsList);
-        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        commentsRecyclerView.setAdapter(adapter);
 
+        fetchComments();
+
+        userInteractVideo();
+
+        return view;
+    }
+
+    private void fetchComments() {
+        interactionController.getAllInteractionsByVideoUID(video.getUid(), new DataFetchCallback<Interaction>() {
+            @Override
+            public void onSuccess(List<Interaction> data) {
+                // Initialize RecyclerView
+                commentsList.clear(); // Clear the existing comments
+                commentsList.addAll(data);
+                if (adapter == null) {
+                    adapter = new CommentsAdapter(commentsList);
+                    commentsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    commentsRecyclerView.setAdapter(adapter);
+                } else {
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("Comment Dialog", "Error fetching comments: " + e.getMessage());
+            }
+        });
+    }
+
+    private void userInteractVideo() {
         sendButton.setOnClickListener(v -> {
             String newComment = commentInput.getText().toString().trim();
             if (!newComment.isEmpty()) {
-                commentsList.add(new Interaction("User", "ok", newComment, true, "Just now"));
-                adapter.notifyItemInserted(commentsList.size() - 1);
-                commentsRecyclerView.scrollToPosition(commentsList.size() - 1); // Scroll to the bottom
-                commentInput.setText("");
+                Interaction newInteraction = new Interaction(UidGenerator.generateUID(), loginController.getUserUID(), video.getUid(), newComment, true, "Just now");
+                userController.userInteraction(newInteraction, video, newInteraction.getUid(), new DataFetchCallback<String>() {
+                    @Override
+                    public void onSuccess(List<String> data) {
+                        commentInput.setText(""); // Clear the input field
+                        fetchComments(); // Fetch the updated list of comments
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("Comment Dialog", "Error sending comment: " + e.getMessage());
+                    }
+                });
             }
         });
-
-        return view;
     }
 
 }

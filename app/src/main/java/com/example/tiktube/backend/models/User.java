@@ -1,3 +1,4 @@
+// User class with UID field
 package com.example.tiktube.backend.models;
 
 import android.os.Parcel;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User implements Parcelable {
+    private String uid; // UID field
     private String name;
     private String phoneNumber;
     private String email;
@@ -20,7 +22,8 @@ public class User implements Parcelable {
     public User() {}
 
     // Constructor
-    public User(String name, String phoneNumber, String email, String imageUrl, List<String> ownVideo, List<String> interactedVideo) {
+    public User(String uid, String name, String phoneNumber, String email, String imageUrl, List<String> ownVideo, List<String> interactedVideo) {
+        this.uid = uid;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -30,6 +33,14 @@ public class User implements Parcelable {
     }
 
     // Getters and setters
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
     public String getName() {
         return name;
     }
@@ -89,6 +100,7 @@ public class User implements Parcelable {
 
     // Parcelable implementation
     protected User(Parcel in) {
+        uid = in.readString();
         name = in.readString();
         phoneNumber = in.readString();
         email = in.readString();
@@ -104,6 +116,7 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(uid);
         dest.writeString(name);
         dest.writeString(phoneNumber);
         dest.writeString(email);

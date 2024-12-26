@@ -85,9 +85,10 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
 
         // Open CommentsDialogFragment on comment icon click
         holder.comment.setOnClickListener(v -> {
-            CommentsDialogFragment dialogFragment = new CommentsDialogFragment();
+            CommentsDialogFragment dialogFragment = CommentsDialogFragment.newInstance(video);
             dialogFragment.show(((AppCompatActivity) context).getSupportFragmentManager(), "CommentsDialog");
         });
+
 
     }
 

@@ -10,7 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.callbacks.DataFetchCallback;
+import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.backend.models.Interaction;
+import com.example.tiktube.backend.models.User;
 
 import java.util.List;
 
@@ -18,9 +21,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     private List<Interaction> commentsList;
 
+    private UserController userController;
+
     // Constructor
     public CommentsAdapter(List<Interaction> commentsList) {
         this.commentsList = commentsList;
+        userController = new UserController();
     }
 
     @NonNull
@@ -35,9 +41,24 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         // Bind data to the views
         Interaction interaction = commentsList.get(position);
-        holder.userName.setText(interaction.getOwnerUID()); // Assuming ownerUID is the user name or identifier
-        holder.commentText.setText(interaction.getComment());
-        holder.commentTime.setText(interaction.getTimeStamp());
+
+        userController.getUserById(interaction.getOwnerUID(), new DataFetchCallback<User>() {
+            @Override
+            public void onSuccess(List<User> data) {
+                User user = data.get(0);
+                holder.userName.setText(user.getName()); // Assuming ownerUID is the user name or identifier
+                holder.commentText.setText(interaction.getComment());
+                holder.commentTime.setText(interaction.getTimeStamp());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                holder.userName.setText(interaction.getOwnerUID()); // Assuming ownerUID is the user name or identifier
+                holder.commentText.setText(interaction.getComment());
+                holder.commentTime.setText(interaction.getTimeStamp());
+            }
+        });
+
 
         // Update like button state
         if (interaction.isLiked()) {
