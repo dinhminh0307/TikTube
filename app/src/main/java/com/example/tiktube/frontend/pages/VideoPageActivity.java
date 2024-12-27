@@ -1,8 +1,12 @@
 package com.example.tiktube.frontend.pages;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.media.MediaCodec;
+import android.media.MediaFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,8 +34,12 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
+import android.media.MediaMetadataRetriever;
+import android.media.MediaMuxer;
+import android.media.MediaExtractor;
 
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -150,16 +158,29 @@ public class VideoPageActivity extends AppCompatActivity {
     }
 
     // Step 4: Upload Video to Google Drive
+
     private void uploadVideoToGoogleDrive() {
         new Thread(() -> {
             try {
                 InputStream inputStream = getContentResolver().openInputStream(videoUri);
 
-                File metadata = new File();
+                // Retrieve video duration
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(this, videoUri);
+                String durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                long duration = Long.parseLong(durationStr);
+
+                // Check if video duration exceeds 1 minute
+                Uri videoToUploadUri = videoUri;
+                if (duration > 60000) { // 1 minute = 60000 ms
+                    videoToUploadUri = trimVideo(videoUri);
+                }
+
+                File metadata = new File(); // Google Drive File object
                 metadata.setName("uploaded_video.mp4");
 
                 com.google.api.client.http.InputStreamContent mediaContent =
-                        new com.google.api.client.http.InputStreamContent("video/mp4", inputStream);
+                        new com.google.api.client.http.InputStreamContent("video/mp4", getContentResolver().openInputStream(videoToUploadUri));
 
                 File uploadedFile = googleDriveService.files().create(metadata, mediaContent)
                         .setFields("id, webViewLink")
@@ -181,6 +202,123 @@ public class VideoPageActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+    private Uri trimVideo(Uri sourceUri) throws Exception {
+        // Resolve the file path from Uri
+        String sourcePath = getPathFromUri(sourceUri);
+
+        // Validate and log the source path
+        if (sourcePath == null || sourcePath.isEmpty()) {
+            throw new IllegalArgumentException("Invalid source path for the video");
+        }
+        Log.d("VideoPageActivity", "Source path: " + sourcePath);
+
+        // Output path for the trimmed video
+        java.io.File outputDir = getCacheDir(); // Use the app's cache directory
+        java.io.File outputFile = java.io.File.createTempFile("trimmed_video", ".mp4", outputDir);
+        String outputPath = outputFile.getAbsolutePath();
+
+        MediaExtractor extractor = new MediaExtractor();
+        extractor.setDataSource(sourcePath); // This line causes the exception
+
+        MediaMuxer muxer = new MediaMuxer(outputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+
+        int videoTrackIndex = -1;
+        for (int i = 0; i < extractor.getTrackCount(); i++) {
+            if (extractor.getTrackFormat(i).getString(MediaFormat.KEY_MIME).startsWith("video/")) {
+                videoTrackIndex = muxer.addTrack(extractor.getTrackFormat(i));
+                extractor.selectTrack(i);
+                break;
+            }
+        }
+
+        if (videoTrackIndex == -1) {
+            throw new IllegalArgumentException("No video track found in the provided file.");
+        }
+
+        muxer.start();
+        long startUs = 0; // Start at the beginning
+        long endUs = 120000000; // End at 1 minute (60000000 microseconds)
+        extractor.seekTo(startUs, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
+
+        MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
+        ByteBuffer buffer = ByteBuffer.allocate(1024 * 1024); // Allocate a buffer of 1 MB
+
+        while (true) {
+            int sampleSize = extractor.readSampleData(buffer, 0);
+            if (sampleSize < 0 || extractor.getSampleTime() >= endUs) {
+                break; // End of stream or beyond the trimming range
+            }
+
+            bufferInfo.offset = 0;
+            bufferInfo.size = sampleSize;
+            bufferInfo.presentationTimeUs = extractor.getSampleTime();
+
+            // Translate MediaExtractor flags to MediaCodec.BufferInfo flags
+            int sampleFlags = extractor.getSampleFlags();
+            bufferInfo.flags = 0; // Default to no flags
+            if ((sampleFlags & MediaExtractor.SAMPLE_FLAG_SYNC) != 0) {
+                bufferInfo.flags |= MediaCodec.BUFFER_FLAG_SYNC_FRAME;
+            }
+
+            muxer.writeSampleData(videoTrackIndex, buffer, bufferInfo);
+            extractor.advance();
+        }
+
+        muxer.stop();
+        muxer.release();
+        extractor.release();
+
+        return Uri.fromFile(outputFile); // Return trimmed video URI
+    }
+
+
+
+    private String getPathFromUri(Uri uri) {
+        String[] projection = {MediaStore.Video.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+
+        if (cursor != null) {
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
+            if (cursor.moveToFirst()) {
+                String path = cursor.getString(columnIndex);
+                cursor.close();
+                if (path != null && !path.isEmpty()) {
+                    return path;
+                }
+            }
+            cursor.close();
+        }
+
+        // Fallback: Copy the content to a temporary file
+        return copyUriToTempFile(uri).getAbsolutePath();
+    }
+
+
+    private java.io.File copyUriToTempFile(Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            java.io.File tempFile = java.io.File.createTempFile("temp_video", ".mp4", getCacheDir());
+            java.io.FileOutputStream outputStream = new java.io.FileOutputStream(tempFile);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            return tempFile;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to copy URI to temporary file: " + e.getMessage(), e);
+        }
+    }
+
+
+
+
 
     private void uploadVideoToFirebase(String link) {
         Video vid = new Video(UidGenerator.generateUID(), "hello", link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
