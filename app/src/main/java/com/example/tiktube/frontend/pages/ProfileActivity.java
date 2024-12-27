@@ -3,6 +3,7 @@ package com.example.tiktube.frontend.pages;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +26,8 @@ import java.util.List;
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
     TextView nameID;
     ImageView menuIcon;
+
+    Button editProfileBtn;
     private VideoGridAdapter videoGridAdapter;
     private RecyclerView videoRecyclerView;
     private List<Video> videoList;
@@ -32,6 +35,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     private LoginController loginController;
 
     private User user;
+
+    private boolean isCurrentUser = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +52,18 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     private void setUpComponent() {
         menuIcon = findViewById(R.id.menuIcon);
         nameID = findViewById(R.id.username);
+        editProfileBtn = findViewById(R.id.editProfileBtn);
         videoRecyclerView = findViewById(R.id.videoRecyclerView);
         loginController = new LoginController();
         userController = new UserController();
         user = getIntent().getParcelableExtra("user");
         nameID.setText(user.getName());
+
+        // set up edit button to check the current user
+        if(!user.getUid().equals(loginController.getUserUID())) {
+            editProfileBtn.setText("Follow");
+            isCurrentUser = false;
+        }
     }
 
     private void setUpRecyclerView() {
