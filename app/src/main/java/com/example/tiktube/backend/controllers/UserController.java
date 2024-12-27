@@ -1,5 +1,6 @@
 package com.example.tiktube.backend.controllers;
 
+import com.example.tiktube.backend.callbacks.CheckUserCallback;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.models.Interaction;
 import com.example.tiktube.backend.models.LikeVideo;
@@ -32,5 +33,13 @@ public class UserController {
 
     public void userLikeVideo(Video video, LikeVideo likeVideo) {
         userService.userLikeVideo(video, likeVideo);
+    }
+
+    public void userFollowingAction(User followingUser, DataFetchCallback<Void> cb) {
+        userService.userFollowingAction(followingUser, cb);
+    }
+
+    public void checkCurrentUser(User target, CheckUserCallback cb) {
+        userService.checkCurrentUser(target, cb);
     }
 }

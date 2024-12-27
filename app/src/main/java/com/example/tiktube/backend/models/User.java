@@ -17,6 +17,8 @@ public class User implements Parcelable {
     private List<String> ownVideo;
     private List<String> interactedVideo;
     private List<String> likesVideo; // New likesVideo field
+    private List<String> followingList; // New followingList field
+    private List<String> followerList; // New followerList field
 
     // Default constructor (required for Firestore)
     public User() {}
@@ -97,6 +99,22 @@ public class User implements Parcelable {
         this.likesVideo = likesVideo;
     }
 
+    public List<String> getFollowingList() {
+        return followingList;
+    }
+
+    public void setFollowingList(List<String> followingList) {
+        this.followingList = followingList;
+    }
+
+    public List<String> getFollowerList() {
+        return followerList;
+    }
+
+    public void setFollowerList(List<String> followerList) {
+        this.followerList = followerList;
+    }
+
     public void setUser(User currentUser) {
         this.uid = currentUser.getUid();
         this.name = currentUser.getName();
@@ -106,6 +124,8 @@ public class User implements Parcelable {
         this.ownVideo = currentUser.getOwnVideo();
         this.interactedVideo = currentUser.getInteractedVideo();
         this.likesVideo = currentUser.getLikesVideo();
+        this.followingList = currentUser.getFollowingList();
+        this.followerList = currentUser.getFollowerList();
     }
 
     // Parcelable implementation
@@ -117,7 +137,9 @@ public class User implements Parcelable {
         imageUrl = in.readString();
         ownVideo = in.createStringArrayList();
         interactedVideo = in.createStringArrayList();
-        likesVideo = in.createStringArrayList(); // Parcelable integration for likesVideo
+        likesVideo = in.createStringArrayList();
+        followingList = in.createStringArrayList(); // Parcelable integration for followingList
+        followerList = in.createStringArrayList(); // Parcelable integration for followerList
     }
 
     @Override
@@ -134,7 +156,9 @@ public class User implements Parcelable {
         dest.writeString(imageUrl);
         dest.writeStringList(ownVideo);
         dest.writeStringList(interactedVideo);
-        dest.writeStringList(likesVideo); // Write likesVideo to Parcel
+        dest.writeStringList(likesVideo);
+        dest.writeStringList(followingList); // Write followingList to Parcel
+        dest.writeStringList(followerList); // Write followerList to Parcel
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

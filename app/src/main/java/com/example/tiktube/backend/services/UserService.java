@@ -2,6 +2,7 @@ package com.example.tiktube.backend.services;
 
 import android.util.Log;
 
+import com.example.tiktube.backend.callbacks.CheckUserCallback;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.firebase.FirebaseHelper;
@@ -10,6 +11,7 @@ import com.example.tiktube.backend.models.Interaction;
 import com.example.tiktube.backend.models.LikeVideo;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
+import com.example.tiktube.backend.utils.Enums;
 import com.example.tiktube.backend.utils.UidGenerator;
 
 import java.util.ArrayList;
@@ -190,6 +192,51 @@ public class UserService {
         });
     }
 
+    public void checkCurrentUser(User target, CheckUserCallback cb) {
+        loginController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                if(user.getFollowingList().contains(target.getUid())) {
+                    cb.onSuccess(Enums.UserType.FOLLOWER);
+                } else if(!user.getFollowingList().contains(target.getUid()) && !user.getUid().equals(target.getUid())) {
+                    cb.onSuccess(Enums.UserType.OTHER);
+                } else if(!user.getFollowingList().contains(target.getUid()) && user.getUid().equals(target.getUid())) {
+                    cb.onSuccess(Enums.UserType.CURRENT_USER);
+                }
+            }
 
+            @Override
+            public void onFailure(Exception e) {
 
+            }
+        });
+    }
+    public void userFollowingAction(User followingUser, DataFetchCallback<Void> cb) {
+        List<String> followingUserfollower = new ArrayList<>();
+        followingUserfollower.addAll(followingUser.getFollowerList());
+        followingUserfollower.add(loginController.getUserUID());
+
+        List<String> currentUserFollowing = new ArrayList<>();
+        loginController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                currentUserFollowing.addAll(user.getFollowingList());
+                currentUserFollowing.add(followingUser.getUid());
+                // update in the target user follower list
+                firebaseHelper.updateField(followingUser.getUid(), users_collection,
+                        "followerList", followingUserfollower);
+
+                //update in the current user
+                firebaseHelper.updateField(loginController.getUserUID(), users_collection,
+                        "followingList", currentUserFollowing);
+                cb.onSuccess(null);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                cb.onFailure(e);
+            }
+        });
+
+    }
 }

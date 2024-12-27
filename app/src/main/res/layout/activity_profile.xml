@@ -82,6 +82,7 @@
                         android:orientation="vertical"
                         android:layout_marginEnd="16dp">
                         <TextView
+                            android:id="@+id/followingNumber"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="89"
@@ -102,6 +103,7 @@
                         android:orientation="vertical"
                         android:layout_marginEnd="16dp">
                         <TextView
+                            android:id="@+id/followerNumber"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="131298"
