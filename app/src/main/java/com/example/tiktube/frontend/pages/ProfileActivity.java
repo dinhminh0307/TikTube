@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
@@ -73,6 +74,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         checkCurrentUser();
 
         setUpUserStat();
+
+        onMenuIconClicked();
     }
 
     @SuppressLint("SetTextI18n")
@@ -180,6 +183,46 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
                 }
             }
         });
+
+    }
+
+    private void showPopupMenu(View anchor) {
+        android.widget.PopupMenu popupMenu = new android.widget.PopupMenu(this, anchor);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_profile, popupMenu.getMenu());
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.option_settings) {
+                // Navigate to Settings
+//        Intent settingsIntent = new Intent(ProfileActivity.this, SettingActivity.class);
+//        startActivity(settingsIntent);
+                return true;
+            } else if (itemId == R.id.option_edit) {
+//        if (isCurrentUser == Enums.UserType.CURRENT_USER) {
+//            // Navigate to Edit Profile page
+//            Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+//            startActivity(editIntent);
+//        } else {
+//            Toast.makeText(this, "You can only edit your own profile", Toast.LENGTH_SHORT).show();
+//        }
+                return true;
+            } else if (itemId == R.id.option_logout) {
+                // Perform logout
+                loginController.userSignOut();
+                Intent logoutIntent = new Intent(ProfileActivity.this, MainActivity.class);
+                logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(logoutIntent);
+                finish();
+                return true;
+            }
+            return false;
+        });
+
+        popupMenu.show();
+    }
+
+    private void onMenuIconClicked() {
+        menuIcon.setOnClickListener(v -> showPopupMenu(menuIcon));
 
     }
 }
