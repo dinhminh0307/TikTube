@@ -1,6 +1,7 @@
 package com.example.tiktube.frontend.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.controllers.LoginController;
@@ -23,6 +25,8 @@ import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.frontend.dialogs.CommentsDialogFragment;
+import com.example.tiktube.frontend.pages.ProfileActivity;
+import com.example.tiktube.frontend.pages.VideoPageActivity;
 
 import java.util.List;
 
@@ -95,6 +99,34 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
         });
 
         onVideoLikeButtonClicked(holder, video);
+        onUserNameClicked(holder, video);
+    }
+
+    private void onUserNameClicked(VideoViewHolder holder, Video video) {
+        holder.username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userController.getUserById(video.getOwner(), new DataFetchCallback<User>() {
+                    @Override
+                    public void onSuccess(List<User> data) {
+                        User vidOnwer = data.get(0);
+                        Intent intent = new Intent(context, ProfileActivity.class);
+                        intent.putExtra("user", vidOnwer);
+                        // Ensure the context is an activity context
+                        if (context instanceof AppCompatActivity) {
+                            context.startActivity(intent);
+                        } else {
+                            Log.e("VideoPagerAdapter", "Context is not an instance of AppCompatActivity");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                    }
+                });
+            }
+        });
     }
 
     private void onVideoLikeButtonClicked(VideoViewHolder holder, Video video) {

@@ -15,6 +15,7 @@ import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.frontend.adapters.VideoGridAdapter;
 
@@ -29,6 +30,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     private List<Video> videoList;
     private UserController userController;
     private LoginController loginController;
+
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         videoRecyclerView = findViewById(R.id.videoRecyclerView);
         loginController = new LoginController();
         userController = new UserController();
+        user = getIntent().getParcelableExtra("user");
+        nameID.setText(user.getName());
     }
 
     private void setUpRecyclerView() {
@@ -62,7 +67,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             public void onSuccess(List<Video> data) {
                 videoList.clear();
                 for (Video video : data) {
-                    if (video.getOwner().equals(loginController.getUserUID())) {
+                    if (video.getOwner().equals(user.getUid())) {
                         videoList.add(video);
                     }
                 }
