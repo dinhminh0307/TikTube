@@ -53,21 +53,21 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_home"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:src="@drawable/ic_house_foreground" />
 
         <ImageView
             android:id="@+id/uploadIcon"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_upload"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:src="@drawable/ic_upload_foreground" />
 
         <ImageView
             android:id="@+id/profileIcon"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/profile_placeholder"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:src="@drawable/ic_account_circle_foreground" />
     </LinearLayout>
 </RelativeLayout>
