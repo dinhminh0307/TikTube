@@ -41,11 +41,33 @@
         android:layout_below="@id/topNav"
         android:layout_above="@id/bottomNav" />
 
-    <!-- Include Bottom Navigation Bar -->
-    <include
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
         android:id="@+id/bottomNav"
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        layout="@layout/bottom_navigation"
-        android:layout_alignParentBottom="true" />
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_house_foreground" />
+
+        <ImageView
+            android:id="@+id/uploadIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_upload_foreground" />
+
+        <ImageView
+            android:id="@+id/profileIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_account_circle_foreground" />
+    </LinearLayout>
 </RelativeLayout>
