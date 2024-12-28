@@ -160,8 +160,7 @@ public class UserService {
                 getUserById(loginController.getUserUID(), new DataFetchCallback<User>() {
                     @Override
                     public void onSuccess(List<User> data) {
-                        List<String> currentUserLikes = new ArrayList<>();
-                        currentUserLikes.addAll(data.get(0).getLikesVideo());
+                        List<String> currentUserLikes = new ArrayList<>(data.get(0).getLikesVideo());
 
                         currentUserLikes.add(likeVideo.getUid());
 
@@ -170,6 +169,11 @@ public class UserService {
                                 "likesVideo",
                                 currentUserLikes
                                 );
+
+                        // add likes in video
+                        List<String> currentVideoLike = new ArrayList<>(video.getLikes());
+                        currentVideoLike.add(likeVideo.getUid());
+                        videoService.updateVideoLikesFields(video.getUid(), currentVideoLike);
                     }
 
                     @Override
@@ -177,12 +181,6 @@ public class UserService {
 
                     }
                 });
-
-                // add likes in video
-                List<String> currentVideoLike = new ArrayList<>();
-                currentVideoLike.addAll(video.getLikes());
-                currentVideoLike.add(likeVideo.getUid());
-                videoService.updateVideoLikesFields(video.getUid(), currentVideoLike);
             }
 
             @Override
