@@ -177,7 +177,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         editProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isCurrentUser == Enums.UserType.OTHER) {
+                if (isCurrentUser == Enums.UserType.OTHER) {
                     userController.userFollowingAction(user, new DataFetchCallback<Void>() {
                         @Override
                         public void onSuccess(List<Void> data) {
@@ -205,8 +205,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             int itemId = item.getItemId();
             if (itemId == R.id.option_settings) {
                 // Navigate to Settings
-//        Intent settingsIntent = new Intent(ProfileActivity.this, SettingActivity.class);
-//        startActivity(settingsIntent);
+                Intent settingsIntent = new Intent(ProfileActivity.this, SettingActivity.class);
+                startActivity(settingsIntent);
                 return true;
             } else if (itemId == R.id.option_edit) {
 //        if (isCurrentUser == Enums.UserType.CURRENT_USER) {
@@ -234,6 +234,5 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
     private void onMenuIconClicked() {
         menuIcon.setOnClickListener(v -> showPopupMenu(menuIcon));
-
     }
 }
