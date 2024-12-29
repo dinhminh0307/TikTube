@@ -43,7 +43,7 @@ public class UserService {
     }
 
 
-    public void uploadVideo(Video vid) {
+    public void uploadVideo(Video vid ,DataFetchCallback<Void> cb) {
         firebaseHelper.create(video_collection, vid.getUid(), vid, new DataFetchCallback<String>() {
             @Override
             public void onSuccess(List<String> data) {
@@ -73,10 +73,12 @@ public class UserService {
                         for (String tmp : updateOwnVideo) {
                             Log.d("User Service", "Updated Video: " + tmp);
                         }
+                        cb.onSuccess(null);
                     }
 
                     @Override
                     public void onFailure(Exception e) {
+                        cb.onFailure(e);
                         Log.e("User Service", "Error fetching current user: " + e.getMessage());
                     }
                 });
@@ -84,6 +86,7 @@ public class UserService {
 
             @Override
             public void onFailure(Exception e) {
+                cb.onFailure(e);
                 Log.e("User Service", "Error creating video: " + e.getMessage());
             }
         });
@@ -240,6 +243,38 @@ public class UserService {
                 //update in the current user
                 firebaseHelper.updateField(loginController.getUserUID(), users_collection,
                         "followingList", currentUserFollowing);
+                cb.onSuccess(null);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                cb.onFailure(e);
+            }
+        });
+
+    }
+
+    public void userUnfollowAction(User target, DataFetchCallback<Void> cb) {
+        List<String> targetFollower = new ArrayList<>();
+        targetFollower.addAll(target.getFollowerList());
+        // remove the current user in the target follower list
+        targetFollower.remove(loginController.getUserUID());
+
+        // current user following list
+        List<String> currentUserFollowing = new ArrayList<>();
+        loginController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                currentUserFollowing.addAll(user.getFollowingList());
+                currentUserFollowing.remove(target.getUid());
+
+                // update the current user collection firebase
+                firebaseHelper.updateField(loginController.getUserUID(), users_collection,
+                        "followingList", currentUserFollowing);
+
+                // update in the target user follower list
+                firebaseHelper.updateField(target.getUid(), users_collection,
+                        "followerList", targetFollower);
                 cb.onSuccess(null);
             }
 

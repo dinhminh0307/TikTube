@@ -44,6 +44,10 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
     private Enums.UserType isCurrentUser = Enums.UserType.CURRENT_USER;
 
+    private List<String> displayFollowingList = new ArrayList<>();
+
+    private List<String> getDisplayFollowerList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,8 +84,6 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         // set up edit button to check the current user
         checkCurrentUser();
 
-        setUpUserStat();
-
         onMenuIconClicked();
     }
 
@@ -108,7 +110,9 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             public void onSuccess(List<Video> data) {
                 videoList.clear();
                 for (Video video : data) {
+                    Log.d("Video Activity", "User UID: " +user.getUid());
                     if (video.getOwner().equals(user.getUid())) {
+                        Log.d("Video Activity", "Video: " +video.getOwner());
                         videoList.add(video);
                     }
                 }
@@ -136,7 +140,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             @Override
             public void onSuccess(List<User> data) {
                 user.setUser(data.get(0));
-                setUpUserStat();
+                checkCurrentUser(); // check the current user again to reload the button
             }
 
             @Override
@@ -160,10 +164,12 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
                         break;
                     case FOLLOWER:
                         editProfileBtn.setText("Unfollow");
+                        isCurrentUser = Enums.UserType.FOLLOWER;
                         break;
                     default:
                         break;
                 }
+                setUpUserStat(); // set up user status after checking profile
             }
 
             @Override
@@ -173,28 +179,58 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         });
     }
 
+    private void followUser() {
+        userController.userFollowingAction(user, new DataFetchCallback<Void>() {
+            @Override
+            public void onSuccess(List<Void> data) {
+                checkCurrentUser();
+                reloadTheTargetUser();
+                Toast.makeText(ProfileActivity.this, "Followed Successfully", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(ProfileActivity.this, "Follow Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     private void onEditButtonClicked() {
         editProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isCurrentUser == Enums.UserType.OTHER) {
-                    userController.userFollowingAction(user, new DataFetchCallback<Void>() {
-                        @Override
-                        public void onSuccess(List<Void> data) {
-                            checkCurrentUser();
-                            reloadTheTargetUser();
-                            Toast.makeText(ProfileActivity.this, "Follow Successfully", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-                            Toast.makeText(ProfileActivity.this, "Follow Fail", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                if (isCurrentUser == Enums.UserType.OTHER || isCurrentUser == Enums.UserType.FOLLOWER) {
+                    // Toggle Follow/Unfollow action
+                    if (editProfileBtn.getText().toString().equalsIgnoreCase("Follow")) {
+                        followUser();
+                    } else if (editProfileBtn.getText().toString().equalsIgnoreCase("Unfollow")) {
+                        unfollowUser();
+                    }
+                } else if (isCurrentUser == Enums.UserType.CURRENT_USER) {
+                    // Handle edit profile for the current user
+                    Log.d("EditButton", "Edit button clicked by the current user.");
+                    // You can navigate to an Edit Profile page here
+                    Toast.makeText(ProfileActivity.this, "Edit Profile clicked", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
 
+
+    private void unfollowUser() {
+        userController.userUnfollowAction(user, new DataFetchCallback<Void>() {
+            @Override
+            public void onSuccess(List<Void> data) {
+                reloadTheTargetUser();
+                Toast.makeText(ProfileActivity.this, "Unfollow Successfully", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(ProfileActivity.this, "Unfollow Fail", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showPopupMenu(View anchor) {

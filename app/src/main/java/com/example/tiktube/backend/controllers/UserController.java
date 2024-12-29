@@ -15,8 +15,8 @@ public class UserController {
         this.userService = new UserService();
     }
 
-    public void uploadVideo(Video vid) {
-        userService.uploadVideo(vid);
+    public void uploadVideo(Video vid, DataFetchCallback<Void> cb) {
+        userService.uploadVideo(vid, cb);
     }
 
     public void getAllVideo(DataFetchCallback<Video> cb) {
@@ -41,5 +41,9 @@ public class UserController {
 
     public void checkCurrentUser(User target, CheckUserCallback cb) {
         userService.checkCurrentUser(target, cb);
+    }
+
+    public void userUnfollowAction(User target, DataFetchCallback<Void> cb) {
+        userService.userUnfollowAction(target, cb);
     }
 }
