@@ -194,21 +194,34 @@ public class UserService {
         loginController.getCurrentUser(new GetUserCallback() {
             @Override
             public void onSuccess(User user) {
-                if(user.getFollowingList().contains(target.getUid())) {
-                    cb.onSuccess(Enums.UserType.FOLLOWER);
-                } else if(!user.getFollowingList().contains(target.getUid()) && !user.getUid().equals(target.getUid())) {
-                    cb.onSuccess(Enums.UserType.OTHER);
-                } else if(!user.getFollowingList().contains(target.getUid()) && user.getUid().equals(target.getUid())) {
-                    cb.onSuccess(Enums.UserType.CURRENT_USER);
+
+                // Ensure `user`, `target`, and their lists are not null
+                if (user == null || target == null || user.getFollowingList() == null || target.getUid() == null) {
+                    cb.onFailure(new NullPointerException("User, target, or their lists are null"));
+                    return;
                 }
+
+                if (user.getFollowingList().contains(target.getUid())) {
+                    cb.onSuccess(Enums.UserType.FOLLOWER);
+                } else if (!user.getFollowingList().contains(target.getUid()) && !user.getUid().equals(target.getUid())) {
+                    Log.d("User Service", "current user uid: " + user.getUid() + " target uid: " + target.getUid());
+                    cb.onSuccess(Enums.UserType.OTHER);
+                } else if (!user.getFollowingList().contains(target.getUid()) && user.getUid().equals(target.getUid())) {
+                    cb.onSuccess(Enums.UserType.CURRENT_USER);
+                } else {
+                    cb.onFailure(new IllegalStateException("Unhandled user type"));
+                }
+
+
             }
 
             @Override
             public void onFailure(Exception e) {
-
+                cb.onFailure(e);
             }
         });
     }
+
     public void userFollowingAction(User followingUser, DataFetchCallback<Void> cb) {
         List<String> followingUserfollower = new ArrayList<>();
         followingUserfollower.addAll(followingUser.getFollowerList());

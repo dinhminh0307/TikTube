@@ -16,9 +16,9 @@ public class User implements Parcelable {
     private String imageUrl;
     private List<String> ownVideo;
     private List<String> interactedVideo;
-    private List<String> likesVideo; // New likesVideo field
-    private List<String> followingList; // New followingList field
-    private List<String> followerList; // New followerList field
+    private List<String> likesVideo = new ArrayList<>(); // New likesVideo field
+    private List<String> followingList = new ArrayList<>(); // New followingList field
+    private List<String> followerList = new ArrayList<>(); // New followerList field
 
     // Default constructor (required for Firestore)
     public User() {}

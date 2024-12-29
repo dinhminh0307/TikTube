@@ -68,6 +68,13 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         userController = new UserController();
 
         user = getIntent().getParcelableExtra("user");
+        if (user == null) {
+            Log.e("ProfileActivity", "User object is null");
+            Toast.makeText(this, "User data not available", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         nameID.setText(user.getName());
 
         // set up edit button to check the current user
@@ -78,12 +85,15 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         onMenuIconClicked();
     }
 
+
     @SuppressLint("SetTextI18n")
     private void setUpUserStat() {
-        Log.d("Profile Activity", "Followin: " + Integer.toString(user.getFollowingList().size()));
-        followingNumber.setText(Integer.toString(user.getFollowingList().size()));
-        followerNumber.setText(Integer.toString(user.getFollowerList().size()));
+        followingNumber.setText(user.getFollowingList() != null ?
+                Integer.toString(user.getFollowingList().size()) : "0");
+        followerNumber.setText(user.getFollowerList() != null ?
+                Integer.toString(user.getFollowerList().size()) : "0");
     }
+
 
     private void setUpRecyclerView() {
         videoList = new ArrayList<>();
@@ -142,6 +152,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             public void onSuccess(Enums.UserType user) {
                 switch (user) {
                     case CURRENT_USER:
+                        Log.d("Profile Activity", "Current User right?");
                         break;
                     case OTHER:
                         editProfileBtn.setText("Follow");

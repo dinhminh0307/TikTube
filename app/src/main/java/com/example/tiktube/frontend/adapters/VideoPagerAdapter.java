@@ -102,6 +102,13 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
         onUserNameClicked(holder, video);
     }
 
+    @Override
+    public void onViewDetachedFromWindow(@NonNull VideoViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.videoView.pause();
+    }
+
+
     private void onUserNameClicked(VideoViewHolder holder, Video video) {
         holder.username.setOnClickListener(new View.OnClickListener() {
             @Override
