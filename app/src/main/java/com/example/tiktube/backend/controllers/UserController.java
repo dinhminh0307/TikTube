@@ -31,8 +31,8 @@ public class UserController {
         userService.userInteraction(interaction, video, customUID, cb);
     }
 
-    public void userLikeVideo(Video video, LikeVideo likeVideo) {
-        userService.userLikeVideo(video, likeVideo);
+    public void userLikeVideo(Video video, LikeVideo likeVideo, DataFetchCallback<String> cb) {
+        userService.userLikeVideo(video, likeVideo, cb);
     }
 
     public void userFollowingAction(User followingUser, DataFetchCallback<Void> cb) {

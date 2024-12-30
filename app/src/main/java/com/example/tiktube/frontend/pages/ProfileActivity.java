@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
-    TextView nameID, followingNumber, followerNumber;
+    TextView nameID, followingNumber, followerNumber, likes;
     ImageView menuIcon;
 
     Button editProfileBtn;
@@ -47,6 +47,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     private List<String> displayFollowingList = new ArrayList<>();
 
     private List<String> getDisplayFollowerList = new ArrayList<>();
+
+    private int totalLike = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         videoRecyclerView = findViewById(R.id.videoRecyclerView);
         followingNumber = findViewById(R.id.followingNumber);
         followerNumber = findViewById(R.id.followerNumber);
+        likes = findViewById(R.id.totalLike);
 
         loginController = new LoginController();
         userController = new UserController();
@@ -94,6 +97,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
                 Integer.toString(user.getFollowingList().size()) : "0");
         followerNumber.setText(user.getFollowerList() != null ?
                 Integer.toString(user.getFollowerList().size()) : "0");
+
     }
 
 
@@ -113,11 +117,15 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
                     Log.d("Video Activity", "User UID: " +user.getUid());
                     if (video.getOwner().equals(user.getUid())) {
                         Log.d("Video Activity", "Video: " +video.getOwner());
+                        totalLike += video.getLikes().size();
                         videoList.add(video);
                     }
                 }
                 Log.d("ProfileActivity", "Number of videos: " + videoList.size());
                 videoGridAdapter.notifyDataSetChanged();
+
+                // if there is any like, update in realtime
+                likes.setText(Integer.toString(totalLike));
             }
 
             @Override

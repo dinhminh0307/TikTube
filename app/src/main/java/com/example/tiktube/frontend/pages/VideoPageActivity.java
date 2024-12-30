@@ -119,6 +119,14 @@ public class VideoPageActivity extends AppCompatActivity {
         });
     }
 
+    public void updateVideo(Video updatedVideo) {
+        int position = videoDataList.indexOf(updatedVideo);
+        if (position != -1) {
+            videoDataList.set(position, updatedVideo);
+            videoPagerAdapter.notifyItemChanged(position);
+        }
+    }
+
 
     private void onProfileImageClicked() {
         profileIcon = findViewById(R.id.profileIcon);

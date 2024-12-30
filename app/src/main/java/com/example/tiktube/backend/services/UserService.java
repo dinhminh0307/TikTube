@@ -15,6 +15,7 @@ import com.example.tiktube.backend.utils.Enums;
 import com.example.tiktube.backend.utils.UidGenerator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -154,7 +155,7 @@ public class UserService {
 
 
 
-    public void userLikeVideo(Video video, LikeVideo likeVideo) {
+    public void userLikeVideo(Video video, LikeVideo likeVideo, DataFetchCallback<String> cb) {
         likeVideo.setUid(UidGenerator.generateUID());
         likeService.createLike(likeVideo, new DataFetchCallback<String>() {
             @Override
@@ -177,11 +178,12 @@ public class UserService {
                         List<String> currentVideoLike = new ArrayList<>(video.getLikes());
                         currentVideoLike.add(likeVideo.getUid());
                         videoService.updateVideoLikesFields(video.getUid(), currentVideoLike);
+                        cb.onSuccess(Collections.singletonList(likeVideo.getUid()));
                     }
 
                     @Override
                     public void onFailure(Exception e) {
-
+                        cb.onFailure(e);
                     }
                 });
             }
