@@ -117,7 +117,9 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
                     Log.d("Video Activity", "User UID: " +user.getUid());
                     if (video.getOwner().equals(user.getUid())) {
                         Log.d("Video Activity", "Video: " +video.getOwner());
+
                         totalLike += video.getLikes().size();
+
                         videoList.add(video);
                     }
                 }
