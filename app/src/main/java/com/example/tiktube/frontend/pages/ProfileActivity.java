@@ -208,6 +208,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
                         unfollowUser();
                     }
                 } else if (isCurrentUser == Enums.UserType.CURRENT_USER) {
+                    editProfilePage();
                     // Handle edit profile for the current user
                     Log.d("EditButton", "Edit button clicked by the current user.");
                     // You can navigate to an Edit Profile page here
@@ -241,8 +242,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             int itemId = item.getItemId();
             if (itemId == R.id.option_settings) {
                 // Navigate to Settings
-                Intent settingsIntent = new Intent(ProfileActivity.this, SettingActivity.class);
-                startActivity(settingsIntent);
+
                 return true;
             } else if (itemId == R.id.option_edit) {
 //        if (isCurrentUser == Enums.UserType.CURRENT_USER) {
@@ -270,5 +270,10 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
     private void onMenuIconClicked() {
         menuIcon.setOnClickListener(v -> showPopupMenu(menuIcon));
+    }
+
+    private void editProfilePage() {
+        Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+        startActivity(editIntent);
     }
 }
