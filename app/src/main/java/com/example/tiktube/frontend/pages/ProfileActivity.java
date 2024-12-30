@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
-    TextView nameID, followingNumber, followerNumber;
+    TextView nameID, followingNumber, followerNumber, totalLike;
     ImageView menuIcon;
 
     Button editProfileBtn;
@@ -44,9 +44,6 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
     private Enums.UserType isCurrentUser = Enums.UserType.CURRENT_USER;
 
-    private List<String> displayFollowingList = new ArrayList<>();
-
-    private List<String> getDisplayFollowerList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +64,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         videoRecyclerView = findViewById(R.id.videoRecyclerView);
         followingNumber = findViewById(R.id.followingNumber);
         followerNumber = findViewById(R.id.followerNumber);
+        totalLike = findViewById(R.id.totalLike);
 
         loginController = new LoginController();
         userController = new UserController();
@@ -85,6 +83,14 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         checkCurrentUser();
 
         onMenuIconClicked();
+    }
+
+    private void displayTotalLikes() {
+        int likeCount = 0;
+        for(Video v : videoList) {
+            likeCount += v.getLikes().size();
+        }
+        totalLike.setText(Integer.toString(likeCount));
     }
 
 
@@ -116,6 +122,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
                         videoList.add(video);
                     }
                 }
+                displayTotalLikes(); // display total like
                 Log.d("ProfileActivity", "Number of videos: " + videoList.size());
                 videoGridAdapter.notifyDataSetChanged();
             }
