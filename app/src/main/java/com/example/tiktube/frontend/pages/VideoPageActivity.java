@@ -18,6 +18,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
+import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
@@ -63,7 +64,7 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private ImageView profileIcon;
 
-    User user ;
+    User currentUser ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,9 @@ public class VideoPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_page);
         userController = new UserController();
         loginController = new LoginController();
-        user = getIntent().getParcelableExtra("user");
+
+        currentUser = getIntent().getParcelableExtra("user");
+
         // Set up Google Sign-In options
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -94,6 +97,37 @@ public class VideoPageActivity extends AppCompatActivity {
         onProfileImageClicked();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchCurrentUser();
+    }
+
+    // Fetch the current user from the database or server
+    private void fetchCurrentUser() {
+        loginController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                currentUser.setUser(user); // Update the current user object
+                Log.d("VideoPageActivity", "Current user updated: " + currentUser.getName());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("VideoPageActivity", "Failed to fetch current user: " + e.getMessage());
+            }
+        });
+    }
+
+    public void updateVideo(Video updatedVideo) {
+        int position = videoDataList.indexOf(updatedVideo);
+        if (position != -1) {
+            videoDataList.set(position, updatedVideo);
+            videoPagerAdapter.notifyItemChanged(position);
+        }
+    }
+
+
     private void onProfileImageClicked() {
         profileIcon = findViewById(R.id.profileIcon);
 
@@ -101,7 +135,7 @@ public class VideoPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(VideoPageActivity.this, ProfileActivity.class);
-                intent.putExtra("user", user);
+                intent.putExtra("user", currentUser);
                 startActivity(intent);
             }
         });
@@ -322,7 +356,17 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private void uploadVideoToFirebase(String link) {
         Video vid = new Video(UidGenerator.generateUID(), "hello", link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
-        userController.uploadVideo(vid);
+        userController.uploadVideo(vid, new DataFetchCallback<Void>() {
+            @Override
+            public void onSuccess(List<Void> data) {
+                fetchCurrentUser();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
     }
 
     private void makeFilePublic(String fileId) {
@@ -338,6 +382,7 @@ public class VideoPageActivity extends AppCompatActivity {
                 runOnUiThread(() -> Toast.makeText(this, "Failed to make file public", Toast.LENGTH_SHORT).show());
             }
         }).start();
+        fetchAllVideo();
     }
 
     @Override

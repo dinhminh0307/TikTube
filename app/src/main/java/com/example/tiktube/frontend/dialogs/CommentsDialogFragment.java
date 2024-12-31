@@ -27,6 +27,7 @@ import com.example.tiktube.backend.models.Interaction;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.utils.UidGenerator;
 import com.example.tiktube.frontend.adapters.CommentsAdapter;
+import com.example.tiktube.frontend.pages.VideoPageActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,12 +130,27 @@ public class CommentsDialogFragment extends DialogFragment {
         sendButton.setOnClickListener(v -> {
             String newComment = commentInput.getText().toString().trim();
             if (!newComment.isEmpty()) {
-                Interaction newInteraction = new Interaction(UidGenerator.generateUID(), loginController.getUserUID(), video.getUid(), newComment, "Just now");
+                Interaction newInteraction = new Interaction(
+                        UidGenerator.generateUID(),
+                        loginController.getUserUID(),
+                        video.getUid(),
+                        newComment,
+                        "Just now"
+                );
+
                 userController.userInteraction(newInteraction, video, newInteraction.getUid(), new DataFetchCallback<String>() {
                     @Override
                     public void onSuccess(List<String> data) {
                         commentInput.setText(""); // Clear the input field
-                        fetchComments(); // Fetch the updated list of comments
+                        fetchComments(); // Fetch updated comments
+
+                        // Update comment count in the video object
+                        video.getInteractions().add(data.get(0));
+
+                        // Notify the adapter about the change (if the adapter is passed via callback)
+                        if (getActivity() instanceof VideoPageActivity) {
+                            ((VideoPageActivity) getActivity()).updateVideo(video);
+                        }
                     }
 
                     @Override
@@ -145,5 +161,6 @@ public class CommentsDialogFragment extends DialogFragment {
             }
         });
     }
+
 
 }

@@ -1,5 +1,6 @@
 package com.example.tiktube.frontend.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -100,6 +101,8 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
 
         onVideoLikeButtonClicked(holder, video);
         onUserNameClicked(holder, video);
+
+        onVideoStatDisplay(holder, video);
     }
 
     @Override
@@ -137,13 +140,33 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
     }
 
     private void onVideoLikeButtonClicked(VideoViewHolder holder, Video video) {
-        holder.likeVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LikeVideo likeVideo = new LikeVideo(loginController.getUserUID(), video.getUid(), "Just Now");
-                userController.userLikeVideo(video, likeVideo);
-            }
+        holder.likeVideo.setOnClickListener(v -> {
+            LikeVideo likeVideo = new LikeVideo(
+                    loginController.getUserUID(),
+                    video.getUid(),
+                    "Just Now"
+            );
+
+            userController.userLikeVideo(video, likeVideo, new DataFetchCallback<String>() {
+                @Override
+                public void onSuccess(List<String> data) {
+                    video.getLikes().add(data.get(0)); // Update likes in the video object
+                    notifyItemChanged(holder.getAdapterPosition()); // Refresh UI for this item
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.e("VideoPagerAdapter", "Failed to like video: " + e.getMessage());
+                }
+            });
         });
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    private void onVideoStatDisplay(VideoViewHolder holder, Video video) {
+        holder.displayLikeVideo.setText(Integer.toString(video.getLikes().size()));
+        holder.displayComment.setText(Integer.toString(video.getInteractions().size()));
     }
 
 
@@ -155,7 +178,7 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
 
         VideoView videoView;
-        TextView username, description;
+        TextView username, description, displayLikeVideo, displayComment;
 
         ImageView comment, likeVideo;
 
@@ -166,6 +189,8 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
             description = itemView.findViewById(R.id.description);
             comment = itemView.findViewById(R.id.comment);
             likeVideo = itemView.findViewById(R.id.likeVideo);
+            displayComment = itemView.findViewById(R.id.displayComment);
+            displayLikeVideo = itemView.findViewById(R.id.displayLikeVideo);
         }
     }
 }

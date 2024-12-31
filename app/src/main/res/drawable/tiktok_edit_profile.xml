@@ -125,7 +125,7 @@
         android:fillColor="#161722"/>
     <path
         android:pathData="M125,165m-45,0a45,45 0,1 1,90 0a45,45 0,1 1,-90 0"
-        android:fillColor="url(#pattern0_4_357)"/>
+        android:fillColor="#FF0000"/>
     <path
         android:pathData="M125,165m-45,0a45,45 0,1 1,90 0a45,45 0,1 1,-90 0"
         android:fillColor="#000000"
