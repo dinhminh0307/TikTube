@@ -46,4 +46,9 @@ public class UserController {
     public void userUnfollowAction(User target, DataFetchCallback<Void> cb) {
         userService.userUnfollowAction(target, cb);
     }
+
+    public void userEditProfile(User target, DataFetchCallback<Void> cb)
+    {
+        userService.userEditProfile(target, cb);
+    }
 }

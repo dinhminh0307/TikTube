@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
+import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.backend.firebase.FirebaseHelper;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.models.Interaction;
@@ -286,5 +287,21 @@ public class UserService {
             }
         });
 
+    }
+
+    public void userEditProfile(User targetUser, DataFetchCallback<Void> cb) {
+        List<String> socialMedia = new ArrayList<>();
+                loginController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                firebaseHelper.updateField(targetUser.getUid(), users_collection, "bio" , socialMedia);
+                cb.onSuccess(null);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                cb.onFailure(e);
+            }
+        });
     }
 }
