@@ -73,17 +73,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username"
+            android:text="Phone Number"
             android:textColor="@android:color/black"
             android:textSize="16sp"
             android:layout_marginEnd="8dp" />
 
         <EditText
-            android:id="@+id/usernameEditText"
+            android:id="@+id/phoneNumEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Enter your username"
+            android:hint="Enter your phone number"
             android:inputType="text" />
     </LinearLayout>
 
@@ -148,17 +148,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="YouTube"
+            android:text="Facebook"
             android:textColor="@android:color/black"
             android:textSize="16sp"
             android:layout_marginEnd="8dp" />
 
         <EditText
-            android:id="@+id/youtubeEditText"
+            android:id="@+id/facebookEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Add YouTube to your profile"
+            android:hint="Add Facebook to your profile"
             android:inputType="text" />
     </LinearLayout>
 

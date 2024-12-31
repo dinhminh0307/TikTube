@@ -5,7 +5,6 @@ import android.util.Log;
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
-import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.backend.firebase.FirebaseHelper;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.models.Interaction;
@@ -18,7 +17,6 @@ import com.example.tiktube.backend.utils.UidGenerator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class UserService {
     FirebaseHelper firebaseHelper;
@@ -289,12 +287,17 @@ public class UserService {
 
     }
 
-    public void userEditProfile(User targetUser, DataFetchCallback<Void> cb) {
-        List<String> socialMedia = new ArrayList<>();
+    public void userEditProfile(User targetUser, DataFetchCallback<User> cb) {
                 loginController.getCurrentUser(new GetUserCallback() {
             @Override
             public void onSuccess(User user) {
-                firebaseHelper.updateField(targetUser.getUid(), users_collection, "bio" , socialMedia);
+                // Update profile for User
+                firebaseHelper.updateField(targetUser.getUid(), users_collection, "name" , targetUser.getName());
+                firebaseHelper.updateField(targetUser.getUid(), users_collection, "phoneNumber" , targetUser.getPhoneNumber());
+                firebaseHelper.updateField(targetUser.getUid(), users_collection, "bio" , targetUser.getBio());
+                firebaseHelper.updateField(targetUser.getUid(), users_collection, "instagram" , targetUser.getInstagram());
+                firebaseHelper.updateField(targetUser.getUid(), users_collection, "facebook" , targetUser.getFacebook());
+
                 cb.onSuccess(null);
             }
 
