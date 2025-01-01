@@ -32,12 +32,15 @@ public class RegisterActivity extends AppCompatActivity {
     EditText phoneNumberInput;
     EditText emailInput;
     EditText passwordInput;
+    EditText confirmPasswordInput;
 
     Button finishBtn;
 
     ImageView passwordToggle;
+    ImageView confirmPasswordToggle;
 
     boolean pwdVisible = false;
+    boolean confirmPwdVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +54,32 @@ public class RegisterActivity extends AppCompatActivity {
     private void togglePassword() {
         passwordToggle = findViewById(R.id.passwordToggle);
         passwordInput = findViewById(R.id.passwordInput);
-        passwordToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pwdVisible = !pwdVisible;
-                if(pwdVisible) {
-                    passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                } else {
-                    passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                }
+
+        confirmPasswordToggle = findViewById(R.id.confirmPasswordToggle);
+        confirmPasswordInput = findViewById(R.id.confirmPasswordInput);
+
+        passwordToggle.setOnClickListener(v -> {
+            if (pwdVisible) {
+                passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                passwordToggle.setImageResource(R.drawable.ic_visibility_foreground);
+            } else {
+                passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                passwordToggle.setImageResource(R.drawable.ic_visibility_off_foreground);
             }
+            pwdVisible = !pwdVisible;
+            passwordInput.setSelection(passwordInput.getText().length());
+        });
+
+        confirmPasswordToggle.setOnClickListener(v -> {
+            if (confirmPwdVisible) {
+                confirmPasswordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                confirmPasswordToggle.setImageResource(R.drawable.ic_visibility_foreground);
+            } else {
+                confirmPasswordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                confirmPasswordToggle.setImageResource(R.drawable.ic_visibility_off_foreground);
+            }
+            confirmPwdVisible = !confirmPwdVisible;
+            confirmPasswordInput.setSelection(confirmPasswordInput.getText().length());
         });
     }
 
@@ -68,6 +87,7 @@ public class RegisterActivity extends AppCompatActivity {
         nameInput = findViewById(R.id.nameInput);
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
+        confirmPasswordInput = findViewById(R.id.confirmPasswordInput);
         phoneNumberInput = findViewById(R.id.phoneNumberInput);
         finishBtn = findViewById(R.id.finishButton);
 
@@ -76,6 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = emailInput.getText().toString().trim();
                 String password = passwordInput.getText().toString().trim();
+                String confirmPassword = confirmPasswordInput.getText().toString().trim();
                 String phoneNum = phoneNumberInput.getText().toString().trim();
                 String name = nameInput.getText().toString().trim();
                 if (email.isEmpty() || password.isEmpty() || phoneNum.isEmpty() || name.isEmpty()) {
@@ -85,6 +106,11 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if (password.length() < 6) {
                     Toast.makeText(RegisterActivity.this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!confirmPassword.equals(password)) {
+                    Toast.makeText(RegisterActivity.this, "Passwords does not match", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
