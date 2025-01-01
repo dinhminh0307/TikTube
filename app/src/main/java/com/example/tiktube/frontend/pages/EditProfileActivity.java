@@ -71,6 +71,7 @@ public class EditProfileActivity extends AppCompatActivity {
         EditText instagramEditText = findViewById(R.id.instagramEditText);
         EditText facebookEditText = findViewById(R.id.facebookEditText);
         Button saveButton = findViewById(R.id.saveButton);
+        Button returnButton = findViewById(R.id.returnButton);
 
         saveButton.setOnClickListener(v -> {
             if (user == null) {
@@ -103,6 +104,11 @@ public class EditProfileActivity extends AppCompatActivity {
                     Toast.makeText(EditProfileActivity.this, "Failed to update profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+        });
+
+        returnButton.setOnClickListener(v -> {
+            // Close the activity and return to the previous screen
+            finish();
         });
     }
 }
