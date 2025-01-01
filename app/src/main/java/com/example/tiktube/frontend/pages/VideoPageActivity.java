@@ -62,7 +62,7 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private List<Video> videoDataList = new ArrayList<>();
 
-    private ImageView profileIcon;
+    private ImageView profileIcon, messagingIcon;
 
     User currentUser ;
 
@@ -95,6 +95,8 @@ public class VideoPageActivity extends AppCompatActivity {
 
         //setup component button
         onProfileImageClicked();
+
+        onNotificationClicked();
     }
 
     @Override
@@ -428,6 +430,17 @@ public class VideoPageActivity extends AppCompatActivity {
                         Toast.makeText(VideoPageActivity.this, "Failed to load videos", Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        });
+    }
+
+    private void onNotificationClicked() {
+        messagingIcon = findViewById(R.id.messagingIcon);
+        messagingIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(VideoPageActivity.this, NotificationActivity.class);
+                startActivity(intent);
             }
         });
     }
