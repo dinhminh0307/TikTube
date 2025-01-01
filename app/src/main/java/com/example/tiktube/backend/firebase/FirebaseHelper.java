@@ -12,6 +12,8 @@ import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.utils.UidGenerator;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,9 +58,6 @@ public class FirebaseHelper {
                     cb.onFailure(e);
                 });
     }
-
-
-
 
     public void updateField(String Id, String collections,  String fieldName, Object value) {
         firestore.collection(collections)

@@ -2,38 +2,44 @@ package com.example.tiktube.backend.services;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
-import com.example.tiktube.backend.firebase.FirebaseHelper;
 import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.firebase.FirebaseHelper;
 import com.example.tiktube.backend.models.Interaction;
 import com.example.tiktube.backend.models.LikeVideo;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.utils.Enums;
 import com.example.tiktube.backend.utils.UidGenerator;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserService {
     FirebaseHelper firebaseHelper;
 
     LoginController loginController;
 
-    private InteractionService interactionService;
+    private final InteractionService interactionService;
 
-    private LikeService likeService;
+    private final LikeService likeService;
 
-    private VideoService videoService;
+    private final VideoService videoService;
 
-    private String video_collection = "videos";
+    private final String video_collection = "videos";
 
-    private String users_collection = "users";
+    private final String users_collection = "users";
 
-    private String interaction_collections = "interactions";
+    private final String interaction_collections = "interactions";
+
     public UserService() {
         firebaseHelper = new FirebaseHelper();
         loginController = new LoginController();
@@ -43,7 +49,7 @@ public class UserService {
     }
 
 
-    public void uploadVideo(Video vid ,DataFetchCallback<Void> cb) {
+    public void uploadVideo(Video vid, DataFetchCallback<Void> cb) {
         firebaseHelper.create(video_collection, vid.getUid(), vid, new DataFetchCallback<String>() {
             @Override
             public void onSuccess(List<String> data) {
@@ -91,7 +97,6 @@ public class UserService {
             }
         });
     }
-
 
 
     public void getAllVideo(DataFetchCallback<Video> cb) {
@@ -152,8 +157,6 @@ public class UserService {
     }
 
 
-
-
     public void userLikeVideo(Video video, LikeVideo likeVideo, DataFetchCallback<String> cb) {
         likeVideo.setUid(UidGenerator.generateUID());
         likeService.createLike(likeVideo, new DataFetchCallback<String>() {
@@ -171,7 +174,7 @@ public class UserService {
                                 users_collection,
                                 "likesVideo",
                                 currentUserLikes
-                                );
+                        );
 
                         // add likes in video
                         List<String> currentVideoLike = new ArrayList<>(video.getLikes());
@@ -287,24 +290,29 @@ public class UserService {
 
     }
 
-    public void userEditProfile(User targetUser, DataFetchCallback<User> cb) {
-                loginController.getCurrentUser(new GetUserCallback() {
-            @Override
-            public void onSuccess(User user) {
-                // Update profile for User
-                firebaseHelper.updateField(targetUser.getUid(), users_collection, "name" , targetUser.getName());
-                firebaseHelper.updateField(targetUser.getUid(), users_collection, "phoneNumber" , targetUser.getPhoneNumber());
-                firebaseHelper.updateField(targetUser.getUid(), users_collection, "bio" , targetUser.getBio());
-                firebaseHelper.updateField(targetUser.getUid(), users_collection, "instagram" , targetUser.getInstagram());
-                firebaseHelper.updateField(targetUser.getUid(), users_collection, "facebook" , targetUser.getFacebook());
+    public void userEditProfile(User updatedUser, DataFetchCallback<User> callback) {
+        if (updatedUser.getUid() == null || updatedUser.getUid().isEmpty()) {
+            callback.onFailure(new IllegalArgumentException("User UID is null or empty"));
+            return;
+        }
 
-                cb.onSuccess(null);
-            }
+        // Update only non-empty fields
+        if (updatedUser.getName() != null && !updatedUser.getName().isEmpty()) {
+            firebaseHelper.updateField(updatedUser.getUid(), "users", "name", updatedUser.getName());
+        }
+        if (updatedUser.getPhoneNumber() != null && !updatedUser.getPhoneNumber().isEmpty()) {
+            firebaseHelper.updateField(updatedUser.getUid(), "users", "phoneNumber", updatedUser.getPhoneNumber());
+        }
+        if (updatedUser.getBio() != null && !updatedUser.getBio().isEmpty()) {
+            firebaseHelper.updateField(updatedUser.getUid(), "users", "bio", updatedUser.getBio());
+        }
+        if (updatedUser.getInstagram() != null && !updatedUser.getInstagram().isEmpty()) {
+            firebaseHelper.updateField(updatedUser.getUid(), "users", "instagram", updatedUser.getInstagram());
+        }
+        if (updatedUser.getFacebook() != null && !updatedUser.getFacebook().isEmpty()) {
+            firebaseHelper.updateField(updatedUser.getUid(), "users", "facebook", updatedUser.getFacebook());
+        }
 
-            @Override
-            public void onFailure(Exception e) {
-                cb.onFailure(e);
-            }
-        });
+        callback.onSuccess(Collections.singletonList(updatedUser));
     }
 }
