@@ -1,8 +1,10 @@
 package com.example.tiktube.frontend.pages;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,6 +25,8 @@ public class NotificationActivity extends AppCompatActivity {
     private LinearLayout emptyState;
     private LinearLayout notificationList;
 
+    private ImageView messageIcon;
+
     private NotificationController notificationController;
 
     private List<Notification> notifications = new ArrayList<>();
@@ -36,11 +40,14 @@ public class NotificationActivity extends AppCompatActivity {
         initComponent();
 
         fetchAllNotification(); // fetch and display the notification
+
+        onMessageIconClicked();
     }
 
     private void initComponent() {
         emptyState = findViewById(R.id.emptyState);
         notificationList = findViewById(R.id.notificationList);
+        messageIcon = findViewById(R.id.messageIcon);
 
         notificationController = new NotificationController();
     }
@@ -87,5 +94,15 @@ public class NotificationActivity extends AppCompatActivity {
         notification.setBackgroundResource(R.drawable.notification_item_background); // Add a custom background if needed
 
         notificationList.addView(notification);
+    }
+
+    private void onMessageIconClicked() {
+        messageIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NotificationActivity.this, ChatActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }
