@@ -1,5 +1,6 @@
 package com.example.tiktube.frontend.pages;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -96,7 +97,13 @@ public class EditProfileActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(List<User> updatedUsers) {
                     Toast.makeText(EditProfileActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                    finish();
+
+                    // Pass updated user back to ProfileActivity
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("updatedUser", user);
+                    setResult(RESULT_OK, resultIntent);
+
+                    finish(); // Close EditProfileActivity
                 }
 
                 @Override
@@ -107,8 +114,10 @@ public class EditProfileActivity extends AppCompatActivity {
         });
 
         returnButton.setOnClickListener(v -> {
-            // Close the activity and return to the previous screen
+            // Close the activity without saving changes
+            setResult(RESULT_CANCELED);
             finish();
         });
     }
+
 }

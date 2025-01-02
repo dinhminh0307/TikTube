@@ -11,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
-    TextView nameID, followingNumber, followerNumber, totalLike;
+    TextView nameID, followingNumber, followerNumber, totalLike, bioText;
     ImageView menuIcon;
 
     Button editProfileBtn;
@@ -63,6 +65,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         onEditButtonClicked();
     }
 
+
+
     private void setUpComponent() {
         menuIcon = findViewById(R.id.menuIcon);
         nameID = findViewById(R.id.username);
@@ -71,6 +75,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         followingNumber = findViewById(R.id.followingNumber);
         followerNumber = findViewById(R.id.followerNumber);
         totalLike = findViewById(R.id.totalLike);
+        bioText = findViewById(R.id.bioText);
 
         loginController = new LoginController();
         userController = new UserController();
@@ -84,10 +89,12 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             return;
         }
 
-        nameID.setText(user.getName());
 
         // set up edit button to check the current user
         checkCurrentUser();
+
+        nameID.setText(user.getName());
+        bioText.setText(user.getBio());
 
         onMenuIconClicked();
     }
@@ -164,12 +171,29 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         });
     }
 
+    private void fetchCurrentUserData() {
+        loginController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User currentUser) {
+                user.setUser(currentUser);
+                nameID.setText(user.getName());
+                bioText.setText(user.getBio());
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
+    }
+
     private void checkCurrentUser() {
         userController.checkCurrentUser(user, new CheckUserCallback() {
             @Override
             public void onSuccess(Enums.UserType user) {
                 switch (user) {
                     case CURRENT_USER:
+                        fetchCurrentUserData();
                         Log.d("Profile Activity", "Current User right?");
                         break;
                     case OTHER:
@@ -300,8 +324,25 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         menuIcon.setOnClickListener(v -> showPopupMenu(menuIcon));
     }
 
+    private final ActivityResultLauncher<Intent> editProfileLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    // Get updated user data
+                    user = result.getData().getParcelableExtra("updatedUser");
+
+                    // Update the UI with the new user data
+                    nameID.setText(user.getName());
+                    bioText.setText(user.getBio());
+                    setUpUserStat();
+                }
+            }
+    );
+
     private void editProfilePage() {
         Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-        startActivity(editIntent);
+        editIntent.putExtra("user", user); // Pass the current user to EditProfileActivity
+        editProfileLauncher.launch(editIntent);
     }
+
 }
