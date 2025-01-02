@@ -19,11 +19,15 @@ import android.widget.ImageView;
 
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
+import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.InteractionController;
 import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.controllers.NotificationController;
 import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.backend.controllers.VideoController;
 import com.example.tiktube.backend.models.Interaction;
+import com.example.tiktube.backend.models.Notification;
+import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.utils.UidGenerator;
 import com.example.tiktube.frontend.adapters.CommentsAdapter;
@@ -45,6 +49,8 @@ public class CommentsDialogFragment extends DialogFragment {
     private LoginController loginController;
 
     private InteractionController interactionController;
+
+    private NotificationController notificationController;
 
     private VideoController videoController;
 
@@ -90,6 +96,7 @@ public class CommentsDialogFragment extends DialogFragment {
         userController = new UserController();
         videoController = new VideoController();
         interactionController = new InteractionController();
+        notificationController = new NotificationController();
         commentsRecyclerView = view.findViewById(R.id.comments_recycler_view);
         commentInput = view.findViewById(R.id.comment_input);
         sendButton = view.findViewById(R.id.send_button);
@@ -141,16 +148,41 @@ public class CommentsDialogFragment extends DialogFragment {
                 userController.userInteraction(newInteraction, video, newInteraction.getUid(), new DataFetchCallback<String>() {
                     @Override
                     public void onSuccess(List<String> data) {
-                        commentInput.setText(""); // Clear the input field
-                        fetchComments(); // Fetch updated comments
+                        loginController.getCurrentUser(new GetUserCallback() {
+                            @Override
+                            public void onSuccess(User user) {
+                                Notification notification = new Notification(video.getOwner(), user.getName() + " has commented: " + commentInput.getText().toString(), "Just Now");
+                                notification.setUid(UidGenerator.generateUID());
 
-                        // Update comment count in the video object
-                        video.getInteractions().add(data.get(0));
+                                // add to notification colelction
+                                notificationController.addNotification(notification)
+                                                .thenRun(() -> {
+                                                    Log.d("Comment Dialog", "add notificaiton successfully");
+                                                })
+                                        .exceptionally(e -> {
+                                                    Log.e("Comment Dialog", "Error add noti: " + e);
+                                                    return null;
+                                        });
 
-                        // Notify the adapter about the change (if the adapter is passed via callback)
-                        if (getActivity() instanceof VideoPageActivity) {
-                            ((VideoPageActivity) getActivity()).updateVideo(video);
-                        }
+                                commentInput.setText(""); // Clear the input field
+                                fetchComments(); // Fetch updated comments
+
+                                // Update comment count in the video object
+                                video.getInteractions().add(data.get(0));
+
+
+                                // Notify the adapter about the change (if the adapter is passed via callback)
+                                if (getActivity() instanceof VideoPageActivity) {
+                                    ((VideoPageActivity) getActivity()).updateVideo(video);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+
+                            }
+                        });
+
                     }
 
                     @Override

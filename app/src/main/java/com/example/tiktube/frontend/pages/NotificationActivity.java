@@ -1,6 +1,7 @@
 package com.example.tiktube.frontend.pages;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,10 +13,19 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.controllers.NotificationController;
+import com.example.tiktube.backend.models.Notification;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotificationActivity extends AppCompatActivity {
     private LinearLayout emptyState;
     private LinearLayout notificationList;
+
+    private NotificationController notificationController;
+
+    private List<Notification> notifications = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,13 +33,45 @@ public class NotificationActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_notification);
 
+        initComponent();
+
+        fetchAllNotification(); // fetch and display the notification
+    }
+
+    private void initComponent() {
         emptyState = findViewById(R.id.emptyState);
         notificationList = findViewById(R.id.notificationList);
 
-        // Example: Add notifications dynamically
-        addNotification("You have a new follower!");
-        addNotification("Your video reached 1K views!");
+        notificationController = new NotificationController();
     }
+
+    private void fetchAllNotification() {
+        notificationController.getNotifications()
+                .thenAccept(fetchedNotifications -> {
+                    // Update notifications list
+                    notifications.addAll(fetchedNotifications);
+
+                    // Update the UI on the main thread
+                    runOnUiThread(() -> {
+                        if (notifications.isEmpty()) {
+                            emptyState.setVisibility(View.VISIBLE);
+                            notificationList.setVisibility(View.GONE);
+                        } else {
+                            emptyState.setVisibility(View.GONE);
+                            notificationList.setVisibility(View.VISIBLE);
+
+                            for (Notification not : notifications) {
+                                addNotification(not.getContent());
+                            }
+                        }
+                    });
+                })
+                .exceptionally(e -> {
+                    Log.e("Notification Activity", "Error fetching notifications", e);
+                    return null;
+                });
+    }
+
 
     private void addNotification(String message) {
         emptyState.setVisibility(View.GONE);
