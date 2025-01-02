@@ -21,10 +21,14 @@ import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.controllers.NotificationController;
+import java.util.concurrent.CompletableFuture;
 import com.example.tiktube.backend.models.LikeVideo;
+import com.example.tiktube.backend.models.Notification;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.backend.utils.UidGenerator;
 import com.example.tiktube.frontend.dialogs.CommentsDialogFragment;
 import com.example.tiktube.frontend.pages.ProfileActivity;
 import com.example.tiktube.frontend.pages.VideoPageActivity;
@@ -39,10 +43,13 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
     private UserController userController;
 
     private LoginController loginController;
+
+    private NotificationController notificationController;
     public VideoPagerAdapter(Context context, List<Video> videos) {
         this.context = context;
         this.videos = videos;
         userController = new UserController();
+        notificationController = new NotificationController();
         loginController = new LoginController();
     }
 
@@ -151,6 +158,32 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
                 @Override
                 public void onSuccess(List<String> data) {
                     video.getLikes().add(data.get(0)); // Update likes in the video object
+                    // add to notification colelction
+                    userController.getUserById(loginController.getUserUID(), new DataFetchCallback<User>() {
+                        @Override
+                        public void onSuccess(List<User> data) {
+                            Notification notification = new Notification(video.getOwner(), data.get(0).getName() + " Like your video", "Just Now");
+                            notification.setUid(UidGenerator.generateUID());
+
+                            notificationController.addNotification(notification)
+                                    .thenRun(() -> {
+                                        // This will execute when the CompletableFuture is successfully completed
+                                        Log.d("Video Adapter", "Notification successfully added.");
+                                    })
+                                    .exceptionally(e -> {
+                                        // This will handle any exceptions
+                                        Log.e("Video Adapter", "Error adding notification", e);
+                                        return null;
+                                    });
+
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+
+                        }
+                    });
+
                     notifyItemChanged(holder.getAdapterPosition()); // Refresh UI for this item
                 }
 
