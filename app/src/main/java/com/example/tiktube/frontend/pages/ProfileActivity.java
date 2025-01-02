@@ -19,11 +19,15 @@ import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
+import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.controllers.NotificationController;
 import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.backend.models.Notification;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.utils.Enums;
+import com.example.tiktube.backend.utils.UidGenerator;
 import com.example.tiktube.frontend.adapters.VideoGridAdapter;
 
 import java.util.ArrayList;
@@ -43,6 +47,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     private User user;
 
     private Enums.UserType isCurrentUser = Enums.UserType.CURRENT_USER;
+
+    private NotificationController notificationController;
 
 
     @Override
@@ -68,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
         loginController = new LoginController();
         userController = new UserController();
+        notificationController = new NotificationController();
 
         user = getIntent().getParcelableExtra("user");
         if (user == null) {
@@ -188,11 +195,26 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
     private void followUser() {
         userController.userFollowingAction(user, new DataFetchCallback<Void>() {
+            String targetUid = user.getUid();
             @Override
             public void onSuccess(List<Void> data) {
-                checkCurrentUser();
-                reloadTheTargetUser();
-                Toast.makeText(ProfileActivity.this, "Followed Successfully", Toast.LENGTH_SHORT).show();
+                loginController.getCurrentUser(new GetUserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        Notification notification = new Notification(targetUid, user.getName() + " has followed you", "just now");
+                        notification.setUid(UidGenerator.generateUID());
+                        notificationController.addNotification(notification);
+                        checkCurrentUser();
+                        reloadTheTargetUser();
+                        Toast.makeText(ProfileActivity.this, "Followed Successfully", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                    }
+                });
+
             }
 
             @Override
