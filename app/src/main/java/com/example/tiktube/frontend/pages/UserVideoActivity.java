@@ -134,14 +134,7 @@ public class UserVideoActivity extends AppCompatActivity {
     private void onProfileImageClicked() {
         profileIcon = findViewById(R.id.profileIcon);
 
-        profileIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(UserVideoActivity.this, ProfileActivity.class);
-                intent.putExtra("user", currentUser);
-                startActivity(intent);
-            }
-        });
+        profileIcon.setOnClickListener(v -> finish());
     }
 
     // Step 1: Start Google Sign-In
@@ -402,13 +395,14 @@ public class UserVideoActivity extends AppCompatActivity {
                     if (!isFinishing() && !isDestroyed()) {
                         if (data != null && !data.isEmpty()) {
                             videoDataList.clear();
-                            for (Video video : data) {
-                                Log.d("Video Activity", "User UID: " + currentUser.getUid());
-                                if (video.getOwner().equals(currentUser.getUid())) {
-                                    Log.d("Video Activity", "Video: " + video.getOwner());
-                                    videoDataList.add(video);
-                                }
-                            }
+//                            for (Video video : data) {
+//                                Log.d("Video Activity", "User UID: " + currentUser.getUid());
+//                                if (video.getOwner().equals(currentUser.getUid())) {
+//                                    Log.d("Video Activity", "Video: " + video.getOwner());
+//                                    videoDataList.add(video);
+//                                }
+//                            }
+                            videoDataList.add(getIntent().getParcelableExtra("video"));
 
                             // Set up adapter
                             if (videoPagerAdapter == null) {
