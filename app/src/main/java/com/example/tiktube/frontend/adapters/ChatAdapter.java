@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +54,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             }
             holder.messageContent.setLayoutParams(params);
 
-            // Placeholder timestamp (optional)
+            // Optional timestamp
             holder.messageTimestamp.setText("Just now"); // Replace with actual timestamp logic
         }
     }

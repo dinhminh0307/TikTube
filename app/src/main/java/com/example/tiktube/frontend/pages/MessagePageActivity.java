@@ -61,6 +61,7 @@ public class MessagePageActivity extends AppCompatActivity {
             public void onSuccess(User user) {
                 currentUserId = user.getUid();
                 fetchCurrentMessageContents();
+                initAdapter();
                 onSendButtonClicked();
             }
 
@@ -158,31 +159,14 @@ public class MessagePageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         receiverUserId = intent.getStringExtra("userID");
 
-        populateSampleMessages();
 
         // Initialize adapter
+
+    }
+
+    private void initAdapter() {
         chatAdapter = new ChatAdapter(messageContent, currentUserId);
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatRecyclerView.setAdapter(chatAdapter);
-    }
-
-    private void populateSampleMessages() {
-        // Add individual messages to the conversation
-//        Map<String, String> message1 = new HashMap<>();
-//        message1.put(receiverUserId, "Hi! Thanks for reaching out.");
-//        messageContent.add(message1);
-//
-//        Map<String, String> message2 = new HashMap<>();
-//        message2.put(currentUserId, "I'm thinking about getting a large pepperoni pizza.");
-//        messageContent.add(message2);
-//
-//        Map<String, String> message3 = new HashMap<>();
-//        message3.put(currentUserId, "How long will it take for delivery?");
-//        messageContent.add(message3);
-//
-//        Map<String, String> message4 = new HashMap<>();
-//        message4.put(receiverUserId, "We can have that ready for you in about 30-40 minutes.");
-//        messageContent.add(message4);
-
     }
 }
