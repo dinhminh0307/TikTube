@@ -20,7 +20,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@drawable/ic_logo"
-    android:tint="@color/purple" />
+        app:tint="@color/purple" />
 
     <!-- Welcome Back Text -->
     <TextView
@@ -67,21 +67,23 @@
       <EditText
           android:id="@+id/passwordInput"
           android:layout_width="0dp"
-          android:layout_weight="1"
           android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:backgroundTint="@color/purple"
           android:hint="password"
           android:inputType="textPassword"
-          android:backgroundTint="@color/purple"
           android:padding="12dp"
-          android:textColor="@color/black"
-          />
+          android:textColor="@color/black" />
 
       <ImageView
           android:id="@+id/passwordToggle"
-          android:layout_width="24dp"
-          android:layout_height="24dp"
-          android:src="@drawable/ic_visibility"
-      android:layout_marginStart="8dp" />
+          android:layout_width="50dp"
+          android:layout_height="match_parent"
+          android:layout_marginStart="8dp"
+          android:clickable="true"
+          android:contentDescription="toggle visibility"
+          android:focusable="true"
+          android:src="@drawable/ic_visibility_foreground" />
     </LinearLayout>
 
     <!-- Forgot Password -->
