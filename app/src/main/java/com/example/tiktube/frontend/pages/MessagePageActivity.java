@@ -31,7 +31,7 @@ public class MessagePageActivity extends AppCompatActivity {
     private ImageView sendMessageButton;
     private ChatAdapter chatAdapter;
 
-    private List<Map<String, String>> messageContent;
+    private List<Map<String, String>> messageContent = new ArrayList<>();
 
     private LoginController loginController;
 
@@ -39,7 +39,7 @@ public class MessagePageActivity extends AppCompatActivity {
     private String currentUserId = "";
     private String receiverUserId = "";
 
-    private List<Message> currentMessageContents = new ArrayList<>();
+    private Message currentMessageContents = new Message();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,14 +80,12 @@ public class MessagePageActivity extends AppCompatActivity {
                     for (Message message : messages) {
                         if ((message.getSenderId().equals(currentUserId) && message.getReceiverId().equals(receiverUserId)) ||
                                 (message.getSenderId().equals(receiverUserId) && message.getReceiverId().equals(currentUserId))) {
-                            currentMessageContents.add(message);
+                            currentMessageContents.setMessage(message);
                         }
                     }
 
                     // Populate the UI with messages
-                    for (Message message : currentMessageContents) {
-                        messageContent.addAll(message.getMessageContent());
-                    }
+                    messageContent.addAll(currentMessageContents.getMessageContent());
 
                     runOnUiThread(() -> {
                         chatAdapter.notifyDataSetChanged();
@@ -108,23 +106,34 @@ public class MessagePageActivity extends AppCompatActivity {
             if (!messageText.isEmpty()) {
                 // Add the new message to the messageContent list
                 Map<String, String> newMessage = new HashMap<>();
-                newMessage.put(currentUserId, messageText);
-                messageContent.add(newMessage);
-                Message currentMessage = new Message(
-                        UidGenerator.generateUID(),
-                        currentUserId,
-                        receiverUserId,
-                        messageContent
-                );
+                if(messageContent.isEmpty()) {
+                    newMessage.put(currentUserId, messageText);
+                    messageContent.add(newMessage);
+                    Message currentMessage = new Message(
+                            UidGenerator.generateUID(),
+                            currentUserId,
+                            receiverUserId,
+                            messageContent
+                    );
+                    currentMessageContents.setMessage(currentMessage);
 
-                messageController.addMessage(currentMessage)
-                                .thenRun(() -> {
-                                    Log.d("MessageProile", "Run Successfully");
-                                })
-                        .exceptionally(e -> {
-                            Log.e("Error", "Error: " + e);
-                            return null;
-                        });
+                    messageController.addMessage(currentMessageContents)
+                            .thenRun(() -> {
+                                Log.d("MessageProile", "Run Successfully");
+                            })
+                            .exceptionally(e -> {
+                                Log.e("Error", "Error: " + e);
+                                return null;
+                            });
+                } else {
+                    newMessage.put(currentUserId, messageText);
+                    messageContent.add(newMessage);
+
+                    // update to the firebase
+                    currentMessageContents.setMessageContent(messageContent);
+                    messageController.updateMessageContent(currentMessageContents);
+                }
+
 
                 chatAdapter.notifyDataSetChanged();
                 chatRecyclerView.scrollToPosition(messageContent.size() - 1);

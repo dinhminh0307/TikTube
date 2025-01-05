@@ -20,4 +20,8 @@ public class MessageController {
     public CompletableFuture<List<Message>> getAllMessages() {
         return  messageService.getAllMessages();
     }
+
+    public CompletableFuture<Message> updateMessageContent(Message message) {
+        return messageService.updateMessageContent(message);
+    }
 }

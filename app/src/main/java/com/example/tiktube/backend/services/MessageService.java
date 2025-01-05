@@ -4,6 +4,7 @@ import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.firebase.FirebaseHelper;
 import com.example.tiktube.backend.models.Message;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,6 +19,9 @@ public class MessageService {
 
     public CompletableFuture<Void> addMessage(Message message) {
         CompletableFuture<Void> future = new CompletableFuture<>();
+        if (message.getMessageContent() == null) {
+            message.setMessageContent(new ArrayList<>());
+        }
         firebaseHelper.create(
                 message_collection,
                 message.getUid(),
@@ -36,6 +40,7 @@ public class MessageService {
         );
         return future;
     }
+
 
     public CompletableFuture<List<Message>> getAllMessages() {
         CompletableFuture<List<Message>> future = new CompletableFuture<>();
@@ -56,4 +61,17 @@ public class MessageService {
         );
         return future;
     }
+
+    public CompletableFuture<Message> updateMessageContent(Message message) {
+        CompletableFuture<Message> future = new CompletableFuture<>();
+        firebaseHelper.updateField(
+                message.getUid(),
+                message_collection,
+                "messageContent",
+                message.getMessageContent()
+        );
+        future.complete(message);
+        return future;
+    }
+
 }

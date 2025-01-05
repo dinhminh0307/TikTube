@@ -54,4 +54,14 @@ public class Message {
     public void setMessageContent(List<Map<String, String>> messageContent) {
         this.messageContent = messageContent;
     }
+
+    public void setMessage(Message targetMessage) {
+        if (targetMessage == null) return;
+
+        this.uid = targetMessage.getUid();
+        this.messageContent = targetMessage.getMessageContent() != null ? targetMessage.getMessageContent() : new ArrayList<>();
+        this.receiverId = targetMessage.getReceiverId();
+        this.senderId = targetMessage.getSenderId();
+    }
+
 }
