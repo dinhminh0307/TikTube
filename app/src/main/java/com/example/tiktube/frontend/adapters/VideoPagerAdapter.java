@@ -1,6 +1,8 @@
 package com.example.tiktube.frontend.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,14 +17,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.controllers.NotificationController;
+import java.util.concurrent.CompletableFuture;
 import com.example.tiktube.backend.models.LikeVideo;
+import com.example.tiktube.backend.models.Notification;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.backend.utils.UidGenerator;
 import com.example.tiktube.frontend.dialogs.CommentsDialogFragment;
+import com.example.tiktube.frontend.pages.ProfileActivity;
+import com.example.tiktube.frontend.pages.VideoPageActivity;
 
 import java.util.List;
 
@@ -34,10 +43,13 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
     private UserController userController;
 
     private LoginController loginController;
+
+    private NotificationController notificationController;
     public VideoPagerAdapter(Context context, List<Video> videos) {
         this.context = context;
         this.videos = videos;
         userController = new UserController();
+        notificationController = new NotificationController();
         loginController = new LoginController();
     }
 
@@ -95,16 +107,99 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
         });
 
         onVideoLikeButtonClicked(holder, video);
+        onUserNameClicked(holder, video);
+
+        onVideoStatDisplay(holder, video);
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull VideoViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        holder.videoView.pause();
+    }
+
+
+    private void onUserNameClicked(VideoViewHolder holder, Video video) {
+        holder.username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userController.getUserById(video.getOwner(), new DataFetchCallback<User>() {
+                    @Override
+                    public void onSuccess(List<User> data) {
+                        User vidOnwer = data.get(0);
+                        Intent intent = new Intent(context, ProfileActivity.class);
+                        intent.putExtra("user", vidOnwer);
+                        // Ensure the context is an activity context
+                        if (context instanceof AppCompatActivity) {
+                            context.startActivity(intent);
+                        } else {
+                            Log.e("VideoPagerAdapter", "Context is not an instance of AppCompatActivity");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                    }
+                });
+            }
+        });
     }
 
     private void onVideoLikeButtonClicked(VideoViewHolder holder, Video video) {
-        holder.likeVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LikeVideo likeVideo = new LikeVideo(loginController.getUserUID(), video.getUid(), "Just Now");
-                userController.userLikeVideo(video, likeVideo);
-            }
+        holder.likeVideo.setOnClickListener(v -> {
+            LikeVideo likeVideo = new LikeVideo(
+                    loginController.getUserUID(),
+                    video.getUid(),
+                    "Just Now"
+            );
+
+            userController.userLikeVideo(video, likeVideo, new DataFetchCallback<String>() {
+                @Override
+                public void onSuccess(List<String> data) {
+                    video.getLikes().add(data.get(0)); // Update likes in the video object
+                    // add to notification colelction
+                    userController.getUserById(loginController.getUserUID(), new DataFetchCallback<User>() {
+                        @Override
+                        public void onSuccess(List<User> data) {
+                            Notification notification = new Notification(video.getOwner(), data.get(0).getName() + " Like your video", "Just Now");
+                            notification.setUid(UidGenerator.generateUID());
+
+                            notificationController.addNotification(notification)
+                                    .thenRun(() -> {
+                                        // This will execute when the CompletableFuture is successfully completed
+                                        Log.d("Video Adapter", "Notification successfully added.");
+                                    })
+                                    .exceptionally(e -> {
+                                        // This will handle any exceptions
+                                        Log.e("Video Adapter", "Error adding notification", e);
+                                        return null;
+                                    });
+
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+
+                        }
+                    });
+
+                    notifyItemChanged(holder.getAdapterPosition()); // Refresh UI for this item
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    Log.e("VideoPagerAdapter", "Failed to like video: " + e.getMessage());
+                }
+            });
         });
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    private void onVideoStatDisplay(VideoViewHolder holder, Video video) {
+        holder.displayLikeVideo.setText(Integer.toString(video.getLikes().size()));
+        holder.displayComment.setText(Integer.toString(video.getInteractions().size()));
     }
 
 
@@ -116,7 +211,7 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
 
         VideoView videoView;
-        TextView username, description;
+        TextView username, description, displayLikeVideo, displayComment;
 
         ImageView comment, likeVideo;
 
@@ -127,6 +222,8 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
             description = itemView.findViewById(R.id.description);
             comment = itemView.findViewById(R.id.comment);
             likeVideo = itemView.findViewById(R.id.likeVideo);
+            displayComment = itemView.findViewById(R.id.displayComment);
+            displayLikeVideo = itemView.findViewById(R.id.displayLikeVideo);
         }
     }
 }

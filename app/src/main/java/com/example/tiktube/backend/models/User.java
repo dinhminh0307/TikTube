@@ -16,7 +16,13 @@ public class User implements Parcelable {
     private String imageUrl;
     private List<String> ownVideo;
     private List<String> interactedVideo;
-    private List<String> likesVideo; // New likesVideo field
+    private List<String> likesVideo = new ArrayList<>(); // New likesVideo field
+    private List<String> followingList = new ArrayList<>(); // New followingList field
+    private List<String> followerList = new ArrayList<>(); // New followerList field
+
+    private String bio = "";
+    private String instagram = "";
+    private String facebook = "";
 
     // Default constructor (required for Firestore)
     public User() {}
@@ -97,6 +103,46 @@ public class User implements Parcelable {
         this.likesVideo = likesVideo;
     }
 
+    public List<String> getFollowingList() {
+        return followingList;
+    }
+
+    public void setFollowingList(List<String> followingList) {
+        this.followingList = followingList;
+    }
+
+    public List<String> getFollowerList() {
+        return followerList;
+    }
+
+    public void setFollowerList(List<String> followerList) {
+        this.followerList = followerList;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getInstagram() {
+        return instagram;
+    }
+
+    public void setInstagram(String instagram) {
+        this.instagram = instagram;
+    }
+
+    public String getFacebook() {
+        return facebook;
+    }
+
+    public void setFacebook(String facebook) {
+        this.facebook = facebook;
+    }
+
     public void setUser(User currentUser) {
         this.uid = currentUser.getUid();
         this.name = currentUser.getName();
@@ -106,6 +152,11 @@ public class User implements Parcelable {
         this.ownVideo = currentUser.getOwnVideo();
         this.interactedVideo = currentUser.getInteractedVideo();
         this.likesVideo = currentUser.getLikesVideo();
+        this.followingList = currentUser.getFollowingList();
+        this.followerList = currentUser.getFollowerList();
+        this.bio = currentUser.getBio();
+        this.instagram = currentUser.getInstagram();
+        this.facebook = currentUser.getFacebook();
     }
 
     // Parcelable implementation
@@ -117,7 +168,12 @@ public class User implements Parcelable {
         imageUrl = in.readString();
         ownVideo = in.createStringArrayList();
         interactedVideo = in.createStringArrayList();
-        likesVideo = in.createStringArrayList(); // Parcelable integration for likesVideo
+        likesVideo = in.createStringArrayList();
+        followingList = in.createStringArrayList();
+        followerList = in.createStringArrayList();
+        bio = in.readString();
+        instagram = in.readString();
+        facebook = in.readString();
     }
 
     @Override
@@ -134,7 +190,12 @@ public class User implements Parcelable {
         dest.writeString(imageUrl);
         dest.writeStringList(ownVideo);
         dest.writeStringList(interactedVideo);
-        dest.writeStringList(likesVideo); // Write likesVideo to Parcel
+        dest.writeStringList(likesVideo);
+        dest.writeStringList(followingList);
+        dest.writeStringList(followerList);
+        dest.writeString(bio);
+        dest.writeString(instagram);
+        dest.writeString(facebook);
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

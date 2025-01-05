@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
+import com.example.tiktube.backend.controllers.NotificationController;
 import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.backend.models.Interaction;
 import com.example.tiktube.backend.models.User;
@@ -23,10 +24,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     private UserController userController;
 
+
+
     // Constructor
     public CommentsAdapter(List<Interaction> commentsList) {
         this.commentsList = commentsList;
         userController = new UserController();
+
     }
 
     @NonNull

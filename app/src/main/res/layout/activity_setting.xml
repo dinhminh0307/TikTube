@@ -14,23 +14,23 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="16dp"
             android:text="Privacy and settings"
             android:textColor="#000000"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingBottom="16dp" />
+            android:textStyle="bold" />
 
         <!-- Account Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ACCOUNT"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#888888"
             android:paddingTop="16dp"
-            android:paddingBottom="8dp" />
+            android:paddingBottom="8dp"
+            android:text="ACCOUNT"
+            android:textColor="#888888"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <!-- Account Options -->
         <LinearLayout
@@ -41,22 +41,22 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
                 android:orientation="horizontal"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackground">
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_account"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_account" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Manage my account"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <View
@@ -67,22 +67,22 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
                 android:orientation="horizontal"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackground">
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_privacy"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_privacy" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Privacy and safety"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <View
@@ -93,22 +93,22 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
                 android:orientation="horizontal"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackground">
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_content"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_content" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Content preferences"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -116,12 +116,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="GENERAL"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="#888888"
             android:paddingTop="16dp"
-            android:paddingBottom="8dp" />
+            android:paddingBottom="8dp"
+            android:text="GENERAL"
+            android:textColor="#888888"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <!-- General Options -->
         <LinearLayout
@@ -132,23 +132,23 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
                 android:orientation="horizontal"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackground">
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_notification"
+                    android:layout_marginEnd="16dp"
 
-                    android:layout_marginEnd="16dp" />
+                    android:src="@drawable/ic_notification" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Push notifications"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <View
@@ -159,22 +159,22 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
                 android:orientation="horizontal"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackground">
+                android:padding="12dp">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_languages"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_languages" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Language"
-                    android:textSize="16sp"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -195,6 +195,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Log Out"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/backToPrevious"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_left_arrow" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Go back"
                     android:textColor="#000000"
                     android:textSize="16sp" />
             </LinearLayout>
