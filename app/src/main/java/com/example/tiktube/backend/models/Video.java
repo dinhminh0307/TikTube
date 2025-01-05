@@ -3,6 +3,7 @@ package com.example.tiktube.backend.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Video implements Parcelable {
@@ -13,7 +14,7 @@ public class Video implements Parcelable {
     private String timeStamps;
     private List<String> viewers;
     private List<String> interactions;
-    private List<String> likes; // New likesVideo field
+    private List<String> likes = new ArrayList<>(); // New likesVideo field
 
     // Constructor
     public Video(String uid, String title, String videoURL, String owner, String timeStamps, List<String> viewers, List<String> interactions) {

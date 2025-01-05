@@ -18,6 +18,18 @@
         android:theme="@style/Theme.TikTube"
         tools:targetApi="31">
         <activity
+            android:name=".frontend.pages.MessagePageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".frontend.pages.ChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".frontend.pages.NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".frontend.pages.EditProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".frontend.pages.SettingActivity"
             android:exported="false" />
         <activity
