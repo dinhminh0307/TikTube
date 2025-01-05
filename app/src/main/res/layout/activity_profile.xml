@@ -149,12 +149,12 @@
                         android:textColor="@color/black" />
 
                     <Button
-                        android:id="@+id/downloadVideo"
+                        android:id="@+id/messageId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:backgroundTint="@color/white"
-                        android:text="Download Video"
+                        android:text="Messsage"
                         android:textColor="@color/black" />
                 </LinearLayout>
 

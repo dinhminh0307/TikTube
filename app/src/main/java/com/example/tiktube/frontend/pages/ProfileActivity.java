@@ -39,7 +39,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     TextView nameID, followingNumber, followerNumber, totalLike, bioText;
     ImageView menuIcon;
 
-    Button editProfileBtn;
+    Button editProfileBtn, messageId;
     private VideoGridAdapter videoGridAdapter;
     private RecyclerView videoRecyclerView;
     private List<Video> videoList;
@@ -63,6 +63,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         setUpRecyclerView();
         fetchUserVideo();
         onEditButtonClicked();
+        onMessageButtonClicked();
     }
 
 
@@ -76,6 +77,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         followerNumber = findViewById(R.id.followerNumber);
         totalLike = findViewById(R.id.totalLike);
         bioText = findViewById(R.id.bioText);
+        messageId = findViewById(R.id.messageId);
 
         loginController = new LoginController();
         userController = new UserController();
@@ -97,6 +99,17 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         bioText.setText(user.getBio());
 
         onMenuIconClicked();
+    }
+
+    private void onMessageButtonClicked() {
+        messageId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, MessagePageActivity.class);
+                intent.putExtra("userID", user.getUid());
+                startActivity(intent);
+            }
+        });
     }
 
     private void displayTotalLikes() {
