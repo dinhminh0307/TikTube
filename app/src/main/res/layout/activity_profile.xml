@@ -239,21 +239,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <!--  Menu Icon  -->
-        <ImageView
-            android:id="@+id/menuIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="64dp"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="Menu Icon"
-            android:src="@drawable/ic_menu" />
-    </RelativeLayout>
-
     <!-- Bottom Navigation Bar -->
     <include
         android:id="@+id/bottomNav"
