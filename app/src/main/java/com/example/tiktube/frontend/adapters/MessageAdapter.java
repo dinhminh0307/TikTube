@@ -12,7 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.callbacks.DataFetchCallback;
+import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.backend.models.Message;
+import com.example.tiktube.backend.models.User;
 
 import java.util.List;
 import java.util.Map;
@@ -22,9 +26,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private List<Message> messages;
     private Context context;
 
-    public MessageAdapter(Context context, List<Message> messages) {
+    private UserController userController;
+
+    private LoginController loginController;
+
+    private String currentUserId = "";
+
+    public MessageAdapter(Context context, List<Message> messages, String currentUserId) {
         this.context = context;
         this.messages = messages;
+        this.userController = new UserController();
+        this.loginController = new LoginController();
+        this.currentUserId = currentUserId;
     }
 
     @NonNull
@@ -34,17 +47,37 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return new MessageViewHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        Message message = messages.get(position);
+    private void getSenderName(Message message, MessageViewHolder holder) {
+        if(message.getSenderId().equals(currentUserId)) {
+            userController.getUserById(message.getReceiverId(), new DataFetchCallback<User>() {
+                @Override
+                public void onSuccess(List<User> data) {
+                    holder.senderName.post(() -> holder.senderName.setText(data.get(0).getName()));
+                }
 
-        // Set profile image (use Glide or Picasso for loading images)
-        holder.profileImage.setImageResource(R.drawable.ic_account);
+                @Override
+                public void onFailure(Exception e) {
 
-        // Set sender name
-        holder.senderName.setText(message.getSenderId()); // Display sender name
+                }
+            });
 
-        // Retrieve and display the last message
+        } else {
+            userController.getUserById(message.getSenderId(), new DataFetchCallback<User>() {
+                @Override
+                public void onSuccess(List<User> data) {
+                    holder.senderName.post(() -> holder.senderName.setText(data.get(0).getName()));
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+            });
+        }
+
+    }
+
+    private void displayTheLastMessage(Message message, MessageViewHolder holder) {
         if (message.getMessageContent() != null && !message.getMessageContent().isEmpty()) {
             // Get the last map in the list of messageContent
             Map<String, String> lastMessageMap = message.getMessageContent().get(message.getMessageContent().size() - 1);
@@ -54,13 +87,47 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             for (Map.Entry<String, String> entry : lastMessageMap.entrySet()) {
                 String userId = entry.getKey();
                 String content = entry.getValue();
-                lastMessageBuilder.append(userId).append(": ").append(content).append("\n");
-            }
 
-            holder.lastMessage.setText(lastMessageBuilder.toString().trim()); // Set the last message text
+                // Fetch the user's name asynchronously
+                userController.getUserById(userId, new DataFetchCallback<User>() {
+                    @Override
+                    public void onSuccess(List<User> data) {
+                        if (data != null && !data.isEmpty()) {
+                            String userName = data.get(0).getName();
+                            // Append user name and message content
+                            holder.lastMessage.post(() -> holder.lastMessage.setText(userName + ": " + content));
+                        } else {
+                            // Handle case where user data is missing
+                            holder.lastMessage.post(() -> holder.lastMessage.setText("Unknown User: " + content));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        // Handle failure by showing a fallback
+                        holder.lastMessage.post(() -> holder.lastMessage.setText("Unknown User: " + content));
+                    }
+                });
+            }
         } else {
-            holder.lastMessage.setText("No messages yet"); // Fallback if no messages exist
+            // Fallback if no messages exist
+            holder.lastMessage.setText("No messages yet");
         }
+    }
+
+
+    @Override
+    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+        Message message = messages.get(position);
+
+        // Set profile image (use Glide or Picasso for loading images)
+        holder.profileImage.setImageResource(R.drawable.ic_account);
+
+        // Set sender name
+        getSenderName(message, holder);
+
+        // Retrieve and display the last message
+        displayTheLastMessage(message, holder);
 
         // Set a static timestamp for now (replace with actual logic if timestamps are stored)
         holder.timestamp.setText("1:01 PM");

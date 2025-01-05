@@ -1,6 +1,7 @@
 package com.example.tiktube.frontend.pages;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,15 +9,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.callbacks.GetUserCallback;
+import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.controllers.MessageController;
 import com.example.tiktube.backend.models.Message;
+import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.adapters.MessageAdapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
+
+    private LoginController loginController;
+    private MessageController messageController;
+
+    private List<Message> userMessageList = new ArrayList<>();
+    private String userId = "";
+
+    private RecyclerView recyclerView;
+    private MessageAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,32 +36,50 @@ public class ChatActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chat);
 
-        RecyclerView recyclerView = findViewById(R.id.messagesRecyclerView);
+        loginController = new LoginController();
+        messageController = new MessageController();
 
-        // Initialize sample messages
-        List<Message> messageList = createSampleMessages();
+        recyclerView = findViewById(R.id.messagesRecyclerView);
 
-        // Set up RecyclerView
-        MessageAdapter adapter = new MessageAdapter(this, messageList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+
+        fetchCurrentUser();
     }
 
-    private List<Message> createSampleMessages() {
-        List<Message> messageList = new ArrayList<>();
+    private void fetchCurrentUser() {
+        loginController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                userId = user.getUid();
+                recyclerView.setLayoutManager(new LinearLayoutManager(ChatActivity.this));
+                adapter = new MessageAdapter(ChatActivity.this, userMessageList, userId);
+                recyclerView.setAdapter(adapter);
+                fetchUserMessage();
+            }
 
-        List<Map<String, String>> messageContent1 = new ArrayList<>();
-        Map<String, String> message1 = new HashMap<>();
-        message1.put("user1", "Hi, how are you?");
-        messageContent1.add(message1);
-        messageList.add(new Message("1", "user1", "user2", messageContent1));
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("Chat Activity", "Error fetching user data: " + e);
+            }
+        });
+    }
 
-        List<Map<String, String>> messageContent2 = new ArrayList<>();
-        Map<String, String> message2 = new HashMap<>();
-        message2.put("user2", "I am good, thanks! How about you?");
-        messageContent2.add(message2);
-        messageList.add(new Message("2", "user2", "user1", messageContent2));
-
-        return messageList;
+    private void fetchUserMessage() {
+        messageController.getAllMessages()
+                .thenAccept(msgs -> {
+                    for (Message mes : msgs) {
+                        if (mes.getReceiverId().equals(userId) || mes.getSenderId().equals(userId)) {
+                            userMessageList.add(mes);
+                        }
+                    }
+                    // Update the RecyclerView after messages are fetched
+                    runOnUiThread(() -> {
+                        adapter.notifyDataSetChanged();
+                        recyclerView.scrollToPosition(userMessageList.size() - 1);
+                    });
+                })
+                .exceptionally(e -> {
+                    Log.e("Chat Activity", "Error fetching messages", e);
+                    return null;
+                });
     }
 }
