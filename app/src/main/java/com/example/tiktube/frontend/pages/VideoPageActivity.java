@@ -36,6 +36,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
+
 import android.media.MediaMetadataRetriever;
 import android.media.MediaMuxer;
 import android.media.MediaExtractor;
@@ -65,7 +66,7 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private ImageView profileIcon, messagingIcon;
 
-    User currentUser ;
+    User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,7 @@ public class VideoPageActivity extends AppCompatActivity {
         // Set up ViewPager2
         viewPager2 = findViewById(R.id.viewPager);
         viewPager2.setOrientation(ViewPager2.ORIENTATION_VERTICAL); // Enable vertical scrolling
-        // add playback controll
+        // add playback control
         handlePlaybackOnScroll();
 
         // Set click listener for upload icon
@@ -105,7 +106,6 @@ public class VideoPageActivity extends AppCompatActivity {
     private RecyclerView getRecyclerViewFromViewPager2(ViewPager2 viewPager2) {
         return (RecyclerView) viewPager2.getChildAt(0);
     }
-
 
     private void handlePlaybackOnScroll() {
         RecyclerView recyclerView = getRecyclerViewFromViewPager2(viewPager2);
@@ -146,8 +146,6 @@ public class VideoPageActivity extends AppCompatActivity {
         });
     }
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -177,7 +175,6 @@ public class VideoPageActivity extends AppCompatActivity {
             videoPagerAdapter.notifyItemChanged(position);
         }
     }
-
 
     private void onProfileImageClicked() {
         profileIcon = findViewById(R.id.profileIcon);
@@ -357,8 +354,6 @@ public class VideoPageActivity extends AppCompatActivity {
         return Uri.fromFile(outputFile); // Return trimmed video URI
     }
 
-
-
     private String getPathFromUri(Uri uri) {
         String[] projection = {MediaStore.Video.Media.DATA};
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
@@ -378,7 +373,6 @@ public class VideoPageActivity extends AppCompatActivity {
         // Fallback: Copy the content to a temporary file
         return copyUriToTempFile(uri).getAbsolutePath();
     }
-
 
     private java.io.File copyUriToTempFile(Uri uri) {
         try {
@@ -400,10 +394,6 @@ public class VideoPageActivity extends AppCompatActivity {
             throw new RuntimeException("Failed to copy URI to temporary file: " + e.getMessage(), e);
         }
     }
-
-
-
-
 
     private void uploadVideoToFirebase(String link) {
         Video vid = new Video(UidGenerator.generateUID(), "hello", link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
