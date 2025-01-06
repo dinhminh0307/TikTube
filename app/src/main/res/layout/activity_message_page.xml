@@ -1,5 +1,5 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
@@ -9,19 +9,20 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
         android:background="@android:color/white"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
         <!-- Back Button -->
         <ImageView
             android:id="@+id/backButton"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_back"
+            android:layout_gravity="center_vertical"
             android:contentDescription="Back"
-            android:layout_gravity="center_vertical" />
+            android:src="@drawable/ic_arrow_back_foreground"
+            app:tint="#000000" />
 
         <!-- Chat Details -->
         <LinearLayout
@@ -37,9 +38,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Legend - Restaurant"
-                android:textStyle="bold"
+                android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:textColor="@android:color/black" />
+                android:textStyle="bold" />
 
             <!-- Subtitle -->
             <TextView
@@ -47,8 +48,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Food and entertainment"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray" />
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <!-- Call Button -->
@@ -56,8 +57,9 @@
             android:id="@+id/callButton"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_call"
-            android:contentDescription="Call" />
+            android:contentDescription="Call"
+            android:src="@drawable/ic_call_foreground"
+            app:tint="#000000" />
     </LinearLayout>
 
     <!-- Messages List -->
@@ -73,29 +75,30 @@
         android:id="@+id/messageInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:padding="8dp"
         android:background="@android:color/white"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <EditText
             android:id="@+id/messageInput"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:hint="Type your message..."
             android:background="@android:drawable/edit_text"
-            android:padding="8dp"
             android:gravity="center_vertical"
+            android:hint="Type your message..."
+            android:padding="8dp"
             android:textColor="@android:color/black" />
 
         <ImageView
             android:id="@+id/sendMessageButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_send"
             android:contentDescription="Send"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:src="@drawable/ic_send_foreground"
+            app:tint="#000000" />
     </LinearLayout>
 </RelativeLayout>

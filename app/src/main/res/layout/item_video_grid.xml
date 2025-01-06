@@ -19,7 +19,7 @@
         android:layout_height="40dp"
         android:layout_gravity="bottom|start"
         android:layout_margin="8dp"
-        android:src="@drawable/ic_play"
         android:contentDescription="@string/play_icon"
+        android:src="@drawable/ic_play_circle_foreground"
         android:visibility="visible" />
 </FrameLayout>
