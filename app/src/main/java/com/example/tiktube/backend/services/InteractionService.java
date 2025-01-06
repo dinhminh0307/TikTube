@@ -1,10 +1,9 @@
 package com.example.tiktube.backend.services;
 
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
-import com.example.tiktube.backend.firebase.FirebaseHelper;
+import com.example.tiktube.backend.helpers.FirebaseHelper;
 import com.example.tiktube.backend.models.Interaction;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InteractionService {

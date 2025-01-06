@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,9 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.controllers.MessageController;
+import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.backend.models.Message;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.utils.UidGenerator;
@@ -29,6 +32,8 @@ public class MessagePageActivity extends AppCompatActivity {
     private RecyclerView chatRecyclerView;
     private EditText messageInput;
     private ImageView sendMessageButton;
+
+    private TextView chatTitle, chatSubtitle;
     private ChatAdapter chatAdapter;
 
     private List<Map<String, String>> messageContent = new ArrayList<>();
@@ -40,6 +45,8 @@ public class MessagePageActivity extends AppCompatActivity {
     private String receiverUserId = "";
 
     private Message currentMessageContents = new Message();
+
+    private UserController userController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,20 +155,37 @@ public class MessagePageActivity extends AppCompatActivity {
     private void initComponent() {
         loginController = new LoginController();
         messageController = new MessageController();
+        userController = new UserController();
 
         // Initialize UI components
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         messageInput = findViewById(R.id.messageInput);
         sendMessageButton = findViewById(R.id.sendMessageButton);
+        chatTitle = findViewById(R.id.chatTitle);
+        chatSubtitle = findViewById(R.id.chatSubtitle);
 
         messageContent = new ArrayList<>();
         // get intent
         Intent intent = getIntent();
         receiverUserId = intent.getStringExtra("userID");
+        //get user ooposite
+        initChatTitle();
 
+    }
 
-        // Initialize adapter
+    private void initChatTitle() {
+        userController.getUserById(receiverUserId, new DataFetchCallback<User>() {
+            @Override
+            public void onSuccess(List<User> data) {
+                chatTitle.post(() -> chatTitle.setText(data.get(0).getName()));
+                chatSubtitle.post(() -> chatSubtitle.setText(data.get(0).getBio()));
+            }
 
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
     }
 
     private void initAdapter() {

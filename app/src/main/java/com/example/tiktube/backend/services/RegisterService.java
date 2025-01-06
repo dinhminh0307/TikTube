@@ -3,7 +3,7 @@ package com.example.tiktube.backend.services;
 import android.content.Context;
 
 import com.example.tiktube.backend.callbacks.SignUpCallback;
-import com.example.tiktube.backend.firebase.FirebaseHelper;
+import com.example.tiktube.backend.helpers.FirebaseHelper;
 
 public class RegisterService {
     FirebaseHelper firebaseHelper;

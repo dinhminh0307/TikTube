@@ -21,6 +21,7 @@ import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.helpers.GoogleDriveServiceHelper;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.controllers.UserController;
@@ -32,6 +33,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.FileContent;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
@@ -192,45 +194,9 @@ public class VideoPageActivity extends AppCompatActivity {
 
     // Step 1: Start Google Sign-In
     private void signInToGoogleDrive() {
-        startActivityForResult(googleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+        openFilePicker(); // Directly call the file picker
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_SIGN_IN && resultCode == RESULT_OK) {
-            handleSignInResult(data);
-        } else if (requestCode == PICK_VIDEO_REQUEST && resultCode == RESULT_OK && data != null) {
-            videoUri = data.getData();
-            if (videoUri != null) {
-                Toast.makeText(this, "Uploading video...", Toast.LENGTH_SHORT).show();
-                uploadVideoToGoogleDrive();
-            }
-        }
-    }
-
-    // Step 2: Handle Google Sign-In result
-    private void handleSignInResult(Intent data) {
-        try {
-            GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
-            GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(
-                    this, Collections.singleton("https://www.googleapis.com/auth/drive.file"));
-            credential.setSelectedAccount(account.getAccount());
-
-            googleDriveService = new Drive.Builder(
-                    new com.google.api.client.http.javanet.NetHttpTransport(),
-                    GsonFactory.getDefaultInstance(),
-                    credential)
-                    .setApplicationName("Google Drive Upload")
-                    .build();
-
-            openFilePicker();
-        } catch (Exception e) {
-            Log.e("GoogleDrive", "Sign-in failed", e);
-            Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     // Step 3: Open File Picker to Select Video
     private void openFilePicker() {
@@ -245,46 +211,62 @@ public class VideoPageActivity extends AppCompatActivity {
     private void uploadVideoToGoogleDrive() {
         new Thread(() -> {
             try {
-                InputStream inputStream = getContentResolver().openInputStream(videoUri);
+                // Initialize the Drive service
+                Drive driveService = GoogleDriveServiceHelper.getDriveService(this);
 
-                // Retrieve video duration
+                // Check if video needs to be trimmed
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(this, videoUri);
                 String durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
                 long duration = Long.parseLong(durationStr);
 
-                // Check if video duration exceeds 1 minute
-                Uri videoToUploadUri = videoUri;
-                if (duration > 60000) { // 1 minute = 60000 ms
-                    videoToUploadUri = trimVideo(videoUri);
+                Uri uploadUri = videoUri;
+                if (duration > 60000) { // Trim video if duration > 1 minute
+                    uploadUri = trimVideo(videoUri); // Call the trimming logic
                 }
 
-                File metadata = new File(); // Google Drive File object
-                metadata.setName("uploaded_video.mp4");
+                // Prepare the video file for upload
+                java.io.File videoFile = new java.io.File(getPathFromUri(uploadUri));
+                String folderId = "1iyMdEMAvwpgR6WrqpVPkYnjEa3M7utcG"; // Target Google Drive folder ID
 
-                com.google.api.client.http.InputStreamContent mediaContent =
-                        new com.google.api.client.http.InputStreamContent("video/mp4", getContentResolver().openInputStream(videoToUploadUri));
+                // Upload the file
+                String fileLink = GoogleDriveServiceHelper.uploadFile(videoFile, folderId);
 
-                File uploadedFile = googleDriveService.files().create(metadata, mediaContent)
-                        .setFields("id, webViewLink")
-                        .execute();
-
-                String fileId = uploadedFile.getId();
-                String fileLink = "https://drive.google.com/uc?id=" + fileId + "&export=download";
-                makeFilePublic(fileId);
-
-                runOnUiThread(() -> {
-                    uploadVideoToFirebase(fileLink);
-                    Toast.makeText(this, "Upload Successful! Public Link: " + fileLink, Toast.LENGTH_LONG).show();
+                if (fileLink != null) {
                     Log.d("GoogleDrive", "Public Link: " + fileLink);
-                });
 
+                    // Notify the user
+                    runOnUiThread(() -> Toast.makeText(this, "Upload Successful! Public Link: " + fileLink, Toast.LENGTH_LONG).show());
+
+                    // Optionally, upload the video link to Firebase or other storage
+                    uploadVideoToFirebase(fileLink);
+                } else {
+                    runOnUiThread(() -> Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show());
+                }
             } catch (Exception e) {
                 Log.e("GoogleDrive", "Error uploading file", e);
                 runOnUiThread(() -> Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_VIDEO_REQUEST && resultCode == RESULT_OK && data != null) {
+            videoUri = data.getData(); // Retrieve the selected video URI
+            if (videoUri != null) {
+                Toast.makeText(this, "Uploading video...", Toast.LENGTH_SHORT).show();
+                uploadVideoToGoogleDrive(); // Call the upload method
+            } else {
+                Toast.makeText(this, "No video selected", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
 
     private Uri trimVideo(Uri sourceUri) throws Exception {
         // Resolve the file path from Uri
@@ -321,7 +303,8 @@ public class VideoPageActivity extends AppCompatActivity {
 
         muxer.start();
         long startUs = 0; // Start at the beginning
-        long endUs = 120000000; // End at 1 minute (60000000 microseconds)
+        long endUs = 12000000; // End at 12 seconds (12,000,000 microseconds)
+
         extractor.seekTo(startUs, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
 
         MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
@@ -409,22 +392,6 @@ public class VideoPageActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void makeFilePublic(String fileId) {
-        new Thread(() -> {
-            try {
-                Permission permission = new Permission();
-                permission.setType("anyone");
-                permission.setRole("reader");
-                googleDriveService.permissions().create(fileId, permission).execute();
-
-                runOnUiThread(() -> Toast.makeText(this, "File is now public!", Toast.LENGTH_SHORT).show());
-            } catch (Exception e) {
-                runOnUiThread(() -> Toast.makeText(this, "Failed to make file public", Toast.LENGTH_SHORT).show());
-            }
-        }).start();
-        fetchAllVideo();
     }
 
     @Override

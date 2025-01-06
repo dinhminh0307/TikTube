@@ -2,26 +2,22 @@ package com.example.tiktube.backend.services;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
-import com.example.tiktube.backend.firebase.FirebaseHelper;
+import com.example.tiktube.backend.helpers.FirebaseHelper;
 import com.example.tiktube.backend.models.Interaction;
 import com.example.tiktube.backend.models.LikeVideo;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.utils.Enums;
 import com.example.tiktube.backend.utils.UidGenerator;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CompletableFuture;
 
 public class UserService {
     FirebaseHelper firebaseHelper;
@@ -314,5 +310,9 @@ public class UserService {
         }
 
         callback.onSuccess(Collections.singletonList(updatedUser));
+    }
+
+    public CompletableFuture<List<Video>> getUserLikeVideo(User user) {
+        return likeService.getUserLikeVideo(user);
     }
 }
