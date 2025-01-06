@@ -1,11 +1,10 @@
 package com.example.tiktube.backend.services;
 
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
-import com.example.tiktube.backend.firebase.FirebaseHelper;
+import com.example.tiktube.backend.helpers.FirebaseHelper;
 import com.example.tiktube.backend.models.LikeVideo;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
-import com.example.tiktube.backend.utils.UidGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
