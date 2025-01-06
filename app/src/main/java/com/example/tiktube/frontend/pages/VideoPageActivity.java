@@ -303,7 +303,8 @@ public class VideoPageActivity extends AppCompatActivity {
 
         muxer.start();
         long startUs = 0; // Start at the beginning
-        long endUs = 120000000; // End at 1 minute (60000000 microseconds)
+        long endUs = 12000000; // End at 12 seconds (12,000,000 microseconds)
+
         extractor.seekTo(startUs, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
 
         MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
