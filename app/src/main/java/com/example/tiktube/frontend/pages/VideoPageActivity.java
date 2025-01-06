@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.tiktube.R;
@@ -86,6 +87,8 @@ public class VideoPageActivity extends AppCompatActivity {
         // Set up ViewPager2
         viewPager2 = findViewById(R.id.viewPager);
         viewPager2.setOrientation(ViewPager2.ORIENTATION_VERTICAL); // Enable vertical scrolling
+        // add playback controll
+        handlePlaybackOnScroll();
 
         // Set click listener for upload icon
         ImageView uploadIcon = findViewById(R.id.uploadIcon);
@@ -98,6 +101,52 @@ public class VideoPageActivity extends AppCompatActivity {
 
         onNotificationClicked();
     }
+
+    private RecyclerView getRecyclerViewFromViewPager2(ViewPager2 viewPager2) {
+        return (RecyclerView) viewPager2.getChildAt(0);
+    }
+
+
+    private void handlePlaybackOnScroll() {
+        RecyclerView recyclerView = getRecyclerViewFromViewPager2(viewPager2);
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+
+                // Get the current ViewHolder
+                RecyclerView.ViewHolder currentHolder = recyclerView.findViewHolderForAdapterPosition(position);
+                if (currentHolder instanceof VideoPagerAdapter.VideoViewHolder) {
+                    VideoPagerAdapter.VideoViewHolder videoHolder = (VideoPagerAdapter.VideoViewHolder) currentHolder;
+                    if (videoHolder.videoView != null) {
+                        videoHolder.videoView.start(); // Play the current video
+                    }
+                }
+
+                // Pause all other videos
+                for (int i = 0; i < videoPagerAdapter.getItemCount(); i++) {
+                    if (i != position) {
+                        RecyclerView.ViewHolder otherHolder = recyclerView.findViewHolderForAdapterPosition(i);
+                        if (otherHolder instanceof VideoPagerAdapter.VideoViewHolder) {
+                            VideoPagerAdapter.VideoViewHolder videoHolder = (VideoPagerAdapter.VideoViewHolder) otherHolder;
+                            if (videoHolder.videoView != null && videoHolder.videoView.isPlaying()) {
+                                videoHolder.videoView.pause();
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                // Optional: Additional behavior during scroll state changes
+            }
+        });
+    }
+
+
 
     @Override
     protected void onResume() {
