@@ -8,6 +8,9 @@ import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.services.UserService;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 public class UserController {
     UserService userService;
 
@@ -49,5 +52,9 @@ public class UserController {
 
     public void userEditProfile(User updatedUser, DataFetchCallback<User> callback) {
         userService.userEditProfile(updatedUser, callback);
+    }
+
+    public CompletableFuture<List<Video>> getUserLikeVideo(User user) {
+        return userService.getUserLikeVideo(user);
     }
 }

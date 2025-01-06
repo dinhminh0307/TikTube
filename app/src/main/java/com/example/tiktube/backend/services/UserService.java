@@ -11,6 +11,7 @@ import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.firebase.FirebaseHelper;
 import com.example.tiktube.backend.models.Interaction;
 import com.example.tiktube.backend.models.LikeVideo;
+import com.example.tiktube.backend.models.Notification;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.utils.Enums;
@@ -21,6 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserService {
@@ -314,5 +316,9 @@ public class UserService {
         }
 
         callback.onSuccess(Collections.singletonList(updatedUser));
+    }
+
+    public CompletableFuture<List<Video>> getUserLikeVideo(User user) {
+        return likeService.getUserLikeVideo(user);
     }
 }

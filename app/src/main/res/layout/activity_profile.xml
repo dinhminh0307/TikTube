@@ -195,13 +195,14 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/uploadedVideo"
+                    android:id="@+id/userVideos"
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
                     android:contentDescription="videos"
-                    android:src="@drawable/ic_videocam_foreground" />
+                    android:src="@drawable/ic_videocam_foreground"
+                    app:tint="@color/white" />
 
                 <ImageView
                     android:layout_width="0dp"
@@ -226,7 +227,9 @@
                     android:layout_margin="8dp"
                     android:layout_weight="1"
                     android:contentDescription="liked videos"
-                    android:src="@drawable/ic_heart" />
+                    android:src="@drawable/ic_heart"
+                    app:tint="@color/gray" />
+
             </LinearLayout>
 
             <!-- Video Section -->
