@@ -1,4 +1,4 @@
-package com.example.tiktube.frontend.search;
+package com.example.tiktube.frontend.pages;
 
 import android.content.Intent;
 import android.os.Bundle;

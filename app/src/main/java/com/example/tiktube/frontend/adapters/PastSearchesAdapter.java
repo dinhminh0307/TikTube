@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.tiktube.R;
@@ -42,7 +43,7 @@ public class PastSearchesAdapter extends BaseAdapter {
         }
 
         TextView searchEntry = convertView.findViewById(R.id.searchEntry);
-        TextView searchBtnRemove = convertView.findViewById(R.id.searchBtnRemove);
+        ImageView searchBtnRemove = convertView.findViewById(R.id.searchBtnRemove);
 
         String searchQuery = searchEntries.get(position);
         searchEntry.setText(truncateText(searchQuery));

@@ -64,7 +64,7 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private List<Video> videoDataList = new ArrayList<>();
 
-    private ImageView profileIcon, messagingIcon;
+    private ImageView searchIcon, profileIcon, messagingIcon;
 
     User currentUser;
 
@@ -101,6 +101,7 @@ public class VideoPageActivity extends AppCompatActivity {
         onProfileImageClicked();
 
         onNotificationClicked();
+        onSearchClicked();
     }
 
     private RecyclerView getRecyclerViewFromViewPager2(ViewPager2 viewPager2) {
@@ -481,6 +482,14 @@ public class VideoPageActivity extends AppCompatActivity {
                 Intent intent = new Intent(VideoPageActivity.this, NotificationActivity.class);
                 startActivity(intent);
             }
+        });
+    }
+
+    private void onSearchClicked() {
+        searchIcon = findViewById(R.id.searchIcon);
+        searchIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(VideoPageActivity.this, SearchActivity.class);
+            startActivity(intent);
         });
     }
 }
