@@ -67,7 +67,6 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     }
 
 
-
     private void setUpComponent() {
         menuIcon = findViewById(R.id.menuIcon);
         nameID = findViewById(R.id.username);
@@ -114,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
     private void displayTotalLikes() {
         int likeCount = 0;
-        for(Video v : videoList) {
+        for (Video v : videoList) {
             likeCount += v.getLikes().size();
         }
         totalLike.setText(Integer.toString(likeCount));
@@ -143,9 +142,9 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             public void onSuccess(List<Video> data) {
                 videoList.clear();
                 for (Video video : data) {
-                    Log.d("Video Activity", "User UID: " +user.getUid());
+                    Log.d("Video Activity", "User UID: " + user.getUid());
                     if (video.getOwner().equals(user.getUid())) {
-                        Log.d("Video Activity", "Video: " +video.getOwner());
+                        Log.d("Video Activity", "Video: " + video.getOwner());
                         videoList.add(video);
                     }
                 }
@@ -164,9 +163,10 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     @Override
     public void onVideoClick(Video video) {
         // Handle video click here
-//        Intent intent = new Intent(ProfileActivity.this, VideoDetailsActivity.class);
-//        intent.putExtra("video", video); // Pass the video object to the new activity
-//        startActivity(intent);
+        Intent intent = new Intent(ProfileActivity.this, UserVideoActivity.class);
+        intent.putExtra("video", video); // Pass the video object to the new activity
+        intent.putExtra("user", user);
+        startActivity(intent);
     }
 
     private void reloadTheTargetUser() {
@@ -233,6 +233,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     private void followUser() {
         userController.userFollowingAction(user, new DataFetchCallback<Void>() {
             String targetUid = user.getUid();
+
             @Override
             public void onSuccess(List<Void> data) {
                 loginController.getCurrentUser(new GetUserCallback() {
