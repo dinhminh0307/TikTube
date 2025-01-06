@@ -47,6 +47,10 @@ public class PastSearchesAdapter extends BaseAdapter {
 
         String searchQuery = searchEntries.get(position);
         searchEntry.setText(truncateText(searchQuery));
+        searchBtnRemove.setOnClickListener(v -> {
+            searchEntries.remove(position);
+            notifyDataSetChanged();
+        });
 
         return convertView;
     }

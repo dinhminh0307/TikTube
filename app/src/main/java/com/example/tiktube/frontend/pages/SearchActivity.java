@@ -1,6 +1,5 @@
 package com.example.tiktube.frontend.pages;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -52,15 +51,34 @@ public class SearchActivity extends AppCompatActivity {
         trendingSearchesList.add("WandaVision");
         trendingSearchesList.add("Moon Knight");
 
-        Intent intent = getIntent();
-
         searchBar.setIconifiedByDefault(false);
 
-        PastSearchesAdapter adapter1 = new PastSearchesAdapter(this, pastSearchesList);
-        pastSearches.setAdapter(adapter1);
-        TrendingSearchesAdapter adapter2 = new TrendingSearchesAdapter(this, trendingSearchesList);
-        trendingSearches.setAdapter(adapter2);
+        PastSearchesAdapter pastSearchesAdapter = new PastSearchesAdapter(this, pastSearchesList);
+        pastSearches.setAdapter(pastSearchesAdapter);
+        TrendingSearchesAdapter trendingSearchesAdapter = new TrendingSearchesAdapter(this, trendingSearchesList);
+        trendingSearches.setAdapter(trendingSearchesAdapter);
 
         btnBack.setOnClickListener(v -> finish());
+
+        pastSearches.setOnItemClickListener((parent, view, position, id) -> searchBar.setQuery(pastSearchesList.get(position), true));
+        trendingSearches.setOnItemClickListener((parent, view, position, id) -> searchBar.setQuery(trendingSearchesList.get(position), true));
+
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (!query.isEmpty()) {
+                    pastSearchesList.remove(query);
+                    pastSearchesList.add(0, query);
+                    pastSearchesAdapter.notifyDataSetChanged();
+                    searchBar.clearFocus();
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 }
