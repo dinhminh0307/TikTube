@@ -28,6 +28,7 @@ import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.controllers.NotificationController;
 import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.backend.helpers.ImageBuilder;
 import com.example.tiktube.backend.models.Notification;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
@@ -41,6 +42,8 @@ import java.util.List;
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
     TextView nameID, followingNumber, followerNumber, totalLike, bioText;
     ImageView menuIcon, likeVideos, userVideos, profilePicture;
+
+    private ImageBuilder imageBuilder;
 
     Button editProfileBtn, messageId;
     private VideoGridAdapter videoGridAdapter;
@@ -89,6 +92,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         loginController = new LoginController();
         userController = new UserController();
         notificationController = new NotificationController();
+        imageBuilder = new ImageBuilder(ProfileActivity.this);
 
         user = getIntent().getParcelableExtra("user");
         if (user == null) {
@@ -113,15 +117,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
     private void imageProfileLoaded() {
         if(user.getImageUrl() != null && !user.getImageUrl().isEmpty()) {
-            GlideUrl glideUrl = new GlideUrl(user.getImageUrl(), new LazyHeaders.Builder()
-                    .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
-                    .build());
-
-            Glide.with(this)
-                    .load(glideUrl)
-                    .placeholder(R.drawable.ic_account_circle_foreground)
-                    .error(R.drawable.ic_account_circle_foreground)
-                    .into(profilePicture);
+            imageBuilder.loadImage(profilePicture, user);
         } else {
             // Set a default image if no URL is available
             profilePicture.setImageResource(R.drawable.ic_account_circle_foreground);
