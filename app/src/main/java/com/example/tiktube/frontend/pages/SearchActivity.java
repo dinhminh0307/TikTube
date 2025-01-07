@@ -1,33 +1,50 @@
 package com.example.tiktube.frontend.pages;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.controllers.SearchController;
+import com.example.tiktube.backend.models.User;
+import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.frontend.adapters.PastSearchesAdapter;
 import com.example.tiktube.frontend.adapters.TrendingSearchesAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
+
+    private SearchController searchController;
+
+    Button searchBtn;
+    TextView btnBack;
+    SearchView searchBar ;
+    ListView pastSearches ;
+    TextView txtSuggestions;
+    TextView btnRefresh ;
+    ListView trendingSearches;
+    TextView btnImprove ;
+    TextView btnLearnMore ;
+
+    private List<User> searchedUsers = new ArrayList<>();
+
+    private List<Video> searchedVideo = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        TextView btnBack = findViewById(R.id.searchBtnBack);
-        SearchView searchBar = findViewById(R.id.searchBar);
-        ListView pastSearches = findViewById(R.id.pastSearches);
-        TextView txtSuggestions = findViewById(R.id.txtSuggestions);
-        TextView btnRefresh = findViewById(R.id.searchBtnRefresh);
-        ListView trendingSearches = findViewById(R.id.trendingSearches);
-        TextView btnImprove = findViewById(R.id.searchBtnImprove);
-        TextView btnLearnMore = findViewById(R.id.searchBtnLearnMore);
+        initComponent();
 
         ArrayList<String> pastSearchesList = new ArrayList<>();
         pastSearchesList.add("spider-man");
@@ -80,5 +97,66 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        onSearchButtonClicked();
     }
+
+    public void initComponent() {
+        btnBack = findViewById(R.id.searchBtnBack);
+        searchBar = findViewById(R.id.searchBar);
+        pastSearches = findViewById(R.id.pastSearches);
+        txtSuggestions = findViewById(R.id.txtSuggestions);
+        btnRefresh = findViewById(R.id.searchBtnRefresh);
+        trendingSearches = findViewById(R.id.trendingSearches);
+       btnImprove = findViewById(R.id.searchBtnImprove);
+        btnLearnMore = findViewById(R.id.searchBtnLearnMore);
+        searchBtn = findViewById(R.id.searchBtn);
+
+        searchController = new SearchController();
+    }
+
+    private void onSearchButtonClicked() {
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Extract the entered text from the SearchView
+                String keywords = searchBar.getQuery().toString().trim();
+
+                if (keywords.isEmpty()) {
+                    Toast.makeText(SearchActivity.this, "Please enter a search term", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Log.d("Search Activity", "Searched keyword: " + keywords);
+
+                // Call the search controller with the extracted keyword
+                searchController.search(keywords)
+                        .thenAccept(res -> runOnUiThread(() -> {
+                            if (res.isEmpty()) {
+                                Toast.makeText(SearchActivity.this, "No results found for: " + keywords, Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Iterate over the results and log or display them
+                                for (Object o : res) {
+                                    if (o instanceof Video) {
+                                        searchedVideo.add(((Video) o));
+                                        Log.d("Search Activity", "Searched video: " + ((Video) o).getTitle());
+                                        // Optionally, display the video titles in the UI
+                                    } else if(o instanceof User) {
+                                        searchedUsers.add(((User) o));
+                                    }
+                                }
+                            }
+                        }))
+                        .exceptionally(e -> {
+                            // Handle any exceptions
+                            runOnUiThread(() -> {
+                                Toast.makeText(SearchActivity.this, "Error occurred during search", Toast.LENGTH_SHORT).show();
+                            });
+                            e.printStackTrace();
+                            return null;
+                        });
+            }
+        });
+    }
+
 }

@@ -10,12 +10,25 @@
     <SearchView
         android:id="@+id/searchBar"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:iconifiedByDefault="false"
         app:layout_constraintBottom_toBottomOf="@+id/searchBtnBack"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/searchBtn"
         app:layout_constraintStart_toEndOf="@+id/searchBtnBack"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/searchBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search"
+        android:textSize="16sp"
+        android:backgroundTint="@color/purple_500"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/searchBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/searchBar"
+        app:layout_constraintStart_toEndOf="@+id/searchBar" />
 
     <TextView
         android:id="@+id/searchBtnBack"
