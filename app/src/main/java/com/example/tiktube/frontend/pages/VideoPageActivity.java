@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -208,7 +211,7 @@ public class VideoPageActivity extends AppCompatActivity {
 
     // Step 4: Upload Video to Google Drive
 
-    private void uploadVideoToGoogleDrive() {
+    private void uploadVideoToGoogleDrive(String videoDescription) {
         new Thread(() -> {
             try {
                 // Initialize the Drive service
@@ -238,8 +241,8 @@ public class VideoPageActivity extends AppCompatActivity {
                     // Notify the user
                     runOnUiThread(() -> Toast.makeText(this, "Upload Successful! Public Link: " + fileLink, Toast.LENGTH_LONG).show());
 
-                    // Optionally, upload the video link to Firebase or other storage
-                    uploadVideoToFirebase(fileLink);
+                    // Optionally, upload the video description and link to Firebase
+                    uploadVideoToFirebase(fileLink, videoDescription);
                 } else {
                     runOnUiThread(() -> Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show());
                 }
@@ -251,6 +254,7 @@ public class VideoPageActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -258,12 +262,66 @@ public class VideoPageActivity extends AppCompatActivity {
         if (requestCode == PICK_VIDEO_REQUEST && resultCode == RESULT_OK && data != null) {
             videoUri = data.getData(); // Retrieve the selected video URI
             if (videoUri != null) {
-                Toast.makeText(this, "Uploading video...", Toast.LENGTH_SHORT).show();
-                uploadVideoToGoogleDrive(); // Call the upload method
+                showVideoDetailsDialog();
             } else {
                 Toast.makeText(this, "No video selected", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+
+    private void showVideoDetailsDialog() {
+        // Inflate the dialog layout
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_video_details, null);
+
+        // Find views in the dialog
+        TextView tvFileName = dialogView.findViewById(R.id.tvFileName);
+        EditText etVideoDescription = dialogView.findViewById(R.id.etVideoDescription);
+        Button btnUpload = dialogView.findViewById(R.id.btnUpload);
+
+        // Get the file name from the URI
+        String fileName = getFileNameFromUri(videoUri);
+        tvFileName.setText(fileName);
+
+        // Create and show the dialog
+        android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+        dialog.show();
+
+        // Set button click listener
+        btnUpload.setOnClickListener(v -> {
+            String videoDescription = etVideoDescription.getText().toString().trim();
+
+            if (videoDescription.isEmpty()) {
+                Toast.makeText(this, "Please enter a description", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Pass the description to the upload method
+            uploadVideoToGoogleDrive(videoDescription);
+
+            // Dismiss the dialog
+            dialog.dismiss();
+        });
+    }
+
+    // Helper method to get file name from URI
+    private String getFileNameFromUri(Uri uri) {
+        String[] projection = {MediaStore.MediaColumns.DISPLAY_NAME};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+
+        if (cursor != null) {
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME);
+            if (cursor.moveToFirst()) {
+                String fileName = cursor.getString(columnIndex);
+                cursor.close();
+                return fileName;
+            }
+            cursor.close();
+        }
+        return "Unknown File";
     }
 
 
@@ -379,8 +437,8 @@ public class VideoPageActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadVideoToFirebase(String link) {
-        Video vid = new Video(UidGenerator.generateUID(), "hello", link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
+    private void uploadVideoToFirebase(String link, String description) {
+        Video vid = new Video(UidGenerator.generateUID(), description, link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
         userController.uploadVideo(vid, new DataFetchCallback<Void>() {
             @Override
             public void onSuccess(List<Void> data) {
@@ -389,10 +447,11 @@ public class VideoPageActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Exception e) {
-
+                Log.e("Firebase", "Failed to upload video metadata", e);
             }
         });
     }
+
 
     @Override
     protected void onDestroy() {
