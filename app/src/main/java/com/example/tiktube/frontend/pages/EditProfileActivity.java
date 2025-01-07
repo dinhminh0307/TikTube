@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -24,6 +25,17 @@ public class EditProfileActivity extends AppCompatActivity {
     private LoginController loginController;
     private User user;
 
+    private ImageView profileImageView;
+
+    EditText nameEditText ;
+    EditText phoneNumEditText ;
+    EditText bioEditText ;
+    EditText instagramEditText ;
+    EditText facebookEditText ;
+
+    Button saveButton;
+    Button returnButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +45,8 @@ public class EditProfileActivity extends AppCompatActivity {
         // Initialize controllers
         userController = new UserController();
         loginController = new LoginController();
+
+        initComponent();
 
         // Fetch current user
         loginController.getCurrentUser(new GetUserCallback() {
@@ -51,12 +65,18 @@ public class EditProfileActivity extends AppCompatActivity {
         editUserProfile();
     }
 
+    private void initComponent() {
+        nameEditText = findViewById(R.id.nameEditText);
+         phoneNumEditText = findViewById(R.id.phoneNumEditText);
+         bioEditText = findViewById(R.id.bioEditText);
+         instagramEditText = findViewById(R.id.instagramEditText);
+         facebookEditText = findViewById(R.id.facebookEditText);
+         saveButton = findViewById(R.id.saveButton);
+         returnButton = findViewById(R.id.returnButton);
+
+    }
+
     private void populateUserFields(User user) {
-        EditText nameEditText = findViewById(R.id.nameEditText);
-        EditText phoneNumEditText = findViewById(R.id.phoneNumEditText);
-        EditText bioEditText = findViewById(R.id.bioEditText);
-        EditText instagramEditText = findViewById(R.id.instagramEditText);
-        EditText facebookEditText = findViewById(R.id.facebookEditText);
 
         nameEditText.setText(user.getName());
         phoneNumEditText.setText(user.getPhoneNumber());
@@ -66,13 +86,6 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void editUserProfile() {
-        EditText nameEditText = findViewById(R.id.nameEditText);
-        EditText phoneNumEditText = findViewById(R.id.phoneNumEditText);
-        EditText bioEditText = findViewById(R.id.bioEditText);
-        EditText instagramEditText = findViewById(R.id.instagramEditText);
-        EditText facebookEditText = findViewById(R.id.facebookEditText);
-        Button saveButton = findViewById(R.id.saveButton);
-        Button returnButton = findViewById(R.id.returnButton);
 
         saveButton.setOnClickListener(v -> {
             if (user == null) {
