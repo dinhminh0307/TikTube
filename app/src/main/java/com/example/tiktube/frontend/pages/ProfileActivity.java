@@ -17,6 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
@@ -37,7 +40,7 @@ import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
     TextView nameID, followingNumber, followerNumber, totalLike, bioText;
-    ImageView menuIcon, likeVideos, userVideos;
+    ImageView menuIcon, likeVideos, userVideos, profilePicture;
 
     Button editProfileBtn, messageId;
     private VideoGridAdapter videoGridAdapter;
@@ -81,6 +84,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         messageId = findViewById(R.id.messageId);
         likeVideos = findViewById(R.id.likeVideos);
         userVideos = findViewById(R.id.userVideos);
+        profilePicture = findViewById(R.id.profilePicture);
 
         loginController = new LoginController();
         userController = new UserController();
@@ -94,15 +98,36 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             return;
         }
 
-
-        // set up edit button to check the current user
+        // Set up edit button to check the current user
         checkCurrentUser();
 
         nameID.setText(user.getName());
         bioText.setText(user.getBio());
 
+        // Load the profile picture from imageUrl
+        imageProfileLoaded();
+
+
         onMenuIconClicked();
     }
+
+    private void imageProfileLoaded() {
+        if(user.getImageUrl() != null && !user.getImageUrl().isEmpty()) {
+            GlideUrl glideUrl = new GlideUrl(user.getImageUrl(), new LazyHeaders.Builder()
+                    .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
+                    .build());
+
+            Glide.with(this)
+                    .load(glideUrl)
+                    .placeholder(R.drawable.ic_account_circle_foreground)
+                    .error(R.drawable.ic_account_circle_foreground)
+                    .into(profilePicture);
+        } else {
+            // Set a default image if no URL is available
+            profilePicture.setImageResource(R.drawable.ic_account_circle_foreground);
+        }
+    }
+
 
     private void onMessageButtonClicked() {
         messageId.setOnClickListener(new View.OnClickListener() {

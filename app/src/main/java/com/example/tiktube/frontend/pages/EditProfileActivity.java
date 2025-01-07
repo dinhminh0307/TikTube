@@ -160,7 +160,6 @@ public class EditProfileActivity extends AppCompatActivity {
                         String driveUrl = GoogleDriveServiceHelper.uploadImageFile(EditProfileActivity.this, imageFile, driveFolderId);
                         if (driveUrl != null) {
                             user.setImageUrl(driveUrl);
-                            Log.d("EditProfileActivity", "Drive User URL: " + user.getImageUrl());
                             runOnUiThread(this::updateUserProfile);
                         } else {
                             runOnUiThread(() -> Toast.makeText(EditProfileActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show());
