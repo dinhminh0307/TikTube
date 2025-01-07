@@ -10,7 +10,6 @@ import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.pages.LoginActivity;
 import com.example.tiktube.frontend.pages.RegisterActivity;
 import com.example.tiktube.frontend.pages.VideoPageActivity;
-import com.example.tiktube.frontend.search.SearchActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,13 +35,6 @@ public class MainActivity extends AppCompatActivity {
 
         onSignUpButtonClicked();
         onLoginButtonClicked();
-
-        Button btnTestSearch = findViewById(R.id.btnTestSearch);
-
-        btnTestSearch.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-            startActivity(intent);
-        });
     }
 
     @Override

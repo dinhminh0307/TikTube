@@ -37,7 +37,7 @@ import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
     TextView nameID, followingNumber, followerNumber, totalLike, bioText;
-    ImageView menuIcon;
+    ImageView menuIcon, likeVideos, userVideos;
 
     Button editProfileBtn, messageId;
     private VideoGridAdapter videoGridAdapter;
@@ -64,6 +64,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         fetchUserVideo();
         onEditButtonClicked();
         onMessageButtonClicked();
+
+        onTabToggle();
     }
 
 
@@ -77,6 +79,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         totalLike = findViewById(R.id.totalLike);
         bioText = findViewById(R.id.bioText);
         messageId = findViewById(R.id.messageId);
+        likeVideos = findViewById(R.id.likeVideos);
+        userVideos = findViewById(R.id.userVideos);
 
         loginController = new LoginController();
         userController = new UserController();
@@ -119,6 +123,28 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         totalLike.setText(Integer.toString(likeCount));
     }
 
+    private void onTabToggle() {
+        userVideos.setOnClickListener(v -> {
+            highlightTab(userVideos);
+            fetchUserVideo();
+        });
+
+        likeVideos.setOnClickListener(v -> {
+            highlightTab(likeVideos);
+            fetchLikedVideos();
+        });
+
+        // By default, highlight "User Videos" and fetch user videos
+        highlightTab(userVideos);
+        fetchUserVideo();
+    }
+
+    private void highlightTab(ImageView activeTab) {
+        userVideos.setColorFilter(getResources().getColor(R.color.gray)); // Deactivate
+        likeVideos.setColorFilter(getResources().getColor(R.color.gray)); // Deactivate
+        activeTab.setColorFilter(getResources().getColor(R.color.white)); // Activate
+    }
+
 
     @SuppressLint("SetTextI18n")
     private void setUpUserStat() {
@@ -158,6 +184,28 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
                 e.printStackTrace();
             }
         });
+    }
+
+    private void onLikeVideosClicked() {
+        likeVideos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchLikedVideos();
+            }
+        });
+    }
+
+    private void fetchLikedVideos() {
+        userController.getUserLikeVideo(user)
+                .thenAccept(vids -> {
+                    videoList.clear();
+                    videoList.addAll(vids);
+                    videoGridAdapter.notifyDataSetChanged();
+                })
+                .exceptionally(e -> {
+                    Log.e("ProfileActivity", "Failed to fetch liked videos", e);
+                    return null;
+                });
     }
 
     @Override

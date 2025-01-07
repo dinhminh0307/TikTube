@@ -6,7 +6,7 @@ import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.callbacks.LoginCallback;
 import com.example.tiktube.backend.callbacks.LoginResultCallback;
 import com.example.tiktube.backend.exceptions.InvalidCredentialException;
-import com.example.tiktube.backend.firebase.FirebaseHelper;
+import com.example.tiktube.backend.helpers.FirebaseHelper;
 import com.example.tiktube.backend.models.User;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;

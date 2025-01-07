@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -21,6 +24,7 @@ import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.helpers.GoogleDriveServiceHelper;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.controllers.UserController;
@@ -32,10 +36,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.FileContent;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
+
 import android.media.MediaMetadataRetriever;
 import android.media.MediaMuxer;
 import android.media.MediaExtractor;
@@ -63,9 +69,9 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private List<Video> videoDataList = new ArrayList<>();
 
-    private ImageView profileIcon, messagingIcon;
+    private ImageView searchIcon, profileIcon, messagingIcon;
 
-    User currentUser ;
+    User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +93,7 @@ public class VideoPageActivity extends AppCompatActivity {
         // Set up ViewPager2
         viewPager2 = findViewById(R.id.viewPager);
         viewPager2.setOrientation(ViewPager2.ORIENTATION_VERTICAL); // Enable vertical scrolling
-        // add playback controll
+        // add playback control
         handlePlaybackOnScroll();
 
         // Set click listener for upload icon
@@ -100,12 +106,12 @@ public class VideoPageActivity extends AppCompatActivity {
         onProfileImageClicked();
 
         onNotificationClicked();
+        onSearchClicked();
     }
 
     private RecyclerView getRecyclerViewFromViewPager2(ViewPager2 viewPager2) {
         return (RecyclerView) viewPager2.getChildAt(0);
     }
-
 
     private void handlePlaybackOnScroll() {
         RecyclerView recyclerView = getRecyclerViewFromViewPager2(viewPager2);
@@ -146,8 +152,6 @@ public class VideoPageActivity extends AppCompatActivity {
         });
     }
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -178,7 +182,6 @@ public class VideoPageActivity extends AppCompatActivity {
         }
     }
 
-
     private void onProfileImageClicked() {
         profileIcon = findViewById(R.id.profileIcon);
 
@@ -194,45 +197,9 @@ public class VideoPageActivity extends AppCompatActivity {
 
     // Step 1: Start Google Sign-In
     private void signInToGoogleDrive() {
-        startActivityForResult(googleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+        openFilePicker(); // Directly call the file picker
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_SIGN_IN && resultCode == RESULT_OK) {
-            handleSignInResult(data);
-        } else if (requestCode == PICK_VIDEO_REQUEST && resultCode == RESULT_OK && data != null) {
-            videoUri = data.getData();
-            if (videoUri != null) {
-                Toast.makeText(this, "Uploading video...", Toast.LENGTH_SHORT).show();
-                uploadVideoToGoogleDrive();
-            }
-        }
-    }
-
-    // Step 2: Handle Google Sign-In result
-    private void handleSignInResult(Intent data) {
-        try {
-            GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
-            GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(
-                    this, Collections.singleton("https://www.googleapis.com/auth/drive.file"));
-            credential.setSelectedAccount(account.getAccount());
-
-            googleDriveService = new Drive.Builder(
-                    new com.google.api.client.http.javanet.NetHttpTransport(),
-                    GsonFactory.getDefaultInstance(),
-                    credential)
-                    .setApplicationName("Google Drive Upload")
-                    .build();
-
-            openFilePicker();
-        } catch (Exception e) {
-            Log.e("GoogleDrive", "Sign-in failed", e);
-            Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     // Step 3: Open File Picker to Select Video
     private void openFilePicker() {
@@ -244,49 +211,120 @@ public class VideoPageActivity extends AppCompatActivity {
 
     // Step 4: Upload Video to Google Drive
 
-    private void uploadVideoToGoogleDrive() {
+    private void uploadVideoToGoogleDrive(String videoDescription) {
         new Thread(() -> {
             try {
-                InputStream inputStream = getContentResolver().openInputStream(videoUri);
+                // Initialize the Drive service
+                Drive driveService = GoogleDriveServiceHelper.getDriveService(this);
 
-                // Retrieve video duration
+                // Check if video needs to be trimmed
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(this, videoUri);
                 String durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
                 long duration = Long.parseLong(durationStr);
 
-                // Check if video duration exceeds 1 minute
-                Uri videoToUploadUri = videoUri;
-                if (duration > 60000) { // 1 minute = 60000 ms
-                    videoToUploadUri = trimVideo(videoUri);
+                Uri uploadUri = videoUri;
+                if (duration > 60000) { // Trim video if duration > 1 minute
+                    uploadUri = trimVideo(videoUri); // Call the trimming logic
                 }
 
-                File metadata = new File(); // Google Drive File object
-                metadata.setName("uploaded_video.mp4");
+                // Prepare the video file for upload
+                java.io.File videoFile = new java.io.File(getPathFromUri(uploadUri));
+                String folderId = "1iyMdEMAvwpgR6WrqpVPkYnjEa3M7utcG"; // Target Google Drive folder ID
 
-                com.google.api.client.http.InputStreamContent mediaContent =
-                        new com.google.api.client.http.InputStreamContent("video/mp4", getContentResolver().openInputStream(videoToUploadUri));
+                // Upload the file
+                String fileLink = GoogleDriveServiceHelper.uploadFile(videoFile, folderId);
 
-                File uploadedFile = googleDriveService.files().create(metadata, mediaContent)
-                        .setFields("id, webViewLink")
-                        .execute();
-
-                String fileId = uploadedFile.getId();
-                String fileLink = "https://drive.google.com/uc?id=" + fileId + "&export=download";
-                makeFilePublic(fileId);
-
-                runOnUiThread(() -> {
-                    uploadVideoToFirebase(fileLink);
-                    Toast.makeText(this, "Upload Successful! Public Link: " + fileLink, Toast.LENGTH_LONG).show();
+                if (fileLink != null) {
                     Log.d("GoogleDrive", "Public Link: " + fileLink);
-                });
 
+                    // Notify the user
+                    runOnUiThread(() -> Toast.makeText(this, "Upload Successful! Public Link: " + fileLink, Toast.LENGTH_LONG).show());
+
+                    // Optionally, upload the video description and link to Firebase
+                    uploadVideoToFirebase(fileLink, videoDescription);
+                } else {
+                    runOnUiThread(() -> Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show());
+                }
             } catch (Exception e) {
                 Log.e("GoogleDrive", "Error uploading file", e);
                 runOnUiThread(() -> Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_VIDEO_REQUEST && resultCode == RESULT_OK && data != null) {
+            videoUri = data.getData(); // Retrieve the selected video URI
+            if (videoUri != null) {
+                showVideoDetailsDialog();
+            } else {
+                Toast.makeText(this, "No video selected", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    private void showVideoDetailsDialog() {
+        // Inflate the dialog layout
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_video_details, null);
+
+        // Find views in the dialog
+        TextView tvFileName = dialogView.findViewById(R.id.tvFileName);
+        EditText etVideoDescription = dialogView.findViewById(R.id.etVideoDescription);
+        Button btnUpload = dialogView.findViewById(R.id.btnUpload);
+
+        // Get the file name from the URI
+        String fileName = getFileNameFromUri(videoUri);
+        tvFileName.setText(fileName);
+
+        // Create and show the dialog
+        android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+        dialog.show();
+
+        // Set button click listener
+        btnUpload.setOnClickListener(v -> {
+            String videoDescription = etVideoDescription.getText().toString().trim();
+
+            if (videoDescription.isEmpty()) {
+                Toast.makeText(this, "Please enter a description", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Pass the description to the upload method
+            uploadVideoToGoogleDrive(videoDescription);
+
+            // Dismiss the dialog
+            dialog.dismiss();
+        });
+    }
+
+    // Helper method to get file name from URI
+    private String getFileNameFromUri(Uri uri) {
+        String[] projection = {MediaStore.MediaColumns.DISPLAY_NAME};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+
+        if (cursor != null) {
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME);
+            if (cursor.moveToFirst()) {
+                String fileName = cursor.getString(columnIndex);
+                cursor.close();
+                return fileName;
+            }
+            cursor.close();
+        }
+        return "Unknown File";
+    }
+
+
 
     private Uri trimVideo(Uri sourceUri) throws Exception {
         // Resolve the file path from Uri
@@ -323,7 +361,8 @@ public class VideoPageActivity extends AppCompatActivity {
 
         muxer.start();
         long startUs = 0; // Start at the beginning
-        long endUs = 120000000; // End at 1 minute (60000000 microseconds)
+        long endUs = 12000000; // End at 12 seconds (12,000,000 microseconds)
+
         extractor.seekTo(startUs, MediaExtractor.SEEK_TO_CLOSEST_SYNC);
 
         MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
@@ -357,8 +396,6 @@ public class VideoPageActivity extends AppCompatActivity {
         return Uri.fromFile(outputFile); // Return trimmed video URI
     }
 
-
-
     private String getPathFromUri(Uri uri) {
         String[] projection = {MediaStore.Video.Media.DATA};
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
@@ -378,7 +415,6 @@ public class VideoPageActivity extends AppCompatActivity {
         // Fallback: Copy the content to a temporary file
         return copyUriToTempFile(uri).getAbsolutePath();
     }
-
 
     private java.io.File copyUriToTempFile(Uri uri) {
         try {
@@ -401,12 +437,8 @@ public class VideoPageActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
-    private void uploadVideoToFirebase(String link) {
-        Video vid = new Video(UidGenerator.generateUID(), "hello", link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
+    private void uploadVideoToFirebase(String link, String description) {
+        Video vid = new Video(UidGenerator.generateUID(), description, link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
         userController.uploadVideo(vid, new DataFetchCallback<Void>() {
             @Override
             public void onSuccess(List<Void> data) {
@@ -415,26 +447,11 @@ public class VideoPageActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Exception e) {
-
+                Log.e("Firebase", "Failed to upload video metadata", e);
             }
         });
     }
 
-    private void makeFilePublic(String fileId) {
-        new Thread(() -> {
-            try {
-                Permission permission = new Permission();
-                permission.setType("anyone");
-                permission.setRole("reader");
-                googleDriveService.permissions().create(fileId, permission).execute();
-
-                runOnUiThread(() -> Toast.makeText(this, "File is now public!", Toast.LENGTH_SHORT).show());
-            } catch (Exception e) {
-                runOnUiThread(() -> Toast.makeText(this, "Failed to make file public", Toast.LENGTH_SHORT).show());
-            }
-        }).start();
-        fetchAllVideo();
-    }
 
     @Override
     protected void onDestroy() {
@@ -491,6 +508,14 @@ public class VideoPageActivity extends AppCompatActivity {
                 Intent intent = new Intent(VideoPageActivity.this, NotificationActivity.class);
                 startActivity(intent);
             }
+        });
+    }
+
+    private void onSearchClicked() {
+        searchIcon = findViewById(R.id.searchIcon);
+        searchIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(VideoPageActivity.this, SearchActivity.class);
+            startActivity(intent);
         });
     }
 }

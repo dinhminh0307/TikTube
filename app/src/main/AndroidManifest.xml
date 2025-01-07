@@ -39,7 +39,7 @@
             android:name=".frontend.pages.VideoPageActivity"
             android:exported="false" />
         <activity
-            android:name=".frontend.search.SearchActivity"
+            android:name=".frontend.pages.SearchActivity"
             android:exported="false" />
         <activity
             android:name=".frontend.pages.ProfileActivity"

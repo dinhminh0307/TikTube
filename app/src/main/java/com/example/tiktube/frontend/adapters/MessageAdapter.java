@@ -183,7 +183,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         Message message = messages.get(position);
 
         // Set profile image (use Glide or Picasso for loading images)
-        holder.profileImage.setImageResource(R.drawable.ic_account);
+        holder.profileImage.setImageResource(R.drawable.ic_account_circle_foreground);
 
         // Set sender name
         getSenderName(message, holder);

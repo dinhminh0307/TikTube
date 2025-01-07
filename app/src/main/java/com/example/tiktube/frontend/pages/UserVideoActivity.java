@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.tiktube.R;
@@ -63,7 +64,7 @@ public class UserVideoActivity extends AppCompatActivity {
 
     private List<Video> videoDataList = new ArrayList<>();
 
-    private ImageView profileIcon, messagingIcon;
+    private ImageView searchIcon, profileIcon, messagingIcon;
 
     User currentUser;
 
@@ -87,6 +88,8 @@ public class UserVideoActivity extends AppCompatActivity {
         // Set up ViewPager2
         viewPager2 = findViewById(R.id.viewPager);
         viewPager2.setOrientation(ViewPager2.ORIENTATION_VERTICAL); // Enable vertical scrolling
+        // add playback control
+        handlePlaybackOnScroll();
 
         // Set click listener for upload icon
         ImageView uploadIcon = findViewById(R.id.uploadIcon);
@@ -98,6 +101,50 @@ public class UserVideoActivity extends AppCompatActivity {
         onProfileImageClicked();
 
         onNotificationClicked();
+        onSearchClicked();
+    }
+
+    private RecyclerView getRecyclerViewFromViewPager2(ViewPager2 viewPager2) {
+        return (RecyclerView) viewPager2.getChildAt(0);
+    }
+
+    private void handlePlaybackOnScroll() {
+        RecyclerView recyclerView = getRecyclerViewFromViewPager2(viewPager2);
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+
+                // Get the current ViewHolder
+                RecyclerView.ViewHolder currentHolder = recyclerView.findViewHolderForAdapterPosition(position);
+                if (currentHolder instanceof VideoPagerAdapter.VideoViewHolder) {
+                    VideoPagerAdapter.VideoViewHolder videoHolder = (VideoPagerAdapter.VideoViewHolder) currentHolder;
+                    if (videoHolder.videoView != null) {
+                        videoHolder.videoView.start(); // Play the current video
+                    }
+                }
+
+                // Pause all other videos
+                for (int i = 0; i < videoPagerAdapter.getItemCount(); i++) {
+                    if (i != position) {
+                        RecyclerView.ViewHolder otherHolder = recyclerView.findViewHolderForAdapterPosition(i);
+                        if (otherHolder instanceof VideoPagerAdapter.VideoViewHolder) {
+                            VideoPagerAdapter.VideoViewHolder videoHolder = (VideoPagerAdapter.VideoViewHolder) otherHolder;
+                            if (videoHolder.videoView != null && videoHolder.videoView.isPlaying()) {
+                                videoHolder.videoView.pause();
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                // Optional: Additional behavior during scroll state changes
+            }
+        });
     }
 
     @Override
@@ -129,7 +176,6 @@ public class UserVideoActivity extends AppCompatActivity {
             videoPagerAdapter.notifyItemChanged(position);
         }
     }
-
 
     private void onProfileImageClicked() {
         profileIcon = findViewById(R.id.profileIcon);
@@ -302,7 +348,6 @@ public class UserVideoActivity extends AppCompatActivity {
         return Uri.fromFile(outputFile); // Return trimmed video URI
     }
 
-
     private String getPathFromUri(Uri uri) {
         String[] projection = {MediaStore.Video.Media.DATA};
         Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
@@ -322,7 +367,6 @@ public class UserVideoActivity extends AppCompatActivity {
         // Fallback: Copy the content to a temporary file
         return copyUriToTempFile(uri).getAbsolutePath();
     }
-
 
     private java.io.File copyUriToTempFile(Uri uri) {
         try {
@@ -344,7 +388,6 @@ public class UserVideoActivity extends AppCompatActivity {
             throw new RuntimeException("Failed to copy URI to temporary file: " + e.getMessage(), e);
         }
     }
-
 
     private void uploadVideoToFirebase(String link) {
         Video vid = new Video(UidGenerator.generateUID(), "hello", link, loginController.getUserUID(), "12h", new ArrayList<>(), new ArrayList<>());
@@ -439,6 +482,14 @@ public class UserVideoActivity extends AppCompatActivity {
                 Intent intent = new Intent(UserVideoActivity.this, NotificationActivity.class);
                 startActivity(intent);
             }
+        });
+    }
+
+    private void onSearchClicked() {
+        searchIcon = findViewById(R.id.searchIcon);
+        searchIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(UserVideoActivity.this, SearchActivity.class);
+            startActivity(intent);
         });
     }
 }
