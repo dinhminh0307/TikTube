@@ -1,6 +1,8 @@
 package com.example.tiktube.backend.helpers;
 
 import android.content.Context;
+import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 import com.example.tiktube.R;
@@ -10,7 +12,9 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.Permission;
 
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Collections;
+import android.webkit.MimeTypeMap;
 
 public class GoogleDriveServiceHelper {
 
@@ -82,4 +86,51 @@ public class GoogleDriveServiceHelper {
             return null;
         }
     }
+
+    public static String uploadImageFile(Context context, java.io.File imageFile, String folderId) {
+        try {
+            // Metadata for the file
+            File metadata = new File();
+            metadata.setName(imageFile.getName());
+            metadata.setParents(Collections.singletonList(folderId));
+
+            // File content
+            com.google.api.client.http.FileContent mediaContent = new com.google.api.client.http.FileContent("image/jpeg", imageFile);
+
+            // Upload the file
+            File uploadedFile = driveService.files().create(metadata, mediaContent)
+                    .setFields("id, webViewLink")
+                    .execute();
+
+            // Set file permissions
+            Permission permission = new Permission()
+                    .setType("anyone")
+                    .setRole("reader");
+            driveService.permissions().create(uploadedFile.getId(), permission).execute();
+
+            String driveUrl = "https://drive.google.com/uc?id=" + uploadedFile.getId() + "&export=download";
+            Log.d("GoogleDriveHelper", "Drive URL: " + driveUrl);
+
+            return driveUrl;
+        } catch (Exception e) {
+            Log.e("GoogleDriveHelper", "Error uploading image file to Google Drive", e);
+            return null;
+        }
+    }
+
+
+    private static String getMimeType(Context context, java.io.File file) {
+        Uri fileUri = Uri.fromFile(file);
+        String mimeType = context.getContentResolver().getType(fileUri);
+
+        if (mimeType == null) {
+            String extension = MimeTypeMap.getFileExtensionFromUrl(fileUri.toString());
+            if (extension != null) {
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            }
+        }
+        return mimeType;
+    }
+
+
 }
