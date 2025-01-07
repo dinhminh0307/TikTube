@@ -308,6 +308,9 @@ public class UserService {
         if (updatedUser.getFacebook() != null && !updatedUser.getFacebook().isEmpty()) {
             firebaseHelper.updateField(updatedUser.getUid(), "users", "facebook", updatedUser.getFacebook());
         }
+        if (updatedUser.getImageUrl() != null && !updatedUser.getImageUrl().isEmpty()) {
+            firebaseHelper.updateField(updatedUser.getUid(), "users", "imageUrl", updatedUser.getImageUrl());
+        }
 
         callback.onSuccess(Collections.singletonList(updatedUser));
     }

@@ -17,6 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
@@ -25,6 +28,7 @@ import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.controllers.NotificationController;
 import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.backend.helpers.ImageBuilder;
 import com.example.tiktube.backend.models.Notification;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
@@ -37,7 +41,9 @@ import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
     TextView nameID, followingNumber, followerNumber, totalLike, bioText;
-    ImageView menuIcon, likeVideos, userVideos;
+    ImageView menuIcon, likeVideos, userVideos, profilePicture;
+
+    private ImageBuilder imageBuilder;
 
     Button editProfileBtn, messageId;
     private VideoGridAdapter videoGridAdapter;
@@ -81,10 +87,12 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         messageId = findViewById(R.id.messageId);
         likeVideos = findViewById(R.id.likeVideos);
         userVideos = findViewById(R.id.userVideos);
+        profilePicture = findViewById(R.id.profilePicture);
 
         loginController = new LoginController();
         userController = new UserController();
         notificationController = new NotificationController();
+        imageBuilder = new ImageBuilder(ProfileActivity.this);
 
         user = getIntent().getParcelableExtra("user");
         if (user == null) {
@@ -94,15 +102,28 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             return;
         }
 
-
-        // set up edit button to check the current user
+        // Set up edit button to check the current user
         checkCurrentUser();
 
         nameID.setText(user.getName());
         bioText.setText(user.getBio());
 
+        // Load the profile picture from imageUrl
+        imageProfileLoaded();
+
+
         onMenuIconClicked();
     }
+
+    private void imageProfileLoaded() {
+        if(user.getImageUrl() != null && !user.getImageUrl().isEmpty()) {
+            imageBuilder.loadImage(profilePicture, user);
+        } else {
+            // Set a default image if no URL is available
+            profilePicture.setImageResource(R.drawable.ic_account_circle_foreground);
+        }
+    }
+
 
     private void onMessageButtonClicked() {
         messageId.setOnClickListener(new View.OnClickListener() {
