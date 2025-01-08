@@ -92,27 +92,35 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 if (!query.isEmpty()) {
                     Log.d("Search Activity", "Searched keyword: " + query);
+
+                    // Clear old results and reset the adapter
+                    searchedVideo.clear();
+                    searchedUsers.clear();
+
+                    // Temporarily detach adapters
+                    videoResults.setAdapter(null);
+                    userResults.setAdapter(null);
+
                     searchController.search(query)
                             .thenAccept(res -> runOnUiThread(() -> {
                                 if (res.isEmpty()) {
                                     Toast.makeText(SearchActivity.this, "No results found for: " + query, Toast.LENGTH_SHORT).show();
                                 } else {
-//                                    Log.d("before_clear", searchedVideo.size() + "");
-                                    searchedVideo.clear();
-                                    searchedUsers.clear();
-//                                    Log.d("after_clear", searchedVideo.size() + "");
-                                    // Iterate over the results and log or display them
+                                    // Process and add new results
                                     for (Object o : res) {
                                         if (o instanceof Video) {
-                                            searchedVideo.add(((Video) o));
+                                            searchedVideo.add((Video) o);
                                             Log.d("search_results", "Searched video: " + ((Video) o).getTitle());
-                                            searchedVideosAdapter.notifyDataSetChanged();
-                                            // Optionally, display the video titles in the UI
                                         } else if (o instanceof User) {
-                                            searchedUsers.add(((User) o));
-                                            searchedUsersAdapter.notifyDataSetChanged();
+                                            searchedUsers.add((User) o);
                                         }
                                     }
+
+                                    // Reattach and notify adapters after processing all results
+                                    videoResults.setAdapter(searchedVideosAdapter);
+                                    userResults.setAdapter(searchedUsersAdapter);
+                                    searchedVideosAdapter.notifyDataSetChanged();
+                                    searchedUsersAdapter.notifyDataSetChanged();
                                 }
                             }))
                             .exceptionally(e -> {
@@ -123,9 +131,14 @@ public class SearchActivity extends AppCompatActivity {
                                 e.printStackTrace();
                                 return null;
                             });
-                    pastSearchesList.remove(query);
+
+                    // Update past searches
+                    if (pastSearchesList.contains(query)) {
+                        pastSearchesList.remove(query); // Avoid duplicate entries
+                    }
                     pastSearchesList.add(0, query);
                     pastSearchesAdapter.notifyDataSetChanged();
+
                     searchBar.clearFocus();
                 } else {
                     Toast.makeText(SearchActivity.this, "Please enter a search term", Toast.LENGTH_SHORT).show();
@@ -138,6 +151,8 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
 
         searchBar.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
