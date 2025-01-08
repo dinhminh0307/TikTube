@@ -65,6 +65,21 @@ public class FirebaseHelper {
                 });
     }
 
+    public void deleteUser(String userId, DataFetchCallback<Void> callback) {
+        firestore.collection("users")
+                .document(userId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("FirebaseHelper", "User deleted successfully: " + userId);
+                    callback.onSuccess(Collections.emptyList());
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FirebaseHelper", "Failed to delete user: " + userId, e);
+                    callback.onFailure(e);
+                });
+    }
+
+
     public <T> void findAll(String collection, Class<T> type, DataFetchCallback<T> callback) {
         firestore.collection(collection)
                 .get()
