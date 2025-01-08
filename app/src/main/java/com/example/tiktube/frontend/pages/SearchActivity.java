@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -156,8 +155,6 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-
-
         searchBar.setOnQueryTextFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 searchSuggestions.setVisibility(View.VISIBLE);
@@ -185,9 +182,15 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         videoResults.setOnItemClickListener((parent, view, position, id) -> {
-            Intent intent = new Intent(SearchActivity.this, UserVideoActivity.class);
+            Intent intent = new Intent(SearchActivity.this, SingleVideoActivity.class);
             intent.putExtra("video", searchedVideo.get(position));
             intent.putExtra("user", currentUser);
+            startActivity(intent);
+        });
+
+        userResults.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(SearchActivity.this, ProfileActivity.class);
+            intent.putExtra("user", searchedUsers.get(position));
             startActivity(intent);
         });
     }

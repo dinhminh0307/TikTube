@@ -1,21 +1,11 @@
 package com.example.tiktube.frontend.pages;
 
-import android.content.Intent;
-import android.database.Cursor;
-import android.media.MediaCodec;
-import android.media.MediaFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -24,35 +14,17 @@ import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
-import com.example.tiktube.backend.helpers.GoogleDriveServiceHelper;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.controllers.UserController;
-import com.example.tiktube.backend.utils.UidGenerator;
 import com.example.tiktube.frontend.adapters.VideoPagerAdapter;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.FileContent;
-import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.Permission;
 
-import android.media.MediaMetadataRetriever;
-import android.media.MediaMuxer;
-import android.media.MediaExtractor;
-
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class UserVideoActivity extends AppCompatActivity {
+public class SingleVideoActivity extends AppCompatActivity {
 
     private static final int PICK_VIDEO_REQUEST = 1;
     private static final int REQUEST_CODE_SIGN_IN = 2;
@@ -149,12 +121,12 @@ public class UserVideoActivity extends AppCompatActivity {
             @Override
             public void onSuccess(User user) {
                 currentUser.setUser(user); // Update the current user object
-                Log.d("UserVideoActivity", "Current user updated: " + currentUser.getName());
+                Log.d("SingleVideoActivity", "Current user updated: " + currentUser.getName());
             }
 
             @Override
             public void onFailure(Exception e) {
-                Log.e("UserVideoActivity", "Failed to fetch current user: " + e.getMessage());
+                Log.e("SingleVideoActivity", "Failed to fetch current user: " + e.getMessage());
             }
         });
     }
@@ -173,7 +145,7 @@ public class UserVideoActivity extends AppCompatActivity {
         viewPager2 = null;
         videoPagerAdapter = null;
         googleDriveService = null;
-        Log.d("UserVideoActivity", "Activity destroyed");
+        Log.d("SingleVideoActivity", "Activity destroyed");
     }
 
     // Fetch all videos and set up adapter
@@ -189,14 +161,14 @@ public class UserVideoActivity extends AppCompatActivity {
 
                             // Set up adapter
                             if (videoPagerAdapter == null) {
-                                videoPagerAdapter = new VideoPagerAdapter(UserVideoActivity.this, videoDataList);
+                                videoPagerAdapter = new VideoPagerAdapter(SingleVideoActivity.this, videoDataList);
                                 viewPager2.setAdapter(videoPagerAdapter);
                             } else {
                                 videoPagerAdapter.notifyDataSetChanged();
                             }
                         } else {
-                            Log.d("UserVideoActivity", "No videos found");
-                            Toast.makeText(UserVideoActivity.this, "No videos available", Toast.LENGTH_SHORT).show();
+                            Log.d("SingleVideoActivity", "No videos found");
+                            Toast.makeText(SingleVideoActivity.this, "No videos available", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -206,8 +178,8 @@ public class UserVideoActivity extends AppCompatActivity {
             public void onFailure(Exception e) {
                 runOnUiThread(() -> {
                     if (!isFinishing() && !isDestroyed()) {
-                        Log.d("UserVideoActivity", "Failed to fetch videos: " + e.getMessage());
-                        Toast.makeText(UserVideoActivity.this, "Failed to load videos", Toast.LENGTH_SHORT).show();
+                        Log.d("SingleVideoActivity", "Failed to fetch videos: " + e.getMessage());
+                        Toast.makeText(SingleVideoActivity.this, "Failed to load videos", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
