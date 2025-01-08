@@ -1,6 +1,9 @@
 package com.example.tiktube.frontend.pages;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,12 +24,16 @@ public class ShopActivity extends AppCompatActivity {
     private ProductAdapter productAdapter;
     private List<Product> productList = new ArrayList<>();
 
+    private ImageView cartIcon;
+
     private ProductController productController =  new ProductController();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
+
+        initComponent();
 
         // Initialize RecyclerView
         productRecyclerView = findViewById(R.id.productRecyclerView);
@@ -40,7 +47,21 @@ public class ShopActivity extends AppCompatActivity {
         loadProducts();
 
         // Set adapter
+        onCartIconClicked();
+    }
 
+    private void initComponent() {
+        cartIcon = findViewById(R.id.cartIcon);
+    }
+
+    private void onCartIconClicked() {
+        cartIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ShopActivity.this, CartActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void loadProducts() {
