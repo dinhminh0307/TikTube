@@ -515,6 +515,7 @@ public class VideoPageActivity extends AppCompatActivity {
         searchIcon = findViewById(R.id.searchIcon);
         searchIcon.setOnClickListener(v -> {
             Intent intent = new Intent(VideoPageActivity.this, SearchActivity.class);
+            intent.putExtra("user", currentUser);
             startActivity(intent);
         });
     }

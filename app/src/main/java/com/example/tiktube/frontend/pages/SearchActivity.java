@@ -1,8 +1,10 @@
 package com.example.tiktube.frontend.pages;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -28,6 +30,7 @@ import java.util.List;
 public class SearchActivity extends AppCompatActivity {
 
     private SearchController searchController;
+    User currentUser;
 
     TextView btnBack, txtSuggestions, btnRefresh, searchBtnVideos, searchBtnUsers;
     SearchView searchBar;
@@ -47,6 +50,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        currentUser = getIntent().getParcelableExtra("user");
         initComponent();
 
         ArrayList<String> pastSearchesList = new ArrayList<>();
@@ -163,6 +167,13 @@ public class SearchActivity extends AppCompatActivity {
             searchBtnUsers.setAlpha(1);
             videoResults.setVisibility(View.GONE);
             userResults.setVisibility(View.VISIBLE);
+        });
+
+        videoResults.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(SearchActivity.this, UserVideoActivity.class);
+            intent.putExtra("video", searchedVideo.get(position));
+            intent.putExtra("user", currentUser);
+            startActivity(intent);
         });
     }
 
