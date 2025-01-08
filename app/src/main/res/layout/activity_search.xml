@@ -143,17 +143,15 @@
             android:horizontalSpacing="10dp"
             android:numColumns="2"
             android:verticalSpacing="10dp"
-            android:visibility="visible"
-            tools:visibility="gone" />
+            android:visibility="visible" />
 
         <ListView
             android:id="@+id/userResults"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:visibility="gone" />
     </LinearLayout>
 
 </LinearLayout>
