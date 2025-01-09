@@ -22,7 +22,7 @@
             android:name=".frontend.pages.ShopActivity"
             android:exported="false" />
         <activity
-            android:name=".frontend.pages.UserVideoActivity"
+            android:name=".frontend.pages.SingleVideoActivity"
             android:exported="false" />
         <activity
             android:name=".frontend.pages.MessagePageActivity"
