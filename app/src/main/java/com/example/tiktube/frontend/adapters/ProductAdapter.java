@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.controllers.CartController;
+import com.example.tiktube.backend.controllers.ProductController;
 import com.example.tiktube.backend.models.Cart;
 import com.example.tiktube.backend.models.Product;
 import com.example.tiktube.backend.models.User;
@@ -32,11 +33,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     private User currentUser;
 
+    private ProductController productController;
+
     public ProductAdapter(Context context, List<Product> productList, User user) {
         this.context = context;
         this.productList = productList;
         this.cartController = new CartController();
         this.currentUser = user;
+        productController = new ProductController();
     }
 
     @NonNull
@@ -142,13 +146,34 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             return;
         }
 
-        Cart newCart = createCart(userQuantity, product);
-        // decrease the quantity in the product
+        // Decrease the product quantity in the products collection
+        int newQuantity = product.getQuantity() - userQuantity;
+        product.setQuantity(newQuantity);
+
+        // Update the quantity on Firebase for the product
+        productController.productUpdateQuantity(product)
+                .thenAccept(updatedProduct -> {
+                    // Update the local product list and notify adapter
+                    int position = productList.indexOf(product);
+                    if (position >= 0) {
+                        productList.set(position, updatedProduct);
+                        notifyProductChange(position);
+                    }
+                })
+                .exceptionally(e -> {
+                    showToast("Failed to update product quantity on server");
+                    e.printStackTrace();
+                    return null;
+                });
+
+        // Create a new Cart object and add a copy of the product with the user's quantity
+        Product cartProduct = createCartProductCopy(product, userQuantity);
+        Cart newCart = createCart(userQuantity, cartProduct);
 
         cartController.getCurrentUserCart(currentUser)
                 .thenAccept(existingCart -> {
                     if (existingCart != null) {
-                        // Update existing cart
+                        // Update the existing cart
                         mergeCartProducts(existingCart, newCart);
                         cartController.updateCart(existingCart)
                                 .thenAccept(aVoid -> showToast("Cart updated successfully"))
@@ -158,7 +183,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                                     return null;
                                 });
                     } else {
-                        // Save new cart
+                        // Save the new cart to Firebase
                         saveCartToFirebase(newCart);
                     }
                 })
@@ -168,6 +193,25 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     return null;
                 });
     }
+
+    private Product createCartProductCopy(Product product, int userQuantity) {
+        Product cartProduct = new Product();
+        cartProduct.setUid(product.getUid());
+        cartProduct.setName(product.getName());
+        cartProduct.setPrice(product.getPrice());
+        cartProduct.setImageUrl(product.getImageUrl());
+        cartProduct.setQuantity(userQuantity); // Set the quantity for the cart
+        cartProduct.setReviews(new ArrayList<>(product.getReviews())); // Copy reviews if needed
+        return cartProduct;
+    }
+
+
+
+    private void notifyProductChange(int position) {
+        // Notify the adapter about the item change to refresh the RecyclerView
+        notifyItemChanged(position);
+    }
+
 
     private void mergeCartProducts(Cart existingCart, Cart newCart) {
         List<Product> updatedProducts = new ArrayList<>(existingCart.getCartProducts());
