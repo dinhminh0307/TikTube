@@ -1,13 +1,20 @@
 package com.example.tiktube.frontend.pages;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.callbacks.GetUserCallback;
+import com.example.tiktube.backend.controllers.LoginController;
+import com.example.tiktube.backend.controllers.ProductController;
 import com.example.tiktube.backend.models.Product;
+import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.adapters.GridSpacingItemDecoration;
 import com.example.tiktube.frontend.adapters.ProductAdapter;
 
@@ -18,12 +25,22 @@ public class ShopActivity extends AppCompatActivity {
 
     private RecyclerView productRecyclerView;
     private ProductAdapter productAdapter;
-    private List<Product> productList;
+    private List<Product> productList = new ArrayList<>();
+
+    private LoginController loginController;
+
+    private ImageView cartIcon;
+
+    private ProductController productController =  new ProductController();
+
+    private User currentUser = new User();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
+
+        initComponent();
 
         // Initialize RecyclerView
         productRecyclerView = findViewById(R.id.productRecyclerView);
@@ -37,18 +54,51 @@ public class ShopActivity extends AppCompatActivity {
         loadProducts();
 
         // Set adapter
-        productAdapter = new ProductAdapter(this, productList);
-        productRecyclerView.setAdapter(productAdapter);
+        onCartIconClicked();
+    }
+
+    private void initComponent() {
+        cartIcon = findViewById(R.id.cartIcon);
+        loginController = new LoginController();
+
+        setCurrentUser();
+    }
+
+    private void onCartIconClicked() {
+        cartIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ShopActivity.this, CartActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void loadProducts() {
-        productList = new ArrayList<>();
-
-        // Example products (replace with dynamic data)
-        productList.add(new Product("1", "Product 1", 100.0, "https://via.placeholder.com/150", 10, new ArrayList<>()));
-        productList.add(new Product("2", "Product 2", 200.0, "https://via.placeholder.com/150", 5, new ArrayList<>()));
-        productList.add(new Product("3", "Product 3", 300.0, "https://via.placeholder.com/150", 8, new ArrayList<>()));
-        productList.add(new Product("4", "Product 4", 400.0, "https://via.placeholder.com/150", 12, new ArrayList<>()));
-        productList.add(new Product("5", "Product 5", 500.0, "https://via.placeholder.com/150", 7, new ArrayList<>()));
+        productController.getAllProducts()
+                .thenAccept(p -> {
+                    productList.addAll(p);
+                    productAdapter = new ProductAdapter(this, productList, currentUser);
+                    productRecyclerView.setAdapter(productAdapter);
+                })
+                .exceptionally(e -> {
+                    e.printStackTrace();
+                    return null;
+                });
     }
+
+    private void setCurrentUser() {
+        loginController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                currentUser.setUser(user);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
+    }
+
 }

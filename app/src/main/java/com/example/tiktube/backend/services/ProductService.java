@@ -35,4 +35,16 @@ public class ProductService {
         );
         return future;
     }
+
+    public CompletableFuture<Product> productUpdateQuantity(Product product) {
+        CompletableFuture<Product> future = new CompletableFuture<>();
+        firebaseHelper.updateField(
+                product.getUid(),
+                product_collection,
+                "quantity",
+                product.getQuantity()
+        );
+        future.complete(product);
+        return future;
+    }
 }
