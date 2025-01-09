@@ -24,4 +24,8 @@ public class CartController {
     public CompletableFuture<Void> updateCart(Cart cart) {
         return this.cartService.updateCart(cart);
     }
+
+    public  CompletableFuture<Void> updatePurchasedCart(Cart cart) {
+        return this.cartService.updatePurchasedCart(cart);
+    }
 }
