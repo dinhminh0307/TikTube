@@ -17,6 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
@@ -38,7 +41,7 @@ import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
     TextView nameID, followingNumber, followerNumber, totalLike, bioText;
-    ImageView menuIcon, likeVideos, userVideos, profilePicture, btnBack, homeIcon, searchIcon, uploadIcon, messagingIcon, profileIcon;
+    ImageView menuIcon, likeVideos, userVideos, profilePicture;
 
     private ImageBuilder imageBuilder;
 
@@ -85,12 +88,6 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         likeVideos = findViewById(R.id.likeVideos);
         userVideos = findViewById(R.id.userVideos);
         profilePicture = findViewById(R.id.profilePicture);
-        btnBack = findViewById(R.id.btnBack);
-        homeIcon = findViewById(R.id.homeIcon);
-        searchIcon = findViewById(R.id.searchIcon);
-//        uploadIcon = findViewById(R.id.uploadIcon);
-        messagingIcon = findViewById(R.id.messagingIcon);
-        profileIcon = findViewById(R.id.profileIcon);
 
         loginController = new LoginController();
         userController = new UserController();
@@ -114,15 +111,12 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         // Load the profile picture from imageUrl
         imageProfileLoaded();
 
+
         onMenuIconClicked();
-        onBackBtnClicked();
-        onHomeBtnClicked();
-        onSearchBtnClicked();
-        onMessageBtnClicked();
     }
 
     private void imageProfileLoaded() {
-        if (user.getImageUrl() != null && !user.getImageUrl().isEmpty()) {
+        if(user.getImageUrl() != null && !user.getImageUrl().isEmpty()) {
             imageBuilder.loadImage(profilePicture, user);
         } else {
             // Set a default image if no URL is available
@@ -132,10 +126,13 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
 
     private void onMessageButtonClicked() {
-        messageId.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, MessagePageActivity.class);
-            intent.putExtra("userID", user.getUid());
-            startActivity(intent);
+        messageId.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, MessagePageActivity.class);
+                intent.putExtra("userID", user.getUid());
+                startActivity(intent);
+            }
         });
     }
 
@@ -211,8 +208,11 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     }
 
     private void onLikeVideosClicked() {
-        likeVideos.setOnClickListener(v -> {
-            fetchLikedVideos();
+        likeVideos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchLikedVideos();
+            }
         });
     }
 
@@ -232,7 +232,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     @Override
     public void onVideoClick(Video video) {
         // Handle video click here
-        Intent intent = new Intent(ProfileActivity.this, SingleVideoActivity.class);
+        Intent intent = new Intent(ProfileActivity.this, UserVideoActivity.class);
         intent.putExtra("video", video); // Pass the video object to the new activity
         intent.putExtra("user", user);
         startActivity(intent);
@@ -275,7 +275,6 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             public void onSuccess(Enums.UserType user) {
                 switch (user) {
                     case CURRENT_USER:
-                        btnBack.setVisibility(View.GONE);
                         fetchCurrentUserData();
                         Log.d("Profile Activity", "Current User right?");
                         break;
@@ -334,20 +333,23 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
 
     private void onEditButtonClicked() {
-        editProfileBtn.setOnClickListener(v -> {
-            if (isCurrentUser == Enums.UserType.OTHER || isCurrentUser == Enums.UserType.FOLLOWER) {
-                // Toggle Follow/Unfollow action
-                if (editProfileBtn.getText().toString().equalsIgnoreCase("Follow")) {
-                    followUser();
-                } else if (editProfileBtn.getText().toString().equalsIgnoreCase("Unfollow")) {
-                    unfollowUser();
+        editProfileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isCurrentUser == Enums.UserType.OTHER || isCurrentUser == Enums.UserType.FOLLOWER) {
+                    // Toggle Follow/Unfollow action
+                    if (editProfileBtn.getText().toString().equalsIgnoreCase("Follow")) {
+                        followUser();
+                    } else if (editProfileBtn.getText().toString().equalsIgnoreCase("Unfollow")) {
+                        unfollowUser();
+                    }
+                } else if (isCurrentUser == Enums.UserType.CURRENT_USER) {
+                    editProfilePage();
+                    // Handle edit profile for the current user
+                    Log.d("EditButton", "Edit button clicked by the current user.");
+                    // You can navigate to an Edit Profile page here
+                    Toast.makeText(ProfileActivity.this, "Edit Profile clicked", Toast.LENGTH_SHORT).show();
                 }
-            } else if (isCurrentUser == Enums.UserType.CURRENT_USER) {
-                editProfilePage();
-                // Handle edit profile for the current user
-                Log.d("EditButton", "Edit button clicked by the current user.");
-                // You can navigate to an Edit Profile page here
-                Toast.makeText(ProfileActivity.this, "Edit Profile clicked", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -426,42 +428,4 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         editProfileLauncher.launch(editIntent);
     }
 
-    private void onBackBtnClicked() {
-        btnBack.setOnClickListener(v -> finish());
-    }
-
-    private void onHomeBtnClicked() {
-        homeIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, VideoPageActivity.class);
-            intent.putExtra("user", user);
-            startActivity(intent);
-            finish();
-        });
-    }
-
-    private void onSearchBtnClicked() {
-        searchIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, SearchActivity.class);
-            intent.putExtra("user", user);
-            startActivity(intent);
-        });
-    }
-
-    private void onMessageBtnClicked() {
-        messagingIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, NotificationActivity.class);
-            startActivity(intent);
-        });
-    }
-
-//    private void onProfileBtnClicked() {
-//        profileIcon.setOnClickListener(v -> {
-//            btnBack.setVisibility(View.GONE);
-//            fetchCurrentUserData();
-//            editProfileBtn.setText("Edit profile");
-//            isCurrentUser = Enums.UserType.CURRENT_USER;
-//            Log.d("Profile Activity", "Current User right?");
-//            setUpUserStat();
-//        });
-//    }
 }
