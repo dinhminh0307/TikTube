@@ -1,6 +1,7 @@
 package com.example.tiktube.frontend.pages;
 
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class CartActivity extends AppCompatActivity {
     private CartAdapter cartAdapter;
     private List<Product> cartProductList = new ArrayList<>();
     private TextView totalPriceTextView;
+    private ImageView backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,8 @@ public class CartActivity extends AppCompatActivity {
         // Initialize views
         cartRecyclerView = findViewById(R.id.cartRecyclerView);
         totalPriceTextView = findViewById(R.id.totalPriceTextView);
+        backButton = findViewById(R.id.backButton);
+        onBackButtonClicked();
 
         // Set up RecyclerView
         cartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -42,6 +46,10 @@ public class CartActivity extends AppCompatActivity {
 
         // Update total price
         updateTotalPrice();
+    }
+
+    private void onBackButtonClicked() {
+        backButton.setOnClickListener(v -> finish());
     }
 
     private void loadCartProducts() {

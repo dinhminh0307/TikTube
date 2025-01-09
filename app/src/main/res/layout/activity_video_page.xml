@@ -40,10 +40,10 @@
             android:id="@+id/shopIcon"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            android:src="@drawable/ic_shop"
-        android:contentDescription="Shop Icon"
-        android:layout_gravity="center_vertical" />
+            android:contentDescription="Shop Icon"
+            android:src="@drawable/ic_shopping_cart_foreground" />
     </LinearLayout>
 
     <!-- ViewPager2 for Scrollable Video Content -->
