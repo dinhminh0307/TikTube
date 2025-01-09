@@ -19,7 +19,13 @@
         android:theme="@style/Theme.TikTube"
         tools:targetApi="31">
         <activity
-            android:name=".frontend.pages.UserVideoActivity"
+            android:name=".frontend.pages.CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".frontend.pages.ShopActivity"
+            android:exported="false" />
+        <activity
+            android:name=".frontend.pages.SingleVideoActivity"
             android:exported="false" />
         <activity
             android:name=".frontend.pages.MessagePageActivity"

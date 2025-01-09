@@ -69,7 +69,7 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private List<Video> videoDataList = new ArrayList<>();
 
-    private ImageView searchIcon, profileIcon, messagingIcon;
+    private ImageView searchIcon, profileIcon, messagingIcon, shopIcon;
 
     User currentUser;
 
@@ -81,6 +81,7 @@ public class VideoPageActivity extends AppCompatActivity {
         loginController = new LoginController();
 
         currentUser = getIntent().getParcelableExtra("user");
+        shopIcon = findViewById(R.id.shopIcon);
 
         // Set up Google Sign-In options
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -107,6 +108,8 @@ public class VideoPageActivity extends AppCompatActivity {
 
         onNotificationClicked();
         onSearchClicked();
+
+        onShopIconClicked();
     }
 
     private RecyclerView getRecyclerViewFromViewPager2(ViewPager2 viewPager2) {
@@ -156,6 +159,16 @@ public class VideoPageActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         fetchCurrentUser();
+    }
+
+    private void onShopIconClicked() {
+        shopIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(VideoPageActivity.this, ShopActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     // Fetch the current user from the database or server
@@ -515,6 +528,7 @@ public class VideoPageActivity extends AppCompatActivity {
         searchIcon = findViewById(R.id.searchIcon);
         searchIcon.setOnClickListener(v -> {
             Intent intent = new Intent(VideoPageActivity.this, SearchActivity.class);
+            intent.putExtra("user", currentUser);
             startActivity(intent);
         });
     }
