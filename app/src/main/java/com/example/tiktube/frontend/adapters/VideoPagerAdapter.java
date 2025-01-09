@@ -19,9 +19,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
+import com.example.tiktube.backend.callbacks.CacheCallback;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.controllers.NotificationController;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import com.example.tiktube.backend.models.LikeVideo;
 import com.example.tiktube.backend.models.Notification;
@@ -45,6 +54,8 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
     private LoginController loginController;
 
     private NotificationController notificationController;
+
+    private final Map<Integer, VideoView> preloadedVideoViews = new HashMap<>();
     public VideoPagerAdapter(Context context, List<Video> videos) {
         this.context = context;
         this.videos = videos;
@@ -66,12 +77,24 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
         Video video = videos.get(position);
 
         // Set Video URI
-        Uri videoUri = Uri.parse(video.getVideoURL());
-        holder.videoView.setVideoURI(videoUri);
+        cacheVideoAsync(video, new CacheCallback() {
+            @Override
+            public void onCacheComplete(File cachedFile) {
+                holder.videoView.setVideoPath(cachedFile.getAbsolutePath());
+            }
+
+            @Override
+            public void onCacheError(Exception e) {
+                holder.videoView.setVideoURI(Uri.parse(video.getVideoURL()));
+            }
+        });
+
 
         // Start Video Playback
         holder.videoView.setOnPreparedListener(mp -> mp.start());
         holder.videoView.setOnCompletionListener(mp -> mp.start()); // Loop video
+
+        preloadAdjacentVideos(position);
 
         // Set Video Metadata
         userController.getUserById(video.getOwner(), new DataFetchCallback<User>() {
@@ -112,11 +135,82 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
         onVideoStatDisplay(holder, video);
     }
 
-    @Override
-    public void onViewDetachedFromWindow(@NonNull VideoViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-        holder.videoView.pause();
+    private void preloadAdjacentVideos(int currentPosition) {
+        int nextPosition = currentPosition + 1;
+        int prevPosition = currentPosition - 1;
+
+        if (nextPosition < videos.size()) {
+            preloadVideo(videos.get(nextPosition));
+        }
+        if (prevPosition >= 0) {
+            preloadVideo(videos.get(prevPosition));
+        }
     }
+
+    private void preloadVideo(Video video) {
+        new Thread(() -> {
+            try {
+                URL url = new URL(video.getVideoURL());
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(5000); // Timeout for quick retries
+                connection.connect();
+                connection.getInputStream().close(); // Preload video data
+            } catch (Exception e) {
+                Log.e("VideoPagerAdapter", "Error preloading video", e);
+            }
+        }).start();
+    }
+
+
+
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        for (VideoView videoView : preloadedVideoViews.values()) {
+            videoView.stopPlayback();
+        }
+        preloadedVideoViews.clear();
+    }
+
+
+
+    // cache videos temporarily and reduce redundant network usage
+    private void cacheVideoAsync(Video video, CacheCallback callback) {
+        new Thread(() -> {
+            try {
+                File cacheDir = context.getCacheDir();
+                File cacheFile = new File(cacheDir, "video_" + video.getUid() + ".mp4");
+                if (cacheFile.exists()) {
+                    callback.onCacheComplete(cacheFile); // Use existing cached file
+                    return;
+                }
+
+                URL url = new URL(video.getVideoURL());
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                InputStream inputStream = connection.getInputStream();
+                FileOutputStream outputStream = new FileOutputStream(cacheFile);
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                outputStream.close();
+                inputStream.close();
+
+                callback.onCacheComplete(cacheFile); // Notify completion
+            } catch (Exception e) {
+                Log.e("VideoPagerAdapter", "Error caching video", e);
+                callback.onCacheError(e);
+            }
+        }).start();
+    }
+
+
 
 
     private void onUserNameClicked(VideoViewHolder holder, Video video) {
@@ -210,7 +304,7 @@ public class VideoPagerAdapter extends RecyclerView.Adapter<VideoPagerAdapter.Vi
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
 
-        VideoView videoView;
+        public VideoView videoView;
         TextView username, description, displayLikeVideo, displayComment;
 
         ImageView comment, likeVideo;

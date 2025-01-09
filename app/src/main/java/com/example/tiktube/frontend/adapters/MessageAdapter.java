@@ -1,6 +1,8 @@
 package com.example.tiktube.frontend.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +13,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.backend.models.Message;
 import com.example.tiktube.backend.models.User;
+import com.example.tiktube.frontend.pages.MessagePageActivity;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +36,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     private LoginController loginController;
 
     private String currentUserId = "";
+
+    private Map<String, User> userCache = new HashMap<>();
 
     public MessageAdapter(Context context, List<Message> messages, String currentUserId) {
         this.context = context;
@@ -115,13 +122,68 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
     }
 
+    private void onMessageClicked(Message message, MessageViewHolder holder) {
+        holder.itemView.setOnClickListener(v -> {
+            String oppositeUserId = message.getSenderId().equals(currentUserId) ? message.getReceiverId() : message.getSenderId();
+
+            new Thread(() -> {
+                User oppositeUser = fetchOppositeUserSync(oppositeUserId);
+
+                new android.os.Handler(Looper.getMainLooper()).post(() -> { // Post to the main thread
+                    if (oppositeUser != null) {
+                        Intent intent = new Intent(context, MessagePageActivity.class);
+                        intent.putExtra("userID", oppositeUser.getUid());
+                        context.startActivity(intent);
+                    } else {
+                        Toast.makeText(context, "Failed to fetch user", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }).start();
+        });
+    }
+
+
+
+    private User fetchOppositeUserSync(String userId) {
+        if (userCache.containsKey(userId)) {
+            return userCache.get(userId); // Return from cache if available
+        }
+
+        CountDownLatch latch = new CountDownLatch(1);
+        final User[] fetchedUser = new User[1];
+
+        userController.getUserById(userId, new DataFetchCallback<User>() {
+            @Override
+            public void onSuccess(List<User> data) {
+                if (data != null && !data.isEmpty()) {
+                    fetchedUser[0] = data.get(0);
+                    userCache.put(userId, fetchedUser[0]); // Cache the fetched user
+                }
+                latch.countDown(); // Signal completion
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                latch.countDown(); // Signal completion even if it fails
+            }
+        });
+
+        try {
+            latch.await(); // Wait for completion
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return fetchedUser[0]; // Return fetched user or null
+    }
+
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
 
         // Set profile image (use Glide or Picasso for loading images)
-        holder.profileImage.setImageResource(R.drawable.ic_account);
+        holder.profileImage.setImageResource(R.drawable.ic_account_circle_foreground);
 
         // Set sender name
         getSenderName(message, holder);
@@ -133,9 +195,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         holder.timestamp.setText("1:01 PM");
 
         // Handle click events
-        holder.itemView.setOnClickListener(v -> {
-            Toast.makeText(context, "Clicked on " + message.getSenderId(), Toast.LENGTH_SHORT).show();
-        });
+        onMessageClicked(message, holder);
     }
 
 

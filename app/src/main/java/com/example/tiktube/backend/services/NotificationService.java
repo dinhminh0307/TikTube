@@ -5,7 +5,7 @@ import android.util.Log;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
-import com.example.tiktube.backend.firebase.FirebaseHelper;
+import com.example.tiktube.backend.helpers.FirebaseHelper;
 import com.example.tiktube.backend.models.Notification;
 import com.example.tiktube.backend.models.User;
 

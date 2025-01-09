@@ -25,6 +25,7 @@ import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.controllers.NotificationController;
 import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.backend.helpers.ImageBuilder;
 import com.example.tiktube.backend.models.Notification;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
@@ -37,7 +38,9 @@ import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
     TextView nameID, followingNumber, followerNumber, totalLike, bioText;
-    ImageView menuIcon;
+    ImageView menuIcon, likeVideos, userVideos, profilePicture, btnBack;
+
+    private ImageBuilder imageBuilder;
 
     Button editProfileBtn, messageId;
     private VideoGridAdapter videoGridAdapter;
@@ -64,8 +67,9 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         fetchUserVideo();
         onEditButtonClicked();
         onMessageButtonClicked();
-    }
 
+        onTabToggle();
+    }
 
 
     private void setUpComponent() {
@@ -78,10 +82,15 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         totalLike = findViewById(R.id.totalLike);
         bioText = findViewById(R.id.bioText);
         messageId = findViewById(R.id.messageId);
+        likeVideos = findViewById(R.id.likeVideos);
+        userVideos = findViewById(R.id.userVideos);
+        profilePicture = findViewById(R.id.profilePicture);
+        btnBack = findViewById(R.id.btnBack);
 
         loginController = new LoginController();
         userController = new UserController();
         notificationController = new NotificationController();
+        imageBuilder = new ImageBuilder(ProfileActivity.this);
 
         user = getIntent().getParcelableExtra("user");
         if (user == null) {
@@ -91,15 +100,29 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             return;
         }
 
-
-        // set up edit button to check the current user
+        // Set up edit button to check the current user
         checkCurrentUser();
 
         nameID.setText(user.getName());
         bioText.setText(user.getBio());
 
+        // Load the profile picture from imageUrl
+        imageProfileLoaded();
+
+
         onMenuIconClicked();
+        onBackBtnClicked();
     }
+
+    private void imageProfileLoaded() {
+        if(user.getImageUrl() != null && !user.getImageUrl().isEmpty()) {
+            imageBuilder.loadImage(profilePicture, user);
+        } else {
+            // Set a default image if no URL is available
+            profilePicture.setImageResource(R.drawable.ic_account_circle_foreground);
+        }
+    }
+
 
     private void onMessageButtonClicked() {
         messageId.setOnClickListener(new View.OnClickListener() {
@@ -114,10 +137,32 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
     private void displayTotalLikes() {
         int likeCount = 0;
-        for(Video v : videoList) {
+        for (Video v : videoList) {
             likeCount += v.getLikes().size();
         }
         totalLike.setText(Integer.toString(likeCount));
+    }
+
+    private void onTabToggle() {
+        userVideos.setOnClickListener(v -> {
+            highlightTab(userVideos);
+            fetchUserVideo();
+        });
+
+        likeVideos.setOnClickListener(v -> {
+            highlightTab(likeVideos);
+            fetchLikedVideos();
+        });
+
+        // By default, highlight "User Videos" and fetch user videos
+        highlightTab(userVideos);
+        fetchUserVideo();
+    }
+
+    private void highlightTab(ImageView activeTab) {
+        userVideos.setColorFilter(getResources().getColor(R.color.gray)); // Deactivate
+        likeVideos.setColorFilter(getResources().getColor(R.color.gray)); // Deactivate
+        activeTab.setColorFilter(getResources().getColor(R.color.white)); // Activate
     }
 
 
@@ -143,9 +188,9 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             public void onSuccess(List<Video> data) {
                 videoList.clear();
                 for (Video video : data) {
-                    Log.d("Video Activity", "User UID: " +user.getUid());
+                    Log.d("Video Activity", "User UID: " + user.getUid());
                     if (video.getOwner().equals(user.getUid())) {
-                        Log.d("Video Activity", "Video: " +video.getOwner());
+                        Log.d("Video Activity", "Video: " + video.getOwner());
                         videoList.add(video);
                     }
                 }
@@ -161,12 +206,35 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         });
     }
 
+    private void onLikeVideosClicked() {
+        likeVideos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchLikedVideos();
+            }
+        });
+    }
+
+    private void fetchLikedVideos() {
+        userController.getUserLikeVideo(user)
+                .thenAccept(vids -> {
+                    videoList.clear();
+                    videoList.addAll(vids);
+                    videoGridAdapter.notifyDataSetChanged();
+                })
+                .exceptionally(e -> {
+                    Log.e("ProfileActivity", "Failed to fetch liked videos", e);
+                    return null;
+                });
+    }
+
     @Override
     public void onVideoClick(Video video) {
         // Handle video click here
-//        Intent intent = new Intent(ProfileActivity.this, VideoDetailsActivity.class);
-//        intent.putExtra("video", video); // Pass the video object to the new activity
-//        startActivity(intent);
+        Intent intent = new Intent(ProfileActivity.this, SingleVideoActivity.class);
+        intent.putExtra("video", video); // Pass the video object to the new activity
+        intent.putExtra("user", user);
+        startActivity(intent);
     }
 
     private void reloadTheTargetUser() {
@@ -206,6 +274,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             public void onSuccess(Enums.UserType user) {
                 switch (user) {
                     case CURRENT_USER:
+                        btnBack.setVisibility(View.GONE);
                         fetchCurrentUserData();
                         Log.d("Profile Activity", "Current User right?");
                         break;
@@ -233,6 +302,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     private void followUser() {
         userController.userFollowingAction(user, new DataFetchCallback<Void>() {
             String targetUid = user.getUid();
+
             @Override
             public void onSuccess(List<Void> data) {
                 loginController.getCurrentUser(new GetUserCallback() {
@@ -356,6 +426,10 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
         editIntent.putExtra("user", user); // Pass the current user to EditProfileActivity
         editProfileLauncher.launch(editIntent);
+    }
+
+    private void onBackBtnClicked() {
+        btnBack.setOnClickListener(v -> finish());
     }
 
 }

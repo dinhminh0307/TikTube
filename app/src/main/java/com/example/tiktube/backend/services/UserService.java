@@ -2,43 +2,32 @@ package com.example.tiktube.backend.services;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
-import com.example.tiktube.backend.firebase.FirebaseHelper;
+import com.example.tiktube.backend.helpers.FirebaseHelper;
 import com.example.tiktube.backend.models.Interaction;
 import com.example.tiktube.backend.models.LikeVideo;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 import com.example.tiktube.backend.utils.Enums;
 import com.example.tiktube.backend.utils.UidGenerator;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.CompletableFuture;
 
 public class UserService {
-    FirebaseHelper firebaseHelper;
-
-    LoginController loginController;
-
     private final InteractionService interactionService;
-
     private final LikeService likeService;
-
     private final VideoService videoService;
-
     private final String video_collection = "videos";
-
     private final String users_collection = "users";
-
     private final String interaction_collections = "interactions";
+    FirebaseHelper firebaseHelper;
+    LoginController loginController;
 
     public UserService() {
         firebaseHelper = new FirebaseHelper();
@@ -312,7 +301,59 @@ public class UserService {
         if (updatedUser.getFacebook() != null && !updatedUser.getFacebook().isEmpty()) {
             firebaseHelper.updateField(updatedUser.getUid(), "users", "facebook", updatedUser.getFacebook());
         }
+        if (updatedUser.getImageUrl() != null && !updatedUser.getImageUrl().isEmpty()) {
+            firebaseHelper.updateField(updatedUser.getUid(), "users", "imageUrl", updatedUser.getImageUrl());
+        }
 
         callback.onSuccess(Collections.singletonList(updatedUser));
     }
+
+    public void deleteUser(User user, DataFetchCallback<Void> callback) {
+        if (user == null || user.getUid() == null || user.getUid().isEmpty()) {
+            callback.onFailure(new IllegalArgumentException("User ID is null or empty"));
+            return;
+        }
+        firebaseHelper.deleteUser(user.getUid(), callback);
+    }
+
+    public void getUserNamesByIds(List<String> uids, DataFetchCallback<String> callback) {
+        if (uids == null || uids.isEmpty()) {
+            callback.onSuccess(Collections.emptyList());
+            return;
+        }
+
+        List<String> names = new ArrayList<>();
+        List<String> failures = new ArrayList<>();
+
+        for (String uid : uids) {
+            firebaseHelper.findByID(uid, "users", User.class, new DataFetchCallback<User>() {
+                @Override
+                public void onSuccess(List<User> users) {
+                    if (!users.isEmpty()) {
+                        names.add(users.get(0).getName());
+                    }
+                    if (names.size() + failures.size() == uids.size()) {
+                        callback.onSuccess(names);
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    failures.add(uid);
+                    if (names.size() + failures.size() == uids.size()) {
+                        callback.onFailure(new Exception("Failed to fetch some names"));
+                    }
+                }
+            });
+        }
+    }
+
+    public CompletableFuture<List<Video>> getUserLikeVideo(User user) {
+        return likeService.getUserLikeVideo(user);
+    }
+
+    public void getAllUsers(DataFetchCallback<User> cb) {
+        firebaseHelper.findAll(users_collection, User.class, cb);
+    }
+
 }

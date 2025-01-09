@@ -1,9 +1,11 @@
 package com.example.tiktube.frontend.pages;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -20,8 +22,11 @@ public class LoginActivity extends AppCompatActivity {
     EditText passwordInput;
 
     Button loginButton;
+    ImageView passwordToggle;
+    boolean showPassword = false;
 
     LoginController loginController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +41,19 @@ public class LoginActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
         loginButton = findViewById(R.id.loginButton);
+        passwordToggle = findViewById(R.id.passwordToggle);
+
+        passwordToggle.setOnClickListener(v -> {
+            if (showPassword) {
+                passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                passwordToggle.setImageResource(R.drawable.ic_visibility_foreground);
+            } else {
+                passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                passwordToggle.setImageResource(R.drawable.ic_visibility_off_foreground);
+            }
+            showPassword = !showPassword;
+            passwordInput.setSelection(passwordInput.getText().length());
+        });
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
