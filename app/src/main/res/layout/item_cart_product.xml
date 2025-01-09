@@ -38,13 +38,7 @@
             android:textColor="#FF0050"
             android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/productAvailability"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Only 4 left"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+
     </LinearLayout>
 
     <LinearLayout
