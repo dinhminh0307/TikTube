@@ -17,9 +17,11 @@ import com.example.tiktube.R;
 import com.example.tiktube.backend.controllers.CartController;
 import com.example.tiktube.backend.models.Cart;
 import com.example.tiktube.backend.models.Product;
+import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.utils.UidGenerator;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
@@ -28,10 +30,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private List<Product> productList;
     private CartController cartController;
 
-    public ProductAdapter(Context context, List<Product> productList) {
+    private User currentUser;
+
+    public ProductAdapter(Context context, List<Product> productList, User user) {
         this.context = context;
         this.productList = productList;
         this.cartController = new CartController();
+        this.currentUser = user;
     }
 
     @NonNull
@@ -123,19 +128,57 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
     private void handleAddToCart(android.widget.EditText dialogUserQuantity, Product product) {
-        String quantityText = dialogUserQuantity.getText().toString();
-        if (!quantityText.isEmpty()) {
-            int userQuantity = Integer.parseInt(quantityText);
-            if (validateQuantity(userQuantity, product)) {
-                Cart cart = createCart(userQuantity, product);
-                saveCartToFirebase(cart);
-            } else {
-                Toast.makeText(context, "Invalid quantity!", Toast.LENGTH_SHORT).show();
-            }
-        } else {
+        String quantityText = dialogUserQuantity.getText().toString().trim();
+
+        if (quantityText.isEmpty()) {
             Toast.makeText(context, "Please enter a valid quantity", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        int userQuantity = Integer.parseInt(quantityText);
+
+        if (!validateQuantity(userQuantity, product)) {
+            Toast.makeText(context, "Invalid quantity!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Cart newCart = createCart(userQuantity, product);
+        // decrease the quantity in the product
+
+        cartController.getCurrentUserCart(currentUser)
+                .thenAccept(existingCart -> {
+                    if (existingCart != null) {
+                        // Update existing cart
+                        mergeCartProducts(existingCart, newCart);
+                        cartController.updateCart(existingCart)
+                                .thenAccept(aVoid -> showToast("Cart updated successfully"))
+                                .exceptionally(e -> {
+                                    showToast("Failed to update cart");
+                                    e.printStackTrace();
+                                    return null;
+                                });
+                    } else {
+                        // Save new cart
+                        saveCartToFirebase(newCart);
+                    }
+                })
+                .exceptionally(e -> {
+                    showToast("Error fetching cart");
+                    e.printStackTrace();
+                    return null;
+                });
     }
+
+    private void mergeCartProducts(Cart existingCart, Cart newCart) {
+        List<Product> updatedProducts = new ArrayList<>(existingCart.getCartProducts());
+        updatedProducts.addAll(newCart.getCartProducts());
+        existingCart.setCartProducts(updatedProducts);
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
 
     private boolean validateQuantity(int userQuantity, Product product) {
         return userQuantity <= product.getQuantity() && userQuantity > 0;
@@ -144,8 +187,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private Cart createCart(int userQuantity, Product product) {
         Cart cart = new Cart();
         cart.setUid(UidGenerator.generateUID());
+        product.setQuantity(userQuantity);
         cart.setTotalPrice(userQuantity * product.getPrice());
         cart.setCartProducts(List.of(product));
+        cart.setOwnerId(currentUser.getUid());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             cart.setDate(LocalDate.now().toString());
         }

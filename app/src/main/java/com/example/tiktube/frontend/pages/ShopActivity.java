@@ -10,8 +10,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.callbacks.GetUserCallback;
+import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.controllers.ProductController;
 import com.example.tiktube.backend.models.Product;
+import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.adapters.GridSpacingItemDecoration;
 import com.example.tiktube.frontend.adapters.ProductAdapter;
 
@@ -24,9 +27,13 @@ public class ShopActivity extends AppCompatActivity {
     private ProductAdapter productAdapter;
     private List<Product> productList = new ArrayList<>();
 
+    private LoginController loginController;
+
     private ImageView cartIcon;
 
     private ProductController productController =  new ProductController();
+
+    private User currentUser = new User();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +59,9 @@ public class ShopActivity extends AppCompatActivity {
 
     private void initComponent() {
         cartIcon = findViewById(R.id.cartIcon);
+        loginController = new LoginController();
+
+        setCurrentUser();
     }
 
     private void onCartIconClicked() {
@@ -68,13 +78,27 @@ public class ShopActivity extends AppCompatActivity {
         productController.getAllProducts()
                 .thenAccept(p -> {
                     productList.addAll(p);
-                    productAdapter = new ProductAdapter(this, productList);
+                    productAdapter = new ProductAdapter(this, productList, currentUser);
                     productRecyclerView.setAdapter(productAdapter);
                 })
                 .exceptionally(e -> {
                     e.printStackTrace();
                     return null;
                 });
+    }
+
+    private void setCurrentUser() {
+        loginController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User user) {
+                currentUser.setUser(user);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
     }
 
 }
