@@ -16,4 +16,8 @@ public class ProductController {
     public CompletableFuture<List<Product>> getAllProducts() {
         return productService.getAllProducts();
     }
+
+    public CompletableFuture<Product> productUpdateQuantity(Product product) {
+        return productService.productUpdateQuantity(product);
+    }
 }
