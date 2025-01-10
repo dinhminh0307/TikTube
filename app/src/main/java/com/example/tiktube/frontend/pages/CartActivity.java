@@ -3,6 +3,7 @@ package com.example.tiktube.frontend.pages;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class CartActivity extends AppCompatActivity {
     private CartAdapter cartAdapter;
     private List<Product> cartProductList = new ArrayList<>();
     private TextView totalPriceTextView, numberProduct;
+    private ImageView backButton;
     private Button checkoutButton;
 
     private CartController cartController;
@@ -85,6 +87,8 @@ public class CartActivity extends AppCompatActivity {
         loginController = new LoginController();
         cartRecyclerView = findViewById(R.id.cartRecyclerView);
         totalPriceTextView = findViewById(R.id.totalPriceTextView);
+        backButton = findViewById(R.id.backButton);
+        onBackButtonClicked();
         numberProduct = findViewById(R.id.numberProduct);
         checkoutButton = findViewById(R.id.checkoutButton);
 
@@ -101,6 +105,10 @@ public class CartActivity extends AppCompatActivity {
                 });
 
         setCurrentUser();
+    }
+
+    private void onBackButtonClicked() {
+        backButton.setOnClickListener(v -> finish());
     }
 
     private CompletableFuture<Void> loadCartProducts() {
