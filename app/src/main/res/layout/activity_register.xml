@@ -1,10 +1,9 @@
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/bgColor"
     tools:context=".frontend.pages.RegisterActivity">
 
     <LinearLayout
@@ -19,8 +18,7 @@
             android:id="@+id/logoIcon"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/ic_logo"
-            app:tint="@color/purple" />
+            android:src="@drawable/ic_logo" />
 
         <!-- Welcome Text -->
         <TextView
@@ -29,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Welcome to TikTube"
-            android:textColor="@color/black"
+            android:textColor="@color/textColor"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -40,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="SIGNUP"
-            android:textColor="@color/black"
+            android:textColor="@color/textColor"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -54,7 +52,7 @@
             android:hint="name"
             android:inputType="textPersonName"
             android:padding="12dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/textColor" />
 
         <!-- Phone Number Input -->
         <EditText
@@ -66,7 +64,7 @@
             android:hint="phone number"
             android:inputType="phone"
             android:padding="12dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/textColor" />
 
         <!-- Email Input -->
         <EditText
@@ -78,7 +76,7 @@
             android:hint="email"
             android:inputType="textEmailAddress"
             android:padding="12dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/textColor" />
 
         <!-- Password Input -->
         <LinearLayout
@@ -97,14 +95,15 @@
                 android:hint="password"
                 android:inputType="textPassword"
                 android:padding="12dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/textColor" />
 
             <ImageView
                 android:id="@+id/passwordToggle"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
-                android:src="@drawable/ic_visibility_foreground" />
+                android:src="@drawable/ic_visibility_foreground"
+                app:tint="@color/textColor" />
         </LinearLayout>
 
         <!-- Confirm Password Input -->
@@ -124,14 +123,15 @@
                 android:hint="confirm password"
                 android:inputType="textPassword"
                 android:padding="12dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/textColor" />
 
             <ImageView
                 android:id="@+id/confirmPasswordToggle"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="8dp"
-                android:src="@drawable/ic_visibility_foreground" />
+                android:src="@drawable/ic_visibility_foreground"
+                app:tint="@color/textColor" />
         </LinearLayout>
 
         <!-- Finish Button -->
@@ -140,9 +140,9 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/textColor"
             android:text="FINISH"
-            android:textColor="@color/white" />
+            android:textColor="@color/bgColor" />
 
         <!-- Terms and Conditions -->
         <TextView
@@ -152,7 +152,7 @@
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="By clicking ‘FINISH’, you agree to our Terms and Policy."
-            android:textColor="@color/black"
+            android:textColor="@color/textColor"
             android:textSize="12sp" />
 
     </LinearLayout>

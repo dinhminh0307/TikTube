@@ -38,8 +38,7 @@
         android:id="@+id/searchSuggestions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
-        tools:visibility="gone">
+        android:visibility="visible">
 
         <ListView
             android:id="@+id/pastSearches"
@@ -94,8 +93,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/searchOptions"

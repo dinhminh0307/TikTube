@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bgColor"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -25,15 +26,14 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginBottom="8dp"
-                android:src="@drawable/ic_account_circle_foreground"
-                app:tint="#7F7F7F" />
+                android:src="@drawable/ic_account_circle_foreground" />
 
             <TextView
                 android:id="@+id/changePhotoTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Change photo"
-                android:textColor="@android:color/black"
+                android:textColor="@color/textColor"
                 android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="Name"
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="16sp" />
 
         <EditText
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="Phone Number"
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="16sp" />
 
         <EditText
@@ -101,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="Bio"
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="16sp" />
 
         <EditText
@@ -127,7 +127,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="Instagram"
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="16sp" />
 
         <EditText
@@ -151,7 +151,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="Facebook"
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="16sp" />
 
         <EditText
