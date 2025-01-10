@@ -195,6 +195,50 @@ public class FirebaseHelper {
                 });
     }
 
+    public void adminLogin(String email, String password, LoginCallback callback) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Login succeeded
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                Log.d(TAG, "Admin: " + user.getUid());
+                                // Check if the user is in the Admins collection
+                                firestore.collection("admin").document(user.getUid()).get()
+                                        .addOnCompleteListener(adminCheckTask -> {
+                                            if (adminCheckTask.isSuccessful()) {
+                                                DocumentSnapshot document = adminCheckTask.getResult();
+                                                if (document.exists()) {
+                                                    // User is an admin
+                                                    Log.d(TAG, "Admin login successful");
+                                                    callback.onSuccess(user);
+                                                } else {
+                                                    // User is not an admin
+                                                    Log.w(TAG, "Admin login failed: Not an admin");
+                                                    callback.onFailure(new Exception("Access denied: Not an admin"));
+                                                }
+                                            } else {
+                                                Log.e(TAG, "Error checking admin status", adminCheckTask.getException());
+                                                callback.onFailure(adminCheckTask.getException());
+                                            }
+                                        });
+                            } else {
+                                Log.w(TAG, "No user returned after login");
+                                callback.onFailure(new Exception("Failed to retrieve user after login"));
+                            }
+                        } else {
+                            // Login failed
+                            Log.w(TAG, "Admin login failed", task.getException());
+                            callback.onFailure(task.getException());
+                        }
+                    }
+                });
+    }
+
+
+
     public String getUserId() {
         return this.userId;
     }

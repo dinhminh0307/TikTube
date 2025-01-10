@@ -1,5 +1,6 @@
 package com.example.tiktube.frontend.pages;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 
 import com.example.tiktube.backend.callbacks.LoginResultCallback;
@@ -71,22 +73,39 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                try {
-                    loginController.login(email, password, new LoginResultCallback() {
-                        @Override
-                        public void onLoginSuccess(FirebaseUser user) {
-                            Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
+                loginController.adminLogin(email, password).thenAccept(isAdmin -> {
+                    if (isAdmin) {
+                        // Navigate to AdminActivity
+                        Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        // Attempt user login
+                        try {
+                            loginController.login(email, password, new LoginResultCallback() {
+                                @Override
+                                public void onLoginSuccess(FirebaseUser user) {
+                                    Toast.makeText(LoginActivity.this, "Successful login", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
 
-                        @Override
-                        public void onLoginFailure(Exception exception) {
-                            Toast.makeText(LoginActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+                                @Override
+                                public void onLoginFailure(Exception exception) {
+                                    Toast.makeText(LoginActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } catch (Exception e) {
+                            Toast.makeText(LoginActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                    });
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                    }
+                }).exceptionally(e -> {
+                    // Handle errors in admin login
+                    runOnUiThread(() -> Toast.makeText(LoginActivity.this, "Admin login error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    return null;
+                });
+
             }
         });
     }
