@@ -56,7 +56,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         setProductDetails(holder, product);
 
-        holder.itemView.setOnClickListener(v -> showProductDetailsDialog(product));
+        // Disable the product card if the quantity is 0
+        if (product.getQuantity() <= 0) {
+            holder.itemView.setEnabled(false); // Disable click events
+            holder.itemView.setAlpha(0.5f); // Dim the view to indicate it's disabled
+        } else {
+            holder.itemView.setEnabled(true); // Enable click events
+            holder.itemView.setAlpha(1.0f); // Restore normal appearance
+            holder.itemView.setOnClickListener(v -> showProductDetailsDialog(product));
+        }
     }
 
     private void setProductDetails(ProductViewHolder holder, Product product) {

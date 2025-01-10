@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/bgColor"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Product Name"
+        android:textColor="@color/textColor"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -26,21 +27,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Price: 0.00đ" />
+        android:text="Price: 0.00đ"
+        android:textColor="@color/textColor" />
 
     <TextView
         android:id="@+id/dialogProductQuantity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Available: 0" />
+        android:text="Available: 0"
+        android:textColor="@color/textColor" />
 
     <TextView
         android:id="@+id/dialogProductReviews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Reviews: 0" />
+        android:text="Reviews: 0"
+        android:textColor="@color/textColor" />
 
     <EditText
         android:id="@+id/dialogUserQuantity"
@@ -48,7 +52,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="Enter quantity"
-        android:inputType="number" />
+        android:inputType="number"
+        android:textColor="@color/textColor" />
 
     <TextView
         android:id="@+id/dialogTotalPrice"
@@ -56,5 +61,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="Total: 0.00đ"
+        android:textColor="@color/textColor"
         android:textStyle="bold" />
 </LinearLayout>

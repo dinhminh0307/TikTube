@@ -1,48 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@color/black">
-
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:clickable="true"
-        android:contentDescription="back button"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="@+id/menuIcon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/menuIcon"
-        app:srcCompat="@drawable/ic_arrow_back_foreground"
-        tools:ignore="TouchTargetSizeCheck" />
-
-    <!-- Public Account Text -->
-    <TextView
-        android:id="@+id/publicAccount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="public account"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/menuIcon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/menuIcon" />
 
     <!-- Menu Icon -->
     <ImageView
         android:id="@+id/menuIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="64dp"
         android:layout_marginEnd="16dp"
         android:contentDescription="menu icon"
         android:src="@drawable/ic_menu_foreground"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:contentDescription="Back Button"
+        android:src="@drawable/ic_arrow_back_foreground"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:elevation="4dp" />
+
+    <!-- Public Account Text -->
+    <TextView
+        android:id="@+id/adminAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="public account"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:layout_below="@id/menuIcon"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp" />
 
     <!-- Scrollable Content -->
     <ScrollView
@@ -50,9 +48,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
-        app:layout_constraintTop_toBottomOf="@+id/menuIcon">
+        android:layout_below="@id/adminAccount"
+        android:layout_above="@id/bottomNav">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -86,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:baselineAligned="false"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -173,8 +170,7 @@
                     android:id="@+id/editProfileBtn"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
+                    android:layout_margin="4dp"
                     android:backgroundTint="@color/white"
                     android:text="Edit profile"
                     android:textColor="@color/black" />
@@ -183,10 +179,9 @@
                     android:id="@+id/messageId"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
+                    android:layout_margin="4dp"
                     android:backgroundTint="@color/white"
-                    android:text="Messsage"
+                    android:text="Message"
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -214,8 +209,7 @@
                     android:layout_margin="8dp"
                     android:layout_weight="1"
                     android:contentDescription="videos"
-                    android:src="@drawable/ic_videocam_foreground"
-                    app:tint="@color/white" />
+                    android:src="@drawable/ic_videocam_foreground" />
 
                 <ImageView
                     android:layout_width="0dp"
@@ -242,7 +236,6 @@
                     android:contentDescription="liked videos"
                     android:src="@drawable/ic_heart"
                     app:tint="@color/gray" />
-
             </LinearLayout>
 
             <!-- Video Section -->
@@ -261,5 +254,6 @@
         layout="@layout/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

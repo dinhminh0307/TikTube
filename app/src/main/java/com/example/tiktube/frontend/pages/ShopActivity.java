@@ -29,9 +29,9 @@ public class ShopActivity extends AppCompatActivity {
 
     private LoginController loginController;
 
-    private ImageView cartIcon;
+    private ImageView btnBack, cartIcon;
 
-    private ProductController productController =  new ProductController();
+    private ProductController productController = new ProductController();
 
     private User currentUser = new User();
 
@@ -58,8 +58,11 @@ public class ShopActivity extends AppCompatActivity {
     }
 
     private void initComponent() {
+        btnBack = findViewById(R.id.btnBack);
         cartIcon = findViewById(R.id.cartIcon);
         loginController = new LoginController();
+
+        btnBack.setOnClickListener(v -> finish());
 
         setCurrentUser();
     }
@@ -77,7 +80,11 @@ public class ShopActivity extends AppCompatActivity {
     private void loadProducts() {
         productController.getAllProducts()
                 .thenAccept(p -> {
-                    productList.addAll(p);
+                    for(Product product: p) {
+                        if(product.getQuantity() > 0) {
+                            productList.add(product);
+                        }
+                    }
                     productAdapter = new ProductAdapter(this, productList, currentUser);
                     productRecyclerView.setAdapter(productAdapter);
                 })
@@ -100,5 +107,7 @@ public class ShopActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 }
