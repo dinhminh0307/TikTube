@@ -20,4 +20,16 @@ public class ProductController {
     public CompletableFuture<Product> productUpdateQuantity(Product product) {
         return productService.productUpdateQuantity(product);
     }
+
+    public CompletableFuture<Void> addProduct(Product product) {
+        return productService.createProduct(product);
+    }
+
+    public CompletableFuture<Void> deleteProduct(Product product) {
+        return productService.deleteProduct(product);
+    }
+
+    public CompletableFuture<Void> updateProduct(Product product) {
+        return productService.updateProduct(product);
+    }
 }

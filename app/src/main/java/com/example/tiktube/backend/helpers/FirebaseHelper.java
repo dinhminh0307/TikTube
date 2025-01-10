@@ -121,6 +121,20 @@ public class FirebaseHelper {
                 });
     }
 
+    public void deleteDocument(String collection, String documentId, DataFetchCallback<Void> callback) {
+        firestore.collection(collection)
+                .document(documentId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Document with ID " + documentId + " deleted successfully from collection " + collection);
+                    callback.onSuccess(Collections.emptyList());
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to delete document with ID " + documentId + " from collection " + collection, e);
+                    callback.onFailure(e);
+                });
+    }
+
 
     public <T> void findByObject(String collection, T object, DataFetchCallback<T> callback) {
         firestore.collection(collection)

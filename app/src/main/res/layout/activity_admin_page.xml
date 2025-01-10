@@ -73,6 +73,8 @@
     </LinearLayout>
 
     <!-- RecyclerView for displaying content -->
+
+    <!-- RecyclerView for displaying content -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewContent"
         android:layout_width="match_parent"
@@ -80,5 +82,25 @@
         android:layout_marginTop="16dp"
         android:layout_below="@id/sectionTabs"
         android:scrollbars="vertical" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/productListContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/sectionTabs"
+        android:layout_above="@id/btnAddProduct"
+        android:scrollbars="vertical" />
+
+    <!-- Add Product Button -->
+    <Button
+        android:id="@+id/btnAddProduct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Product"
+        android:backgroundTint="@color/gradient_end"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.example.tiktube.backend.helpers;
+package com.example.tiktube.frontend.adapters;
 
 import android.content.Context;
 import android.os.Handler;
@@ -13,12 +13,12 @@ import com.example.tiktube.backend.callbacks.DataFetchCallback;
 
 import java.util.List;
 
-public class UserListHelper {
+public class UserListAdapter {
 
     private final Context context;
     private final UserController userController;
 
-    public UserListHelper(Context context, UserController userController) {
+    public UserListAdapter(Context context, UserController userController) {
         this.context = context;
         this.userController = userController;
     }

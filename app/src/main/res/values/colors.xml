@@ -13,4 +13,5 @@
     <color name="textColor">#FF000000</color>
     <color name="bgColor">#FEF7FF</color>
     <color name="gray">#B0B0B0</color>
+    <color name="red">#FF0000</color>
 </resources>
