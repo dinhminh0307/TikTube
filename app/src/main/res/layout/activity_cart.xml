@@ -24,13 +24,14 @@
             app:tint="@color/textColor" />
 
         <TextView
+            android:id="@+id/numberProduct"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
             android:text="Shopping cart (4)"
-            android:textColor="@color/textColor"
-            android:textSize="18sp" />
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:gravity="center" />
 
         <TextView
             android:id="@+id/editButton"

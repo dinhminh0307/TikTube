@@ -3,14 +3,13 @@ package com.example.tiktube;
 import android.content.Intent;
 import android.os.Bundle;
 
-
 import com.example.tiktube.backend.callbacks.GetUserCallback;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.pages.LoginActivity;
 import com.example.tiktube.frontend.pages.RegisterActivity;
 import com.example.tiktube.frontend.pages.VideoPageActivity;
-
+import com.example.tiktube.frontend.pages.AdminActivity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
@@ -23,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button loginBtn;
     Button signUpBtn;
+    Button viewUsersBtn; // New Button for viewing users
 
     LoginController loginController;
 
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         onSignUpButtonClicked();
         onLoginButtonClicked();
+        onViewUsersButtonClicked(); // Initialize the new button
     }
 
     @Override
@@ -63,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     private void onSignUpButtonClicked() {
         signUpBtn = findViewById(R.id.signUpButton);
         signUpBtn.setOnClickListener(new View.OnClickListener() {
@@ -86,4 +86,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // New Method for "View Users" Button
+    private void onViewUsersButtonClicked() {
+        viewUsersBtn = findViewById(R.id.viewAdminPage);
+        viewUsersBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
 }

@@ -82,6 +82,20 @@ public class CartService {
         return future;
     }
 
+    public CompletableFuture<Void> updatePurchasedCart(Cart cart) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        cart.setPurchased(true);
+        firebaseHelper.updateField(
+                cart.getUid(),
+                cart_collection,
+                "purchased",
+                cart.isPurchased()
+        );
+        future.complete(null);
+        return future;
+    }
+
     public CompletableFuture<Void> updateCart(Cart cart) {
         CompletableFuture<Void> future = new CompletableFuture<>();
         // update the cart we update the product and total price

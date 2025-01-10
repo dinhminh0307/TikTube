@@ -20,21 +20,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class UserService {
-    FirebaseHelper firebaseHelper;
-
-    LoginController loginController;
-
     private final InteractionService interactionService;
-
     private final LikeService likeService;
-
     private final VideoService videoService;
-
     private final String video_collection = "videos";
-
     private final String users_collection = "users";
-
     private final String interaction_collections = "interactions";
+    FirebaseHelper firebaseHelper;
+    LoginController loginController;
 
     public UserService() {
         firebaseHelper = new FirebaseHelper();
@@ -315,7 +308,52 @@ public class UserService {
         callback.onSuccess(Collections.singletonList(updatedUser));
     }
 
+    public void deleteUser(User user, DataFetchCallback<Void> callback) {
+        if (user == null || user.getUid() == null || user.getUid().isEmpty()) {
+            callback.onFailure(new IllegalArgumentException("User ID is null or empty"));
+            return;
+        }
+        firebaseHelper.deleteUser(user.getUid(), callback);
+    }
+
+    public void getUserNamesByIds(List<String> uids, DataFetchCallback<String> callback) {
+        if (uids == null || uids.isEmpty()) {
+            callback.onSuccess(Collections.emptyList());
+            return;
+        }
+
+        List<String> names = new ArrayList<>();
+        List<String> failures = new ArrayList<>();
+
+        for (String uid : uids) {
+            firebaseHelper.findByID(uid, "users", User.class, new DataFetchCallback<User>() {
+                @Override
+                public void onSuccess(List<User> users) {
+                    if (!users.isEmpty()) {
+                        names.add(users.get(0).getName());
+                    }
+                    if (names.size() + failures.size() == uids.size()) {
+                        callback.onSuccess(names);
+                    }
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    failures.add(uid);
+                    if (names.size() + failures.size() == uids.size()) {
+                        callback.onFailure(new Exception("Failed to fetch some names"));
+                    }
+                }
+            });
+        }
+    }
+
     public CompletableFuture<List<Video>> getUserLikeVideo(User user) {
         return likeService.getUserLikeVideo(user);
     }
+
+    public void getAllUsers(DataFetchCallback<User> cb) {
+        firebaseHelper.findAll(users_collection, User.class, cb);
+    }
+
 }

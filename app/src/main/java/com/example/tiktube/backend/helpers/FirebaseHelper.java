@@ -65,6 +65,21 @@ public class FirebaseHelper {
                 });
     }
 
+    public void deleteUser(String userId, DataFetchCallback<Void> callback) {
+        firestore.collection("users")
+                .document(userId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("FirebaseHelper", "User deleted successfully: " + userId);
+                    callback.onSuccess(Collections.emptyList());
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FirebaseHelper", "Failed to delete user: " + userId, e);
+                    callback.onFailure(e);
+                });
+    }
+
+
     public <T> void findAll(String collection, Class<T> type, DataFetchCallback<T> callback) {
         firestore.collection(collection)
                 .get()
@@ -102,6 +117,20 @@ public class FirebaseHelper {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("Firestore", "Error finding donation site", e);
+                    callback.onFailure(e);
+                });
+    }
+
+    public void deleteDocument(String collection, String documentId, DataFetchCallback<Void> callback) {
+        firestore.collection(collection)
+                .document(documentId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Document with ID " + documentId + " deleted successfully from collection " + collection);
+                    callback.onSuccess(Collections.emptyList());
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to delete document with ID " + documentId + " from collection " + collection, e);
                     callback.onFailure(e);
                 });
     }

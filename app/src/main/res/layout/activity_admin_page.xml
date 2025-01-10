@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/black">
+
+    <!-- Menu Icon -->
+    <ImageView
+        android:id="@+id/menuIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="menu icon"
+        android:src="@drawable/ic_menu_foreground"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <!-- Profile Icon -->
+    <ImageView
+        android:id="@+id/profilePicture"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="32dp"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="profile picture"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_account_circle_foreground" />
+
+    <!-- Public Account Text -->
+    <TextView
+        android:id="@+id/adminAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="admin account"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:layout_below="@id/profilePicture"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp" />
+
+    <!-- Section Tabs with Buttons -->
+    <LinearLayout
+        android:id="@+id/sectionTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/adminAccount"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnUserList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/gradient_start"
+            android:text="User List"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/btnProductList"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/gradient_end"
+            android:text="Product List"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+    <!-- RecyclerView for displaying content -->
+
+    <!-- RecyclerView for displaying content -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/sectionTabs"
+        android:scrollbars="vertical" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/productListContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/sectionTabs"
+        android:layout_above="@id/btnAddProduct"
+        android:scrollbars="vertical" />
+
+    <!-- Add Product Button -->
+    <Button
+        android:id="@+id/btnAddProduct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Product"
+        android:backgroundTint="@color/gradient_end"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

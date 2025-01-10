@@ -80,7 +80,11 @@ public class ShopActivity extends AppCompatActivity {
     private void loadProducts() {
         productController.getAllProducts()
                 .thenAccept(p -> {
-                    productList.addAll(p);
+                    for(Product product: p) {
+                        if(product.getQuantity() > 0) {
+                            productList.add(product);
+                        }
+                    }
                     productAdapter = new ProductAdapter(this, productList, currentUser);
                     productRecyclerView.setAdapter(productAdapter);
                 })
@@ -103,5 +107,7 @@ public class ShopActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 }
