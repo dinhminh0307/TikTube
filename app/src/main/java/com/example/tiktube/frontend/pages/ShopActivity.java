@@ -80,8 +80,8 @@ public class ShopActivity extends AppCompatActivity {
     private void loadProducts() {
         productController.getAllProducts()
                 .thenAccept(p -> {
-                    for(Product product: p) {
-                        if(product.getQuantity() > 0) {
+                    for (Product product : p) {
+                        if (product.getQuantity() > 0) {
                             productList.add(product);
                         }
                     }
@@ -107,7 +107,6 @@ public class ShopActivity extends AppCompatActivity {
             }
         });
     }
-
 
 
 }
