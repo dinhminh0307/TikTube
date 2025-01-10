@@ -47,4 +47,72 @@ public class ProductService {
         future.complete(product);
         return future;
     }
+
+    public CompletableFuture<Void> createProduct(Product product) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        firebaseHelper.create(
+                product_collection,
+                product.getUid(),
+                product,
+                new DataFetchCallback<String>() {
+                    @Override
+                    public void onSuccess(List<String> data) {
+                        future.complete(null);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        future.completeExceptionally(e);
+                    }
+                }
+        );
+        return future;
+    }
+
+    public CompletableFuture<Void> deleteProduct(Product product) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        firebaseHelper.deleteDocument(
+                product_collection,
+                product.getUid(),
+                new DataFetchCallback<Void>() {
+                    @Override
+                    public void onSuccess(List<Void> data) {
+                        future.complete(null);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        future.completeExceptionally(e);
+                    }
+                }
+        );
+        return future;
+    }
+
+    public CompletableFuture<Void> updateProduct(Product product) {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        // update name
+        firebaseHelper.updateField(
+                product.getUid(),
+                product_collection,
+                "name",
+                product.getName()
+        );
+        //update price
+        firebaseHelper.updateField(
+                product.getUid(),
+                product_collection,
+                "price",
+                product.getPrice()
+        );
+        // update quantity
+        firebaseHelper.updateField(
+                product.getUid(),
+                product_collection,
+                "quantity",
+                product.getQuantity()
+        );
+        future.complete(null);
+        return future;
+    }
 }

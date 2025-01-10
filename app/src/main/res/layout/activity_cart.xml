@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bgColor"
     android:orientation="vertical"
-    android:background="@color/black"
     android:padding="8dp">
 
     <!-- Header Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="8dp">
 
         <ImageView
             android:id="@+id/backButton"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:contentDescription="Back"
             android:src="@drawable/ic_arrow_back_foreground"
-            android:contentDescription="Back" />
+            app:tint="@color/textColor" />
 
         <TextView
             android:id="@+id/numberProduct"
@@ -45,23 +46,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:paddingVertical="8dp">
 
         <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:src="@drawable/ic_location"
-            android:contentDescription="Location" />
+            android:contentDescription="Location"
+            android:src="@drawable/ic_location_on_foreground"
+            app:tint="@color/textColor" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="8dp"
             android:text="Tân Phong, District 7, Ho Chi Minh City"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:paddingStart="8dp" />
+            android:textColor="@color/textColor"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <!-- Product List Section -->
@@ -70,39 +72,40 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingVertical="8dp"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:paddingVertical="8dp" />
 
     <!-- Footer Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@color/gray"
+        android:orientation="vertical"
         android:padding="8dp">
 
         <!-- Coupons and Expired Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingVertical="8dp">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_coupon"
-                android:contentDescription="Coupon" />
+                android:contentDescription="Coupon"
+                android:src="@drawable/ic_card_giftcard_foreground"
+                app:tint="@color/black" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingStart="8dp"
                 android:text="30.200đ coupon"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:paddingStart="8dp" />
+                android:textColor="@color/black"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/removeCouponButton"
@@ -117,8 +120,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:paddingVertical="8dp">
 
             <TextView
@@ -127,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Total: 347.799đ"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -136,10 +139,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#FF0050"
+                android:paddingHorizontal="16dp"
                 android:text="Check out"
                 android:textColor="@color/white"
-                android:textStyle="bold"
-                android:paddingHorizontal="16dp" />
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

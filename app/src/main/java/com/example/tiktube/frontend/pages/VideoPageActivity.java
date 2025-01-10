@@ -69,7 +69,7 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private List<Video> videoDataList = new ArrayList<>();
 
-    private ImageView searchIcon, profileIcon, messagingIcon, shopIcon;
+    private ImageView searchIcon, profileIcon, messagingIcon, shopIcon, uploadIcon;
 
     User currentUser;
 
@@ -98,7 +98,7 @@ public class VideoPageActivity extends AppCompatActivity {
         handlePlaybackOnScroll();
 
         // Set click listener for upload icon
-        ImageView uploadIcon = findViewById(R.id.uploadIcon);
+        uploadIcon = findViewById(R.id.uploadIcon);
         uploadIcon.setOnClickListener(view -> signInToGoogleDrive());
 
         fetchAllVideo();
@@ -162,12 +162,9 @@ public class VideoPageActivity extends AppCompatActivity {
     }
 
     private void onShopIconClicked() {
-        shopIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(VideoPageActivity.this, ShopActivity.class);
-                startActivity(intent);
-            }
+        shopIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(VideoPageActivity.this, ShopActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -198,13 +195,11 @@ public class VideoPageActivity extends AppCompatActivity {
     private void onProfileImageClicked() {
         profileIcon = findViewById(R.id.profileIcon);
 
-        profileIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(VideoPageActivity.this, ProfileActivity.class);
-                intent.putExtra("user", currentUser);
-                startActivity(intent);
-            }
+        profileIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(VideoPageActivity.this, ProfileActivity.class);
+            intent.putExtra("user", currentUser);
+            startActivity(intent);
+            finish();
         });
     }
 
@@ -265,7 +260,6 @@ public class VideoPageActivity extends AppCompatActivity {
             }
         }).start();
     }
-
 
 
     @Override
@@ -336,7 +330,6 @@ public class VideoPageActivity extends AppCompatActivity {
         }
         return "Unknown File";
     }
-
 
 
     private Uri trimVideo(Uri sourceUri) throws Exception {
@@ -515,12 +508,9 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private void onNotificationClicked() {
         messagingIcon = findViewById(R.id.messagingIcon);
-        messagingIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(VideoPageActivity.this, NotificationActivity.class);
-                startActivity(intent);
-            }
+        messagingIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(VideoPageActivity.this, NotificationActivity.class);
+            startActivity(intent);
         });
     }
 

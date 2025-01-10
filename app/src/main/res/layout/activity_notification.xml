@@ -3,21 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/bgColor">
 
     <!-- Wrapper Layout to Adjust Vertical Position -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingTop="50dp"> <!-- Adjust this value to move content further down -->
+        android:orientation="vertical"> <!-- Adjust this value to move content further down -->
 
         <!-- Toolbar or Action Bar -->
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:clickable="true"
+            android:contentDescription="back button"
+            android:focusable="true"
+            app:srcCompat="@drawable/ic_arrow_back_foreground"
+            app:tint="@color/textColor" />
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@android:color/white"
+            android:background="@color/bgColor"
             android:elevation="4dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
@@ -30,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:text="All activity"
-                android:textColor="@android:color/black"
+                android:textColor="@color/textColor"
                 android:textSize="16sp" />
 
             <!-- Notification Icon -->
@@ -41,7 +50,7 @@
                 android:layout_gravity="end"
                 android:contentDescription="Notification Icon"
                 android:src="@drawable/ic_message_foreground"
-                app:tint="#000000" />
+                app:tint="@color/textColor" />
         </androidx.appcompat.widget.Toolbar>
 
         <!-- Scrollable Notification List -->
@@ -69,7 +78,7 @@
                         android:layout_height="80dp"
                         android:contentDescription="No Notifications"
                         android:src="@drawable/ic_notifications_off_foreground"
-                        app:tint="#000000" />
+                        app:tint="@color/textColor" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -77,8 +86,9 @@
                         android:gravity="center"
                         android:paddingTop="8dp"
                         android:text="Notifications aren’t available"
-                        android:textColor="@android:color/black"
-                        android:textSize="18sp" />
+                        android:textColor="@color/textColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -86,7 +96,7 @@
                         android:gravity="center"
                         android:paddingTop="4dp"
                         android:text="Notifications about your account will appear here"
-                        android:textColor="@android:color/darker_gray"
+                        android:textColor="@color/textColor"
                         android:textSize="14sp" />
                 </LinearLayout>
 

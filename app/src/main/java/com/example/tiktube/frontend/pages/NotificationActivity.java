@@ -25,7 +25,7 @@ public class NotificationActivity extends AppCompatActivity {
     private LinearLayout emptyState;
     private LinearLayout notificationList;
 
-    private ImageView messageIcon;
+    private ImageView btnBack, messageIcon;
 
     private NotificationController notificationController;
 
@@ -41,12 +41,14 @@ public class NotificationActivity extends AppCompatActivity {
 
         fetchAllNotification(); // fetch and display the notification
 
+        onBackButtonClicked();
         onMessageIconClicked();
     }
 
     private void initComponent() {
         emptyState = findViewById(R.id.emptyState);
         notificationList = findViewById(R.id.notificationList);
+        btnBack = findViewById(R.id.btnBack);
         messageIcon = findViewById(R.id.messageIcon);
 
         notificationController = new NotificationController();
@@ -97,12 +99,13 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void onMessageIconClicked() {
-        messageIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(NotificationActivity.this, ChatActivity.class);
-                startActivity(intent);
-            }
+        messageIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(NotificationActivity.this, ChatActivity.class);
+            startActivity(intent);
         });
+    }
+
+    private void onBackButtonClicked() {
+        btnBack.setOnClickListener(v -> finish());
     }
 }
