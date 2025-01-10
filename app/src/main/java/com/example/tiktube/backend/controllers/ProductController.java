@@ -21,6 +21,7 @@ public class ProductController {
         return productService.productUpdateQuantity(product);
     }
 
+
     public CompletableFuture<Void> addProduct(Product product) {
         return productService.createProduct(product);
     }
@@ -32,4 +33,5 @@ public class ProductController {
     public CompletableFuture<Void> updateProduct(Product product) {
         return productService.updateProduct(product);
     }
+
 }

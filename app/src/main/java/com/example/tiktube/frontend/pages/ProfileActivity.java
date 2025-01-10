@@ -17,9 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.model.GlideUrl;
-import com.bumptech.glide.load.model.LazyHeaders;
 import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.CheckUserCallback;
@@ -41,7 +38,7 @@ import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
     TextView nameID, followingNumber, followerNumber, totalLike, bioText;
-    ImageView menuIcon, likeVideos, userVideos, profilePicture;
+    ImageView menuIcon, likeVideos, userVideos, profilePicture, btnBack;
 
     private ImageBuilder imageBuilder;
 
@@ -88,6 +85,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         likeVideos = findViewById(R.id.likeVideos);
         userVideos = findViewById(R.id.userVideos);
         profilePicture = findViewById(R.id.profilePicture);
+        btnBack = findViewById(R.id.btnBack);
 
         loginController = new LoginController();
         userController = new UserController();
@@ -113,6 +111,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
 
         onMenuIconClicked();
+        onBackBtnClicked();
     }
 
     private void imageProfileLoaded() {
@@ -275,6 +274,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             public void onSuccess(Enums.UserType user) {
                 switch (user) {
                     case CURRENT_USER:
+                        btnBack.setVisibility(View.GONE);
                         fetchCurrentUserData();
                         Log.d("Profile Activity", "Current User right?");
                         break;
@@ -426,6 +426,10 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
         editIntent.putExtra("user", user); // Pass the current user to EditProfileActivity
         editProfileLauncher.launch(editIntent);
+    }
+
+    private void onBackBtnClicked() {
+        btnBack.setOnClickListener(v -> finish());
     }
 
 }
