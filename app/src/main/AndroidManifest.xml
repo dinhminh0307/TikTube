@@ -30,6 +30,7 @@
         <activity
             android:name=".frontend.pages.MessagePageActivity"
             android:exported="false" />
+        <activity android:name=".frontend.pages.AdminActivity" />
         <activity
             android:name=".frontend.pages.ChatActivity"
             android:exported="false" />

@@ -57,4 +57,15 @@ public class UserController {
     public CompletableFuture<List<Video>> getUserLikeVideo(User user) {
         return userService.getUserLikeVideo(user);
     }
+
+    public void getUserNamesByIds(List<String> uids, DataFetchCallback<String> callback) {
+        userService.getUserNamesByIds(uids, callback);
+    }
+    public void getAllUsers(DataFetchCallback<User> cb) {
+        userService.getAllUsers(cb);
+    }
+
+    public void deleteUser(User user, DataFetchCallback<Void> callback) {
+        userService.deleteUser(user, callback);
+    }
 }
