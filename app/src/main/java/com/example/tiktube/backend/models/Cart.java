@@ -1,3 +1,4 @@
+
 package com.example.tiktube.backend.models;
 
 import java.util.ArrayList;
@@ -77,5 +78,14 @@ public class Cart {
 
     public void setPurchased(boolean purchased) {
         isPurchased = purchased;
+    }
+
+    public void setCart(Cart cart) {
+        this.uid = cart.getUid();
+        this.cartProducts = cart.getCartProducts();
+        this.ownerId = cart.getOwnerId();
+        this.date = cart.getDate();
+        this.totalPrice = cart.getTotalPrice();
+        this.isPurchased = cart.isPurchased();
     }
 }

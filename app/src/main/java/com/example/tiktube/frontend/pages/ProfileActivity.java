@@ -232,7 +232,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     @Override
     public void onVideoClick(Video video) {
         // Handle video click here
-        Intent intent = new Intent(ProfileActivity.this, UserVideoActivity.class);
+        Intent intent = new Intent(ProfileActivity.this, SingleVideoActivity.class);
         intent.putExtra("video", video); // Pass the video object to the new activity
         intent.putExtra("user", user);
         startActivity(intent);
