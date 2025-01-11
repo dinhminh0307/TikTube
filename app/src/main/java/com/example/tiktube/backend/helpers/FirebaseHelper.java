@@ -195,6 +195,68 @@ public class FirebaseHelper {
                 });
     }
 
+    public <T> void findByEmail(String collection, String email, Class<T> type, DataFetchCallback<T> callback) {
+        firestore.collection(collection)
+                .whereEqualTo("email", email)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<T> results = new ArrayList<>();
+                    querySnapshot.forEach(doc -> {
+                        T obj = doc.toObject(type);
+                        if (obj != null) {
+                            results.add(obj);
+                        }
+                    });
+                    callback.onSuccess(results);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+
+    public void adminLogin(String email, String password, LoginCallback callback) {
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Login succeeded
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                Log.d(TAG, "Admin: " + user.getUid());
+                                // Check if the user is in the Admins collection
+                                firestore.collection("admin").document(user.getUid()).get()
+                                        .addOnCompleteListener(adminCheckTask -> {
+                                            if (adminCheckTask.isSuccessful()) {
+                                                DocumentSnapshot document = adminCheckTask.getResult();
+                                                if (document.exists()) {
+                                                    // User is an admin
+                                                    Log.d(TAG, "Admin login successful");
+                                                    callback.onSuccess(user);
+                                                } else {
+                                                    // User is not an admin
+                                                    Log.w(TAG, "Admin login failed: Not an admin");
+                                                    callback.onFailure(new Exception("Access denied: Not an admin"));
+                                                }
+                                            } else {
+                                                Log.e(TAG, "Error checking admin status", adminCheckTask.getException());
+                                                callback.onFailure(adminCheckTask.getException());
+                                            }
+                                        });
+                            } else {
+                                Log.w(TAG, "No user returned after login");
+                                callback.onFailure(new Exception("Failed to retrieve user after login"));
+                            }
+                        } else {
+                            // Login failed
+                            Log.w(TAG, "Admin login failed", task.getException());
+                            callback.onFailure(task.getException());
+                        }
+                    }
+                });
+    }
+
+
+
     public String getUserId() {
         return this.userId;
     }
@@ -235,28 +297,37 @@ public class FirebaseHelper {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@org.checkerframework.checker.nullness.qual.NonNull Task<AuthResult> task) {
+                    public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign up success
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             if (firebaseUser != null) {
-                                // Create a User object
-                                String userUid = UidGenerator.generateUID();
-                                User user = new User(userUid, name, phoneNumber, email, "", new ArrayList<>(), new ArrayList<>());
+                                // Get the UID from Firebase Authentication
+                                User newUser = new User();
+                                newUser.setUid(firebaseUser.getUid());
+                                newUser.setEmail(email);
+                                newUser.setName(name);
+                                newUser.setPhoneNumber(phoneNumber);
 
-                                // Save the User object to Firestore
-                                firestore.collection("users").document(firebaseUser.getUid())
-                                        .set(user)
-                                        .addOnCompleteListener(saveTask -> {
-                                            if (saveTask.isSuccessful()) {
-                                                Log.d(TAG, "User profile saved to Firestore");
+                                // Save the User object to Firestore with the UID as the document ID
+                                create(
+                                        "users",
+                                        newUser.getUid(),
+                                        newUser,
+                                        new DataFetchCallback<String>() {
+                                            @Override
+                                            public void onSuccess(List<String> data) {
                                                 callback.onSuccess(firebaseUser);
-                                            } else {
-                                                Log.w(TAG, "Failed to save user profile", saveTask.getException());
-                                                callback.onFailure(saveTask.getException());
+                                                Log.d("Firebase Helper", "Save to fire store: " + newUser.getUid());
                                             }
-                                        });
+
+                                            @Override
+                                            public void onFailure(Exception e) {
+                                                callback.onFailure(e);
+                                            }
+                                        }
+                                );
                             } else {
                                 callback.onFailure(new Exception("User is null after successful registration"));
                             }
@@ -269,7 +340,8 @@ public class FirebaseHelper {
                 });
     }
 
-   public FirebaseFirestore getFirestore() {
+
+    public FirebaseFirestore getFirestore() {
         return firestore;
    }
 }

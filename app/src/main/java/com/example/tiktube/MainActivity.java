@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         onSignUpButtonClicked();
         onLoginButtonClicked();
-        onViewUsersButtonClicked(); // Initialize the new button
+//        onViewUsersButtonClicked(); // Initialize the new button
     }
 
     @Override
@@ -87,14 +87,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // New Method for "View Users" Button
-    private void onViewUsersButtonClicked() {
-        viewUsersBtn = findViewById(R.id.viewAdminPage);
-        viewUsersBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AdminActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+//    private void onViewUsersButtonClicked() {
+//        viewUsersBtn = findViewById(R.id.viewAdminPage);
+//        viewUsersBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+//    }
 }

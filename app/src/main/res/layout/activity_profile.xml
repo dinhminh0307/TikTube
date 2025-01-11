@@ -1,27 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <!-- Menu Icon -->
-    <ImageView
-        android:id="@+id/menuIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="16dp"
-        android:contentDescription="menu icon"
-        android:src="@drawable/ic_menu_foreground"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
-
     <!-- Back Button -->
     <ImageView
         android:id="@+id/btnBack"
-        android:layout_width="40dp"
+        android:layout_width="60dp"
         android:layout_height="40dp"
         android:layout_marginTop="64dp"
         android:layout_marginStart="16dp"
@@ -31,17 +18,28 @@
         android:layout_alignParentStart="true"
         android:elevation="4dp" />
 
+    <!-- Menu Icon -->
+    <ImageView
+        android:id="@+id/menuIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="Menu Icon"
+        android:src="@drawable/ic_menu_foreground"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
     <!-- Public Account Text -->
     <TextView
         android:id="@+id/adminAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="public account"
-        android:textColor="@color/white"
-        android:textSize="12sp"
         android:layout_below="@id/menuIcon"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp" />
+        android:text="public account"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
 
     <!-- Scrollable Content -->
     <ScrollView
@@ -64,7 +62,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="24dp"
-                android:contentDescription="profile picture"
+                android:contentDescription="Profile Picture"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_account_circle_foreground" />
 
@@ -84,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:gravity="center"
+                android:baselineAligned="false"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -171,7 +169,8 @@
                     android:id="@+id/editProfileBtn"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
                     android:backgroundTint="@color/white"
                     android:text="Edit profile"
                     android:textColor="@color/black" />
@@ -180,7 +179,8 @@
                     android:id="@+id/messageId"
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
                     android:backgroundTint="@color/white"
                     android:text="Message"
                     android:textColor="@color/black" />
@@ -209,15 +209,16 @@
                     android:layout_height="24dp"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
-                    android:contentDescription="videos"
-                    android:src="@drawable/ic_videocam_foreground" />
+                    android:contentDescription="Videos"
+                    android:src="@drawable/ic_videocam_foreground"
+                    app:tint="@color/white" />
 
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
-                    android:contentDescription="private videos"
+                    android:contentDescription="Private Videos"
                     android:src="@drawable/ic_lock_foreground" />
 
                 <ImageView
@@ -225,7 +226,7 @@
                     android:layout_height="24dp"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
-                    android:contentDescription="bookmarks"
+                    android:contentDescription="Bookmarks"
                     android:src="@drawable/ic_bookmark_border_foreground" />
 
                 <ImageView
@@ -234,9 +235,10 @@
                     android:layout_height="24dp"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
-                    android:contentDescription="liked videos"
+                    android:contentDescription="Liked Videos"
                     android:src="@drawable/ic_heart"
                     app:tint="@color/gray" />
+
             </LinearLayout>
 
             <!-- Video Section -->

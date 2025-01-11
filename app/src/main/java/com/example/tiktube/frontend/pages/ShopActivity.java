@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -26,10 +27,12 @@ public class ShopActivity extends AppCompatActivity {
     private RecyclerView productRecyclerView;
     private ProductAdapter productAdapter;
     private List<Product> productList = new ArrayList<>();
+    private List<Product> filteredProductList = new ArrayList<>();
 
     private LoginController loginController;
 
     private ImageView btnBack, cartIcon;
+    private SearchView searchInput;
 
     private ProductController productController = new ProductController();
 
@@ -55,10 +58,14 @@ public class ShopActivity extends AppCompatActivity {
 
         // Set adapter
         onCartIconClicked();
+
+        // Set up search functionality
+        setupSearch();
     }
 
     private void initComponent() {
         btnBack = findViewById(R.id.btnBack);
+        searchInput = findViewById(R.id.searchInput);
         cartIcon = findViewById(R.id.cartIcon);
         loginController = new LoginController();
 
@@ -68,25 +75,26 @@ public class ShopActivity extends AppCompatActivity {
     }
 
     private void onCartIconClicked() {
-        cartIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ShopActivity.this, CartActivity.class);
-                startActivity(intent);
-            }
+        cartIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(ShopActivity.this, CartActivity.class);
+            startActivity(intent);
         });
     }
 
     private void loadProducts() {
         productController.getAllProducts()
                 .thenAccept(p -> {
-                    for(Product product: p) {
-                        if(product.getQuantity() > 0) {
+                    productList.clear();
+                    for (Product product : p) {
+                        if (product.getQuantity() > 0) {
                             productList.add(product);
                         }
                     }
-                    productAdapter = new ProductAdapter(this, productList, currentUser);
-                    productRecyclerView.setAdapter(productAdapter);
+                    filteredProductList.addAll(productList); // Copy all products for filtering
+                    runOnUiThread(() -> {
+                        productAdapter = new ProductAdapter(this, filteredProductList, currentUser);
+                        productRecyclerView.setAdapter(productAdapter);
+                    });
                 })
                 .exceptionally(e -> {
                     e.printStackTrace();
@@ -103,11 +111,38 @@ public class ShopActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Exception e) {
-
+                e.printStackTrace();
             }
         });
     }
 
+    private void setupSearch() {
+        searchInput.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterProducts(query);
+                return true;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterProducts(newText);
+                return true;
+            }
+        });
+    }
 
+    private void filterProducts(String query) {
+        String lowerCaseQuery = query.toLowerCase();
+        filteredProductList.clear();
+
+        for (Product product : productList) {
+            if (product.getName().toLowerCase().contains(lowerCaseQuery)) {
+                filteredProductList.add(product);
+            }
+        }
+
+        // Update the adapter with the filtered list
+        productAdapter.notifyDataSetChanged();
+    }
 }

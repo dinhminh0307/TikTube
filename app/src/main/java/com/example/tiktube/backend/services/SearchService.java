@@ -2,6 +2,7 @@ package com.example.tiktube.backend.services;
 
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.helpers.FirebaseHelper;
+import com.example.tiktube.backend.models.Product;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.models.Video;
 
@@ -14,6 +15,8 @@ public class SearchService {
 
     private final String video_collection = "videos";
     private final String users_collection = "users";
+
+    private final String product_collections = "products";
 
     public SearchService() {
         firebaseHelper = new FirebaseHelper();
@@ -116,4 +119,45 @@ public class SearchService {
                 }
         );
     }
+
+    public CompletableFuture<List<Product>> searchProductByName(String keyword) {
+        CompletableFuture<List<Product>> future = new CompletableFuture<>();
+
+        // Preprocess the keyword
+        String processedKeyword = keyword.toLowerCase();
+
+        // Get the products
+        firebaseHelper.findAll(
+                product_collections,
+                Product.class,
+                new DataFetchCallback<Product>() {
+                    @Override
+                    public void onSuccess(List<Product> data) {
+                        List<Product> matchingProducts = new ArrayList<>();
+
+                        for (Product product : data) {
+                            if (product.getName() != null) {
+                                // Check if the product name contains the keyword
+                                String productName = product.getName().toLowerCase();
+                                if (productName.contains(processedKeyword)) {
+                                    matchingProducts.add(product);
+                                }
+                            }
+                        }
+
+                        // Complete the future with the matching products
+                        future.complete(matchingProducts);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        // Complete the future with an exception in case of failure
+                        future.completeExceptionally(e);
+                    }
+                }
+        );
+
+        return future;
+    }
+
 }

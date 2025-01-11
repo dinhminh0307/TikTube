@@ -1,17 +1,17 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/bgColor"
     android:orientation="horizontal"
-    android:padding="8dp"
-    android:background="@color/black">
+    android:padding="8dp">
 
     <ImageView
         android:id="@+id/productImage"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:scaleType="centerCrop"
-        android:contentDescription="Product Image" />
+        android:contentDescription="Product Image"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -24,11 +24,11 @@
             android:id="@+id/productName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Product Name"
-            android:textColor="@color/white"
-            android:textSize="14sp"
+            android:ellipsize="end"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:text="Product Name"
+            android:textColor="@color/textColor"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/productPrice"
@@ -43,23 +43,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Only 4 left"
-            android:textColor="@color/white"
+            android:textColor="@color/textColor"
             android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/decreaseQuantity"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_minus"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Decrease Quantity" />
+            android:contentDescription="Decrease Quantity"
+            android:src="@drawable/ic_minus"
+            app:tint="@color/textColor" />
 
         <TextView
             android:id="@+id/productQuantity"
@@ -67,14 +68,15 @@
             android:layout_height="32dp"
             android:gravity="center"
             android:text="1"
-            android:textColor="@color/white" />
+            android:textColor="@color/textColor" />
 
         <ImageButton
             android:id="@+id/increaseQuantity"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_add_foreground"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Increase Quantity" />
+            android:contentDescription="Increase Quantity"
+            android:src="@drawable/ic_add_foreground"
+            app:tint="@color/textColor" />
     </LinearLayout>
 </LinearLayout>
