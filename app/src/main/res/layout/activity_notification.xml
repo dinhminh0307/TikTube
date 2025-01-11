@@ -1,114 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@color/bgColor">
 
-    <!-- Wrapper Layout to Adjust Vertical Position -->
-    <LinearLayout
+    
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:elevation="4dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:contentInsetStartWithNavigation="0dp">
+
+        <!-- Dropdown for "All activity" -->
+        <TextView
+            android:id="@+id/dropdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="All activity"
+            android:textColor="@color/textColor"
+            android:textSize="16sp" />
+
+        <!-- Notification Icon -->
+        <ImageView
+            android:id="@+id/messageIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end"
+            android:contentDescription="Notification Icon"
+            android:src="@drawable/ic_message_foreground"
+            app:tint="@color/textColor" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:contentDescription="back button"
+        android:focusable="true"
+        app:srcCompat="@drawable/ic_arrow_back_foreground"
+        app:tint="@color/textColor" />
+
+    <!-- Scrollable Notification List -->
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"> <!-- Adjust this value to move content further down -->
+        android:layout_below="@id/btnBack"
+        android:layout_marginTop="8dp">
 
-        <!-- Toolbar or Action Bar -->
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:clickable="true"
-            android:contentDescription="back button"
-            android:focusable="true"
-            app:srcCompat="@drawable/ic_arrow_back_foreground"
-            app:tint="@color/textColor" />
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:elevation="4dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            app:contentInsetStartWithNavigation="0dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <!-- Dropdown for "All activity" -->
-            <TextView
-                android:id="@+id/dropdown"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:text="All activity"
-                android:textColor="@color/textColor"
-                android:textSize="16sp" />
-
-            <!-- Notification Icon -->
-            <ImageView
-                android:id="@+id/messageIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="end"
-                android:contentDescription="Notification Icon"
-                android:src="@drawable/ic_message_foreground"
-                app:tint="@color/textColor" />
-        </androidx.appcompat.widget.Toolbar>
-
-        <!-- Scrollable Notification List -->
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            <!-- Default Empty State -->
             <LinearLayout
+                android:id="@+id/emptyState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:contentDescription="No Notifications"
+                    android:src="@drawable/ic_notifications_off_foreground"
+                    app:tint="@color/textColor" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="8dp"
+                    android:text="Notifications aren’t available"
+                    android:textColor="@color/textColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="4dp"
+                    android:text="Notifications about your account will appear here"
+                    android:textColor="@color/textColor"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- Dynamic Notification List -->
+            <LinearLayout
+                android:id="@+id/notificationList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- Default Empty State -->
-                <LinearLayout
-                    android:id="@+id/emptyState"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:visibility="visible">
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:contentDescription="No Notifications"
-                        android:src="@drawable/ic_notifications_off_foreground"
-                        app:tint="@color/textColor" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingTop="8dp"
-                        android:text="Notifications aren’t available"
-                        android:textColor="@color/textColor"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingTop="4dp"
-                        android:text="Notifications about your account will appear here"
-                        android:textColor="@color/textColor"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <!-- Dynamic Notification List -->
-                <LinearLayout
-                    android:id="@+id/notificationList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-                    <!-- Dynamically add notification items here -->
-                </LinearLayout>
+                android:visibility="gone">
+                <!-- Dynamically add notification items here -->
             </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
