@@ -454,15 +454,30 @@ public class VideoPageActivity extends AppCompatActivity {
         userController.uploadVideo(vid, new DataFetchCallback<Void>() {
             @Override
             public void onSuccess(List<Void> data) {
-                fetchCurrentUser();
+                runOnUiThread(() -> {
+                    // Add the new video to the local list
+                    videoDataList.add(0, vid); // Add at the top to show the newest video first
+                    if (videoPagerAdapter == null) {
+                        videoPagerAdapter = new VideoPagerAdapter(VideoPageActivity.this, videoDataList);
+                        viewPager2.setAdapter(videoPagerAdapter);
+                    } else {
+                        videoPagerAdapter.notifyItemInserted(0);
+                        viewPager2.setCurrentItem(0, true); // Navigate to the new video
+                    }
+                    Toast.makeText(VideoPageActivity.this, "Video uploaded successfully!", Toast.LENGTH_SHORT).show();
+                });
             }
 
             @Override
             public void onFailure(Exception e) {
-                Log.e("Firebase", "Failed to upload video metadata", e);
+                runOnUiThread(() -> {
+                    Log.e("Firebase", "Failed to upload video metadata", e);
+                    Toast.makeText(VideoPageActivity.this, "Failed to upload video", Toast.LENGTH_SHORT).show();
+                });
             }
         });
     }
+
 
 
     @Override
