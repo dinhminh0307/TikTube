@@ -1,11 +1,10 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:background="@color/bgColor"
     android:orientation="vertical"
-    android:padding="8dp"
-    android:background="@color/white"
-    android:layout_marginBottom="8dp">
+    android:padding="8dp">
 
     <!-- Product Image -->
     <ImageView
@@ -21,11 +20,11 @@
         android:id="@+id/adminProductName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Product Name"
+        android:textColor="@color/textColor"
         android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_marginTop="8dp" />
+        android:textStyle="bold" />
 
     <!-- Product Price -->
     <TextView
@@ -33,8 +32,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Price: $0.00"
-        android:textSize="14sp"
-        android:textColor="@color/black" />
+        android:textColor="@color/textColor"
+        android:textSize="14sp" />
 
     <!-- Product Quantity -->
     <TextView
@@ -42,33 +41,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Quantity: 0"
-        android:textSize="14sp"
-        android:textColor="@color/black" />
+        android:textColor="@color/textColor"
+        android:textSize="14sp" />
 
     <!-- Buttons for Update and Delete -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="end"
+        android:orientation="horizontal"
         android:paddingTop="8dp">
 
         <Button
             android:id="@+id/adminUpdateProduct"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Update"
+            android:layout_marginEnd="8dp"
             android:backgroundTint="@color/gradient_start"
-            android:textColor="@color/white"
-            android:layout_marginEnd="8dp" />
+            android:text="Update"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/adminDeleteProduct"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete"
             android:backgroundTint="@color/red"
-            android:textColor="@color/white" />
+            android:text="Delete"
+            android:textColor="@color/black" />
     </LinearLayout>
 
 </LinearLayout>

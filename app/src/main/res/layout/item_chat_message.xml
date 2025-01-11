@@ -1,5 +1,4 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -10,19 +9,20 @@
         android:id="@+id/messageContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
         android:background="@drawable/bubble_sender"
-    android:text="Sample message"
-    android:textColor="@android:color/black"
-    android:textSize="14sp" />
+        android:padding="12dp"
+        android:text="Sample message"
+        android:textColor="@color/black"
+        android:textSize="14sp" />
 
     <!-- Timestamp -->
     <TextView
         android:id="@+id/messageTimestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="02:59 PM"
-        android:textSize="12sp"
         android:layout_marginTop="4dp"
-        android:textColor="@android:color/darker_gray" />
+        android:alpha="0.6"
+        android:text="02:59 PM"
+        android:textColor="@color/textColor"
+        android:textSize="12sp" />
 </LinearLayout>

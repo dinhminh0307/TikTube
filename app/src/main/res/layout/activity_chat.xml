@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/bgColor">
 
     <!-- Back Button -->
     <ImageView
@@ -15,7 +15,7 @@
         android:layout_marginTop="48dp"
         android:contentDescription="Back"
         android:src="@drawable/ic_arrow_back_foreground"
-        app:tint="#000000" />
+        app:tint="@color/textColor" />
 
     <!-- Title -->
     <TextView
@@ -25,7 +25,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="48dp"
         android:text="Direct messages"
-        android:textColor="@android:color/black"
+        android:textColor="@color/textColor"
         android:textSize="18sp" />
 
     <!-- Add Button -->
@@ -38,7 +38,7 @@
         android:layout_marginEnd="16dp"
         android:contentDescription="Add"
         android:src="@drawable/ic_add_foreground"
-        app:tint="#000000" />
+        app:tint="@color/textColor" />
 
     <!-- Empty State -->
     <LinearLayout
@@ -48,7 +48,8 @@
         android:layout_centerInParent="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/emptyStateIcon"
@@ -56,7 +57,7 @@
             android:layout_height="64dp"
             android:contentDescription="Empty State Icon"
             android:src="@drawable/ic_message_foreground"
-            app:tint="#000000" />
+            app:tint="@color/textColor" />
 
         <TextView
             android:id="@+id/primaryMessage"
@@ -65,7 +66,7 @@
             android:layout_marginTop="8dp"
             android:gravity="center"
             android:text="Message your friends"
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="16sp" />
 
         <TextView
@@ -73,9 +74,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:alpha="0.6"
             android:gravity="center"
             android:text="Share videos or start a conversation"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@color/textColor"
             android:textSize="14sp" />
     </LinearLayout>
 

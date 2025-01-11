@@ -2,6 +2,7 @@ package com.example.tiktube.frontend.pages;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,7 +71,8 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private List<Video> videoDataList = new ArrayList<>();
 
-    private ImageView searchIcon, profileIcon, messagingIcon, shopIcon, uploadIcon;
+    private ImageView homeIcon, searchIcon, uploadIcon, messagingIcon, profileIcon, shopIcon;
+    private LinearLayout bottomNav;
 
     User currentUser;
 
@@ -99,16 +102,19 @@ public class VideoPageActivity extends AppCompatActivity {
 
         // Set click listener for upload icon
         uploadIcon = findViewById(R.id.uploadIcon);
+        uploadIcon.setColorFilter(Color.argb(255, 255, 255, 255));
         uploadIcon.setOnClickListener(view -> signInToGoogleDrive());
 
         fetchAllVideo();
 
         //setup component button
+        bottomNav = findViewById(R.id.bottomNav);
+        bottomNav.setBackgroundColor(Color.argb(1, 0, 0, 0));
+        homeIcon = findViewById(R.id.homeIcon);
+        homeIcon.setColorFilter(Color.argb(255, 255, 255, 255));
         onProfileImageClicked();
-
         onNotificationClicked();
         onSearchClicked();
-
         onShopIconClicked();
     }
 
@@ -194,7 +200,7 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private void onProfileImageClicked() {
         profileIcon = findViewById(R.id.profileIcon);
-
+        profileIcon.setColorFilter(Color.argb(255, 255, 255, 255));
         profileIcon.setOnClickListener(v -> {
             Intent intent = new Intent(VideoPageActivity.this, ProfileActivity.class);
             intent.putExtra("user", currentUser);
@@ -508,6 +514,7 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private void onNotificationClicked() {
         messagingIcon = findViewById(R.id.messagingIcon);
+        messagingIcon.setColorFilter(Color.argb(255, 255, 255, 255));
         messagingIcon.setOnClickListener(v -> {
             Intent intent = new Intent(VideoPageActivity.this, NotificationActivity.class);
             startActivity(intent);
@@ -516,6 +523,7 @@ public class VideoPageActivity extends AppCompatActivity {
 
     private void onSearchClicked() {
         searchIcon = findViewById(R.id.searchIcon);
+        searchIcon.setColorFilter(Color.argb(255, 255, 255, 255));
         searchIcon.setOnClickListener(v -> {
             Intent intent = new Intent(VideoPageActivity.this, SearchActivity.class);
             intent.putExtra("user", currentUser);
