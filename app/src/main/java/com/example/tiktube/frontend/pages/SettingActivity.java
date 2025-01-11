@@ -16,7 +16,7 @@ import com.example.tiktube.backend.controllers.LoginController;
 public class SettingActivity extends AppCompatActivity {
     LinearLayout logout;
     LoginController loginController;
-    LinearLayout backToPrevious;
+    LinearLayout backToPrevious, customerServiceBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +26,7 @@ public class SettingActivity extends AppCompatActivity {
         setUpComponent();
         onLogoutClicked();
         setUpBackNavigation();
+        setUpServiceNavigation();
     }
 
     private void setUpComponent() {
@@ -33,6 +34,7 @@ public class SettingActivity extends AppCompatActivity {
         //controller
         loginController = new LoginController();
         backToPrevious = findViewById(R.id.backToPrevious);
+        customerServiceBtn = findViewById(R.id.customerServiceBtn);
     }
 
     private void onLogoutClicked() {
@@ -46,6 +48,17 @@ public class SettingActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish(); // Finish current activity
                 Toast.makeText(SettingActivity.this, "Logout clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setUpServiceNavigation() {
+        customerServiceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an intent to navigate to ServiceActivity
+                Intent intent = new Intent(SettingActivity.this, ServiceActivity.class);
+                startActivity(intent);
             }
         });
     }
