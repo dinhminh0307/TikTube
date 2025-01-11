@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/bgColor">
 
     <ImageView
         android:id="@+id/btnBack"
@@ -13,6 +13,7 @@
         android:clickable="true"
         android:contentDescription="back button"
         android:focusable="true"
+        app:tint="@color/textColor"
         app:layout_constraintBottom_toBottomOf="@+id/menuIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/menuIcon"
@@ -25,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="public account"
-        android:textColor="@color/white"
+        android:textColor="@color/textColor"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/menuIcon"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,6 +42,7 @@
         android:layout_marginEnd="16dp"
         android:contentDescription="menu icon"
         android:src="@drawable/ic_menu_foreground"
+        app:tint="@color/textColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:background="@color/black"
+        android:background="@color/bgColor"
         app:layout_constraintBottom_toTopOf="@+id/bottomNav"
         app:layout_constraintTop_toBottomOf="@+id/menuIcon">
 
@@ -77,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@peterparker123"
-                android:textColor="@color/white"
+                android:textColor="@color/textColor"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -101,7 +103,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="89"
-                        android:textColor="@color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -109,7 +111,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Following"
-                        android:textColor="@color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -125,7 +127,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="131298"
-                        android:textColor="@color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -133,7 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Followers"
-                        android:textColor="@color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -149,7 +151,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1M"
-                        android:textColor="@color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -157,7 +159,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Likes"
-                        android:textColor="@color/white"
+                        android:textColor="@color/textColor"
                         android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -171,23 +173,23 @@
 
                 <Button
                     android:id="@+id/editProfileBtn"
-                    android:layout_width="130dp"
+                    android:layout_width="140dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/textColor"
                     android:text="Edit profile"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/bgColor" />
 
                 <Button
                     android:id="@+id/messageId"
-                    android:layout_width="130dp"
+                    android:layout_width="140dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/textColor"
                     android:text="Message"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/bgColor" />
             </LinearLayout>
 
             <!-- Bio Section -->
@@ -197,7 +199,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="I heard about it, and I did see it. And it’s a photoshop"
-                android:textColor="@color/white"
+                android:textColor="@color/textColor"
                 android:textSize="14sp" />
 
             <!-- Section Tabs -->
@@ -215,23 +217,29 @@
                     android:layout_weight="1"
                     android:contentDescription="videos"
                     android:src="@drawable/ic_videocam_foreground"
-                    app:tint="@color/white" />
+                    app:tint="@color/textColor" />
 
                 <ImageView
+                    android:id="@+id/privateVideos"
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
+                    android:alpha="0.5"
                     android:contentDescription="private videos"
-                    android:src="@drawable/ic_lock_foreground" />
+                    android:src="@drawable/ic_lock_foreground"
+                    app:tint="@color/textColor" />
 
                 <ImageView
+                    android:id="@+id/bookmarkVideos"
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
+                    android:alpha="0.5"
                     android:contentDescription="bookmarks"
-                    android:src="@drawable/ic_bookmark_border_foreground" />
+                    android:src="@drawable/ic_bookmark_border_foreground"
+                    app:tint="@color/textColor" />
 
                 <ImageView
                     android:id="@+id/likeVideos"
@@ -239,9 +247,10 @@
                     android:layout_height="24dp"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
+                    android:alpha="0.5"
                     android:contentDescription="liked videos"
                     android:src="@drawable/ic_heart"
-                    app:tint="@color/gray" />
+                    app:tint="@color/textColor" />
 
             </LinearLayout>
 

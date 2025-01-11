@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -12,9 +12,9 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:src="@drawable/ic_account_circle_foreground"
+        android:layout_marginEnd="8dp"
         android:scaleType="centerCrop"
-        android:layout_marginEnd="8dp" />
+        android:src="@drawable/ic_account_circle_foreground" />
 
     <!-- User Details -->
     <LinearLayout
@@ -28,32 +28,32 @@
             android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Name"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:textSize="16sp"
             android:ellipsize="end"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:text="User Name"
+            android:textColor="@color/textColor"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <!-- User Email -->
         <TextView
             android:id="@+id/tvUserEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="user@example.com"
-            android:textSize="14sp"
             android:ellipsize="end"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:text="user@example.com"
+            android:textColor="@color/textColor"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <!-- Info Button for CRUD -->
-    <ImageButton
+    <ImageView
         android:id="@+id/btnInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="center_vertical"
-        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Info"
-        android:src="@drawable/ic_info" />
+        app:srcCompat="@drawable/ic_info_foreground"
+        app:tint="@color/textColor" />
 </LinearLayout>

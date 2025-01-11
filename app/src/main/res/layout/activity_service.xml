@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="16dp"
+            android:text="Customer Service"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- Button to Expand Information -->
+        <LinearLayout
+            android:id="@+id/accountContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_account_circle_foreground"
+                app:tint="#000000" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="How to sign in and Log In"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Expandable Section -->
+        <LinearLayout
+            android:id="@+id/accountSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="0dp"
+            android:visibility="gone">
+
+            <!-- Main Page Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
+
+                <!-- Smaller Image -->
+                <ImageView
+                    android:layout_width="157dp"
+                    android:layout_height="300dp"
+                    android:layout_marginEnd="8dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/main_page" />
+
+                <!-- Text Information -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="114dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="This is the main page before getting to log in and sign up pages."
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Sign-In Page Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
+
+                <!-- Smaller Image -->
+                <ImageView
+                    android:layout_width="157dp"
+                    android:layout_height="300dp"
+                    android:layout_marginEnd="8dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/signin_page" />
+
+                <!-- Text Information -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:text="Before fully accessing TikTube, the user needs to sign up and fill out all necessary boxes shown here. The email needs to be @gmail.com."
+                    android:textSize="16sp"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+
+            <!-- Log-In Page Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
+
+                <!-- Smaller Image -->
+                <ImageView
+                    android:layout_width="157dp"
+                    android:layout_height="300dp"
+                    android:layout_marginEnd="8dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/login_page" />
+
+                <!-- Text Information -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Once you finish signing up, you can log in the main access of Tik Tube by filling the boxes with specific information."
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <!-- Video Expandable Section Trigger -->
+        <LinearLayout
+            android:id="@+id/videoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_upload"
+                app:tint="#000000" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="How to upload video"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Video Expandable Section -->
+        <LinearLayout
+            android:id="@+id/videoSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:visibility="gone">
+
+            <!-- Upload Page Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
+
+                <!-- Smaller Image -->
+                <ImageView
+                    android:layout_width="157dp"
+                    android:layout_height="300dp"
+                    android:layout_marginEnd="8dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/bottom_navigation" />
+
+                <!-- Text Information -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:text="Press the icon where the red circle point"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
+
+                <!-- Smaller Image -->
+                <ImageView
+                    android:layout_width="157dp"
+                    android:layout_height="300dp"
+                    android:layout_marginEnd="8dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/upload_page" />
+
+                <!-- Text Information -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:text="You have to log in as google account again to reach this section. Then, if you have downloaded video inside your phone, there should be videos that you can choose to download."
+                    android:textSize="16sp"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
+
+                <!-- Smaller Image -->
+                <ImageView
+                    android:layout_width="157dp"
+                    android:layout_height="300dp"
+                    android:layout_marginEnd="8dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/sdcard_section" />
+
+                <!-- Text Information -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#000000"
+                    android:text="If using this app on Android Studio, go to View → Tool Windows → Device File Explorer then go to sdcard folder and access to Download to upload your videos there to upload videos directly to Tik Tube after pressing upload icon."
+                    android:textSize="16sp"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/backToPrevious"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_arrow_back_foreground"
+                app:tint="#000000" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Go back"
+                android:textColor="#000000"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

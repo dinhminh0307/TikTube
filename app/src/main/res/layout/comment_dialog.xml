@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:background="@color/bgColor"
     android:orientation="vertical"
     android:padding="8dp">
 
@@ -11,7 +11,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
         android:orientation="horizontal"
         android:padding="8dp">
 
@@ -21,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="579 comments"
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -31,7 +30,7 @@
             android:layout_height="24dp"
             android:contentDescription="Close comments"
             android:src="@drawable/ic_close_foreground"
-            app:tint="#000000" />
+            app:tint="@color/textColor" />
     </LinearLayout>
 
     <!-- Comments List -->
@@ -47,7 +46,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
         android:orientation="horizontal"
         android:padding="8dp">
 
@@ -59,7 +57,7 @@
             android:background="@null"
             android:hint="Add comment..."
             android:padding="8dp"
-            android:textColor="@android:color/black"
+            android:textColor="@color/textColor"
             android:textSize="14sp" />
 
         <ImageView
@@ -68,6 +66,6 @@
             android:layout_height="36dp"
             android:contentDescription="Send comment"
             android:src="@drawable/ic_send_foreground"
-            app:tint="#000000" />
+            app:tint="@color/textColor" />
     </LinearLayout>
 </LinearLayout>

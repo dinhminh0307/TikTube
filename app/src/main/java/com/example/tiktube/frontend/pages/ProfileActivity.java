@@ -38,7 +38,7 @@ import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity implements VideoGridAdapter.OnVideoClickListener {
     TextView nameID, followingNumber, followerNumber, totalLike, bioText;
-    ImageView menuIcon, likeVideos, userVideos, profilePicture, btnBack, homeIcon, searchIcon, uploadIcon, messagingIcon, profileIcon;
+    ImageView menuIcon, likeVideos, userVideos, privateVideos, bookmarkVideos, profilePicture, btnBack, homeIcon, searchIcon, uploadIcon, messagingIcon, profileIcon;
 
     private ImageBuilder imageBuilder;
 
@@ -84,6 +84,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         messageId = findViewById(R.id.messageId);
         likeVideos = findViewById(R.id.likeVideos);
         userVideos = findViewById(R.id.userVideos);
+        privateVideos = findViewById(R.id.privateVideos);
+        bookmarkVideos = findViewById(R.id.bookmarkVideos);
         profilePicture = findViewById(R.id.profilePicture);
         btnBack = findViewById(R.id.btnBack);
         homeIcon = findViewById(R.id.homeIcon);
@@ -165,9 +167,11 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     }
 
     private void highlightTab(ImageView activeTab) {
-        userVideos.setColorFilter(getResources().getColor(R.color.gray)); // Deactivate
-        likeVideos.setColorFilter(getResources().getColor(R.color.gray)); // Deactivate
-        activeTab.setColorFilter(getResources().getColor(R.color.white)); // Activate
+        userVideos.setAlpha(0.5F); // Deactivate
+        likeVideos.setAlpha(0.5F); // Deactivate
+        privateVideos.setAlpha(0.5F); // Deactivate
+        bookmarkVideos.setAlpha(0.5F); // Deactivate
+        activeTab.setAlpha(1F); // Activate
     }
 
 
@@ -376,7 +380,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.option_settings) {
-                // Navigate to Setting
+                Intent settingsIntent = new Intent(ProfileActivity.this, SettingActivity.class);
+                startActivity(settingsIntent);
                 return true;
             } else if (itemId == R.id.option_edit) {
 //        if (isCurrentUser == Enums.UserType.CURRENT_USER) {
@@ -439,6 +444,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             finish();
         });
     }
+
     private void onSearchBtnClicked() {
         searchIcon.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, SearchActivity.class);
@@ -446,6 +452,7 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             startActivity(intent);
         });
     }
+
     private void onMessageBtnClicked() {
         messagingIcon.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, NotificationActivity.class);

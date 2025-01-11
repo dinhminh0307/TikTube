@@ -46,4 +46,6 @@
     <string name="back"><![CDATA[<]]></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_web_client_id">476151552588-iubp700jv4n85e7r6d914947m7hgmc18.apps.googleusercontent.com</string>
+
 </resources>

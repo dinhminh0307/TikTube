@@ -14,8 +14,8 @@ public class User implements Parcelable {
     private String phoneNumber;
     private String email;
     private String imageUrl;
-    private List<String> ownVideo;
-    private List<String> interactedVideo;
+    private List<String> ownVideo = new ArrayList<>();
+    private List<String> interactedVideo = new ArrayList<>();
     private List<String> likesVideo = new ArrayList<>(); // New likesVideo field
     private List<String> followingList = new ArrayList<>(); // New followingList field
     private List<String> followerList = new ArrayList<>(); // New followerList field

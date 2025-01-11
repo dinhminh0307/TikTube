@@ -1,5 +1,6 @@
 package com.example.tiktube.frontend.pages;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,8 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tiktube.MainActivity;
 import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
+import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.controllers.ProductController;
 import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.backend.helpers.ImageBuilder;
@@ -39,6 +42,10 @@ public class AdminActivity extends AppCompatActivity {
 
     private ProductController productController;
 
+    private ImageView menuIcon;
+
+    private LoginController loginController;
+
     private List<Product> productList = new ArrayList<>();
 
     @Override
@@ -52,6 +59,45 @@ public class AdminActivity extends AppCompatActivity {
 
 
         setButtonListeners();
+
+        onMenuIconClicked();
+    }
+
+    private void onMenuIconClicked() {
+        menuIcon.setOnClickListener(v -> showPopupMenu(menuIcon));
+    }
+
+    private void showPopupMenu(View anchor) {
+        android.widget.PopupMenu popupMenu = new android.widget.PopupMenu(this, anchor);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_profile, popupMenu.getMenu());
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.option_settings) {
+                // Navigate to Setting
+                return true;
+            } else if (itemId == R.id.option_edit) {
+//        if (isCurrentUser == Enums.UserType.CURRENT_USER) {
+//            // Navigate to Edit Profile page
+//            Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+//            startActivity(editIntent);
+//        } else {
+//            Toast.makeText(this, "You can only edit your own profile", Toast.LENGTH_SHORT).show();
+//        }
+                return true;
+            } else if (itemId == R.id.option_logout) {
+                // Perform logout
+                loginController.userSignOut();
+                Intent logoutIntent = new Intent(AdminActivity.this, MainActivity.class);
+                logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(logoutIntent);
+                finish();
+                return true;
+            }
+            return false;
+        });
+
+        popupMenu.show();
     }
 
     private void initializeViews() {
@@ -63,6 +109,7 @@ public class AdminActivity extends AppCompatActivity {
         btnUserList = findViewById(R.id.btnUserList);
         btnProductList = findViewById(R.id.btnProductList);
         btnAddProduct = findViewById(R.id.btnAddProduct);
+        menuIcon = findViewById(R.id.menuIcon);
 
         // Initialize UserListHelper
         userListAdapter = new UserListAdapter(this, userController);
@@ -73,6 +120,7 @@ public class AdminActivity extends AppCompatActivity {
     private void initializeControllers() {
         userController = new UserController();
         productController = new ProductController();
+        loginController = new LoginController();
     }
 
 

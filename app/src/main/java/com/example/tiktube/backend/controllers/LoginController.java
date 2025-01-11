@@ -5,6 +5,8 @@ import com.example.tiktube.backend.callbacks.LoginResultCallback;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.services.LoginService;
 
+import java.util.concurrent.CompletableFuture;
+
 public class LoginController {
     LoginService loginService;
 
@@ -27,5 +29,9 @@ public class LoginController {
 
     public void userSignOut() {
         this.loginService.userSignOut();
+    }
+
+    public CompletableFuture<Boolean> adminLogin(String username, String password) {
+        return loginService.adminLogin(username, password);
     }
 }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomNav"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/black"
+    android:background="@color/bgColor"
     android:gravity="center"
     android:orientation="horizontal">
 
@@ -12,7 +13,8 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_weight="1"
-        android:src="@drawable/ic_house_foreground" />
+        android:src="@drawable/ic_house_foreground"
+        app:tint="@color/textColor" />
 
     <ImageView
         android:id="@+id/searchIcon"
@@ -22,26 +24,30 @@
         android:clickable="true"
         android:contentDescription="search"
         android:focusable="true"
-        app:srcCompat="@drawable/ic_search_foreground" />
+        app:srcCompat="@drawable/ic_search_foreground"
+        app:tint="@color/textColor" />
 
     <ImageView
         android:id="@+id/uploadIcon"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_weight="1"
-        android:src="@drawable/ic_upload_foreground" />
+        android:src="@drawable/ic_upload_foreground"
+        app:tint="@color/textColor" />
 
     <ImageView
         android:id="@+id/messagingIcon"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_weight="1"
-        android:src="@drawable/ic_message_foreground" />
+        android:src="@drawable/ic_message_foreground"
+        app:tint="@color/textColor" />
 
     <ImageView
         android:id="@+id/profileIcon"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_weight="1"
-        android:src="@drawable/ic_account_circle_foreground" />
+        android:src="@drawable/ic_account_circle_foreground"
+        app:tint="@color/textColor" />
 </LinearLayout>
