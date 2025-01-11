@@ -195,6 +195,24 @@ public class FirebaseHelper {
                 });
     }
 
+    public <T> void findByEmail(String collection, String email, Class<T> type, DataFetchCallback<T> callback) {
+        firestore.collection(collection)
+                .whereEqualTo("email", email)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<T> results = new ArrayList<>();
+                    querySnapshot.forEach(doc -> {
+                        T obj = doc.toObject(type);
+                        if (obj != null) {
+                            results.add(obj);
+                        }
+                    });
+                    callback.onSuccess(results);
+                })
+                .addOnFailureListener(callback::onFailure);
+    }
+
+
     public void adminLogin(String email, String password, LoginCallback callback) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
