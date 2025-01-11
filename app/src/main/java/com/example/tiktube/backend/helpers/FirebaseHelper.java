@@ -297,28 +297,37 @@ public class FirebaseHelper {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@org.checkerframework.checker.nullness.qual.NonNull Task<AuthResult> task) {
+                    public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign up success
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             if (firebaseUser != null) {
-                                // Create a User object
-                                String userUid = UidGenerator.generateUID();
-                                User user = new User(userUid, name, phoneNumber, email, "", new ArrayList<>(), new ArrayList<>());
+                                // Get the UID from Firebase Authentication
+                                User newUser = new User();
+                                newUser.setUid(firebaseUser.getUid());
+                                newUser.setEmail(email);
+                                newUser.setName(name);
+                                newUser.setPhoneNumber(phoneNumber);
 
-                                // Save the User object to Firestore
-                                firestore.collection("users").document(firebaseUser.getUid())
-                                        .set(user)
-                                        .addOnCompleteListener(saveTask -> {
-                                            if (saveTask.isSuccessful()) {
-                                                Log.d(TAG, "User profile saved to Firestore");
+                                // Save the User object to Firestore with the UID as the document ID
+                                create(
+                                        "users",
+                                        newUser.getUid(),
+                                        newUser,
+                                        new DataFetchCallback<String>() {
+                                            @Override
+                                            public void onSuccess(List<String> data) {
                                                 callback.onSuccess(firebaseUser);
-                                            } else {
-                                                Log.w(TAG, "Failed to save user profile", saveTask.getException());
-                                                callback.onFailure(saveTask.getException());
+                                                Log.d("Firebase Helper", "Save to fire store: " + newUser.getUid());
                                             }
-                                        });
+
+                                            @Override
+                                            public void onFailure(Exception e) {
+                                                callback.onFailure(e);
+                                            }
+                                        }
+                                );
                             } else {
                                 callback.onFailure(new Exception("User is null after successful registration"));
                             }
@@ -331,7 +340,8 @@ public class FirebaseHelper {
                 });
     }
 
-   public FirebaseFirestore getFirestore() {
+
+    public FirebaseFirestore getFirestore() {
         return firestore;
    }
 }

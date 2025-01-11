@@ -40,9 +40,12 @@ public class GoogleOAuth2Service {
     }
 
     public void startGoogleSignIn(Activity activity) {
-        Intent signInIntent = googleSignInClient.getSignInIntent();
-        activity.startActivityForResult(signInIntent, 100); // Request code 100
+        googleSignInClient.signOut().addOnCompleteListener(task -> {
+            Intent signInIntent = googleSignInClient.getSignInIntent();
+            activity.startActivityForResult(signInIntent, 100); // Request code 100
+        });
     }
+
 
     public CompletableFuture<FirebaseUser> handleSignInResult(Intent data) {
         CompletableFuture<FirebaseUser> future = new CompletableFuture<>();
