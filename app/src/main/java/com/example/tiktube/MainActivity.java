@@ -1,6 +1,7 @@
 package com.example.tiktube;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.example.tiktube.backend.callbacks.GetUserCallback;
@@ -10,7 +11,9 @@ import com.example.tiktube.frontend.pages.LoginActivity;
 import com.example.tiktube.frontend.pages.RegisterActivity;
 import com.example.tiktube.frontend.pages.VideoPageActivity;
 import com.example.tiktube.frontend.pages.AdminActivity;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.util.Log;
 import android.view.View;
@@ -32,6 +35,16 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_main);
         loginController = new LoginController();
+
+//        Save display mode status
+        SharedPreferences sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE);
+        final boolean isDarkMode = sharedPreferences.getBoolean("isDarkMode", false);
+//        Apply display mode on launch
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
 
         onSignUpButtonClicked();
         onLoginButtonClicked();
