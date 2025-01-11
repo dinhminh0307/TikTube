@@ -199,7 +199,7 @@ public class VideoPageActivity extends AppCompatActivity {
             Intent intent = new Intent(VideoPageActivity.this, ProfileActivity.class);
             intent.putExtra("user", currentUser);
             startActivity(intent);
-            finish();
+            //finish();
         });
     }
 

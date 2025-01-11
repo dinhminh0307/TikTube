@@ -376,7 +376,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.option_settings) {
-                // Navigate to Setting
+                Intent settingsIntent = new Intent(ProfileActivity.this, SettingActivity.class);
+                startActivity(settingsIntent);
                 return true;
             } else if (itemId == R.id.option_edit) {
 //        if (isCurrentUser == Enums.UserType.CURRENT_USER) {
