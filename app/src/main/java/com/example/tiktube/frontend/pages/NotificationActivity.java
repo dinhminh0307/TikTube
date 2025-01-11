@@ -93,6 +93,7 @@ public class NotificationActivity extends AppCompatActivity {
         notification.setPadding(16, 16, 16, 16);
         notification.setText(message);
         notification.setTextSize(16f);
+        notification.setTextColor(getColor(R.color.textColor));
         notification.setBackgroundResource(R.drawable.notification_item_background); // Add a custom background if needed
 
         notificationList.addView(notification);

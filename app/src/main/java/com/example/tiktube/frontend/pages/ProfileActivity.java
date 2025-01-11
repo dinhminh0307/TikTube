@@ -2,6 +2,7 @@ package com.example.tiktube.frontend.pages;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -73,6 +75,16 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
 
 
     private void setUpComponent() {
+//        Save display mode status
+        SharedPreferences sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE);
+        final boolean isDarkMode = sharedPreferences.getBoolean("isDarkMode", false);
+//        Apply display mode on launch
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
         menuIcon = findViewById(R.id.menuIcon);
         nameID = findViewById(R.id.username);
         editProfileBtn = findViewById(R.id.editProfileBtn);

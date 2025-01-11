@@ -143,8 +143,8 @@
                 android:id="@+id/googleIcon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_google"
-                android:contentDescription="Google Icon" />
+                android:contentDescription="Google Icon"
+                android:src="@drawable/ic_google" />
 
             <Button
                 android:id="@+id/googleSignInButton"

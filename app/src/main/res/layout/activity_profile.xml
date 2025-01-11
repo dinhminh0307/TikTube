@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bgColor">
+    android:background="@color/bgColor"
+    android:paddingTop="60dp">
 
     <ImageView
         android:id="@+id/btnBack"
@@ -13,11 +14,11 @@
         android:clickable="true"
         android:contentDescription="back button"
         android:focusable="true"
-        app:tint="@color/textColor"
         app:layout_constraintBottom_toBottomOf="@+id/menuIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/menuIcon"
         app:srcCompat="@drawable/ic_arrow_back_foreground"
+        app:tint="@color/textColor"
         tools:ignore="TouchTargetSizeCheck" />
 
     <!-- Public Account Text -->
@@ -42,9 +43,9 @@
         android:layout_marginEnd="16dp"
         android:contentDescription="menu icon"
         android:src="@drawable/ic_menu_foreground"
-        app:tint="@color/textColor"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/textColor" />
 
     <!-- Scrollable Content -->
     <ScrollView
