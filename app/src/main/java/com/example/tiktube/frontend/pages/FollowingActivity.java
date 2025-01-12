@@ -1,6 +1,7 @@
 package com.example.tiktube.frontend.pages;
 
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,11 +24,12 @@ public class FollowingActivity extends AppCompatActivity {
     private UserController userController;
 
     private User user;
+    private ImageView btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_following);
+        setContentView(R.layout.activity_follow);
 
         initComponent();
 
@@ -36,6 +38,8 @@ public class FollowingActivity extends AppCompatActivity {
     }
 
     private void initComponent() {
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

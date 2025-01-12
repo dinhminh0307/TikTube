@@ -124,7 +124,6 @@ public class SettingActivity extends AppCompatActivity {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if (b) {
-                Toast.makeText(SettingActivity.this, compoundButton.getText(), Toast.LENGTH_SHORT).show();
                 if (compoundButton.getText().equals("Light")) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                     editor.putBoolean("isDarkMode", false);
