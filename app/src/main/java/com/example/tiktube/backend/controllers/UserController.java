@@ -68,4 +68,12 @@ public class UserController {
     public void deleteUser(User user, DataFetchCallback<Void> callback) {
         userService.deleteUser(user, callback);
     }
+
+    public CompletableFuture<List<User>> userGetFollowingList(User user) {
+        return userService.userGetFollowingList(user);
+    }
+
+    public CompletableFuture<List<User>> userGetFollowerList(User user) {
+        return userService.userGetFollowerList(user);
+    }
 }

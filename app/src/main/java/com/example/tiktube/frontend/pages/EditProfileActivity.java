@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tiktube.R;
@@ -26,7 +27,6 @@ import com.example.tiktube.backend.helpers.GoogleDriveServiceHelper;
 import com.example.tiktube.backend.models.User;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +36,7 @@ import java.util.List;
 public class EditProfileActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int REQUEST_MEDIA_PERMISSION = 100;
 
     private UserController userController;
     private LoginController loginController;
@@ -55,8 +56,6 @@ public class EditProfileActivity extends AppCompatActivity {
     private Uri selectedImageUri;
     private String driveFolderId = "1zH_RJTSrwGNgS0DIXk0rAqoCLESbcITW";
 
-    private static final int REQUEST_STORAGE_PERMISSION = 100;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +64,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         userController = new UserController();
         loginController = new LoginController();
-
-        requestStoragePermissions();
 
         initComponent();
 
@@ -89,14 +86,6 @@ public class EditProfileActivity extends AppCompatActivity {
         editUserProfile();
     }
 
-
-    private void requestStoragePermissions() {
-        if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_PERMISSION);
-        }
-    }
-
-
     private void initComponent() {
         nameEditText = findViewById(R.id.nameEditText);
         phoneNumEditText = findViewById(R.id.phoneNumEditText);
@@ -111,17 +100,39 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void openFilePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*"); // Allow only image files
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
 
+
+    private void requestMediaPermissions() {
+        if (shouldShowRequestPermissionRationale(android.Manifest.permission.READ_MEDIA_IMAGES)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Media Permission Required")
+                    .setMessage("This app needs access to your media files to upload a profile picture. Please grant the permission.")
+                    .setPositiveButton("Grant Permission", (dialog, which) ->
+                            requestPermissions(new String[]{android.Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_MEDIA_PERMISSION))
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .show();
+        } else {
+            requestPermissions(new String[]{android.Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_MEDIA_PERMISSION);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            selectedImageUri = data.getData();
-            profileImageView.setImageURI(selectedImageUri);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.getData(); // Get the Uri of the selected file
+            profileImageView.setImageURI(selectedImageUri); // Preview the selected image
+
+            // Grant temporary read permission to the content
+            getContentResolver().takePersistableUriPermission(
+                    selectedImageUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+            );
         }
     }
 
@@ -174,7 +185,6 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
-
         returnButton.setOnClickListener(v -> {
             setResult(RESULT_CANCELED);
             finish();
@@ -201,17 +211,25 @@ public class EditProfileActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == REQUEST_STORAGE_PERMISSION) {
+        if (requestCode == REQUEST_MEDIA_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Storage permission granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Media permission granted", Toast.LENGTH_SHORT).show();
+                openFilePicker();
             } else {
-                Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission Denied")
+                        .setMessage("Media permission is essential for this feature. You can enable it in App Settings.")
+                        .setPositiveButton("Go to Settings", (dialog, which) -> {
+                            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                        })
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .show();
             }
         }
     }
-
-
-
 
     private void updateUserProfile() {
         userController.userEditProfile(user, new DataFetchCallback<User>() {
