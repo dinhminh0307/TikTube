@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="10dp"
-    android:gravity="center_vertical">
+    android:padding="10dp">
 
     <!-- Profile Picture -->
-    <ImageView
-        android:id="@+id/profile_image"
+    <androidx.cardview.widget.CardView
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginEnd="10dp"
-        android:src="@drawable/ic_account_circle_foreground"
-        android:scaleType="centerCrop"
-        />
+        app:cardBackgroundColor="@color/bgColor"
+        app:cardCornerRadius="50dp">
+
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_account_circle_foreground" />
+    </androidx.cardview.widget.CardView>
 
     <!-- User Details -->
     <LinearLayout
@@ -26,12 +32,13 @@
 
         <TextView
             android:id="@+id/user_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:maxLines="1"
             android:text="Username"
-            android:textStyle="bold"
-            android:textSize="16sp" />
-
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

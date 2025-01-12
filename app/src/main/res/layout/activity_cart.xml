@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Shopping cart (4)"
-            android:textColor="@color/white"
+            android:textColor="@color/textColor"
             android:textSize="18sp" />
 
         <TextView
@@ -129,6 +129,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:maxLines="1"
                 android:text="Total: 347.799đ"
                 android:textColor="@color/black"
                 android:textSize="18sp"

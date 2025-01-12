@@ -21,25 +21,35 @@
         app:tint="@color/textColor" />
 
     <!-- Profile Icon -->
-    <ImageView
-        android:id="@+id/profilePicture"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/frame"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"
-        android:contentDescription="profile picture"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_account_circle_foreground" />
+        app:cardBackgroundColor="@color/bgColor"
+        app:cardCornerRadius="50dp">
+
+        <ImageView
+            android:id="@+id/profilePicture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="profile picture"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_account_circle_foreground" />
+    </androidx.cardview.widget.CardView>
 
     <!-- Public Account Text -->
     <TextView
         android:id="@+id/adminAccount"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/profilePicture"
+        android:layout_below="@id/frame"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
+        android:maxLines="1"
         android:text="admin account"
+        android:textAlignment="center"
         android:textColor="@color/textColor"
         android:textSize="12sp" />
 

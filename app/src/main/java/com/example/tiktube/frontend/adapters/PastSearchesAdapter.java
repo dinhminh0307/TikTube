@@ -15,10 +15,16 @@ import java.util.List;
 public class PastSearchesAdapter extends BaseAdapter {
     private Context context;
     private List<String> searchEntries;
+    private OnEntryRemoveListener listener;
 
-    public PastSearchesAdapter(Context context, List<String> searchEntries) {
+    public interface OnEntryRemoveListener {
+        void onEntryRemoved(List<String> updatedList);
+    }
+
+    public PastSearchesAdapter(Context context, List<String> searchEntries, OnEntryRemoveListener listener) {
         this.context = context;
         this.searchEntries = searchEntries;
+        this.listener = listener;
     }
 
     @Override
@@ -46,19 +52,15 @@ public class PastSearchesAdapter extends BaseAdapter {
         ImageView searchBtnRemove = convertView.findViewById(R.id.searchBtnRemove);
 
         String searchQuery = searchEntries.get(position);
-        searchEntry.setText(truncateText(searchQuery));
+        searchEntry.setText(searchQuery);
         searchBtnRemove.setOnClickListener(v -> {
             searchEntries.remove(position);
             notifyDataSetChanged();
+            if (listener != null) {
+                listener.onEntryRemoved(searchEntries);
+            }
         });
 
         return convertView;
-    }
-
-    private String truncateText(String text) {
-        if (text.length() > 34) {
-            return text.substring(0, 33) + "...";
-        }
-        return text;
     }
 }
