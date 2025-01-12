@@ -31,7 +31,7 @@ public class GoogleDriveServiceHelper {
         if (driveService == null) {
             try {
                 // Load the service account JSON key file from res/raw
-                InputStream serviceAccountStream = context.getResources().openRawResource(R.raw.service_account);
+                InputStream serviceAccountStream = context.getResources().openRawResource(R.raw.tiktube_service);
 
                 // Create GoogleCredential with proper token lifetime
                 GoogleCredential credential = GoogleCredential
