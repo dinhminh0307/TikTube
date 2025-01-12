@@ -455,15 +455,6 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
                 Intent settingsIntent = new Intent(ProfileActivity.this, SettingActivity.class);
                 startActivity(settingsIntent);
                 return true;
-            } else if (itemId == R.id.option_edit) {
-//        if (isCurrentUser == Enums.UserType.CURRENT_USER) {
-//            // Navigate to Edit Profile page
-//            Intent editIntent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-//            startActivity(editIntent);
-//        } else {
-//            Toast.makeText(this, "You can only edit your own profile", Toast.LENGTH_SHORT).show();
-//        }
-                return true;
             } else if (itemId == R.id.option_logout) {
                 // Perform logout
                 loginController.userSignOut();
