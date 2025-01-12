@@ -33,4 +33,16 @@ tiktok fake
 - Front-end logic for said pages
 - Dark mode colors & toggle settings
 - Sample data
+
+## Technology Used
+### Backend and Database: 
+- Firebase
+- Google Drive API
+### Payment Simulation
+- Stripe API
+### Frontend
+- Video View
+- Handle Async Firebase: Completable Future
+### Emulator Type:
+- Medium Phone API 35
  
