@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.helpers.ImageBuilder;
 import com.example.tiktube.backend.models.User;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     private Context context;
     private OnInfoButtonClickListener infoButtonClickListener;
 
+    private ImageBuilder imageBuilder;
+
     public interface OnInfoButtonClickListener {
         void onInfoClick(User user);
     }
@@ -30,6 +33,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         this.userList = userList;
         this.context = context;
         this.infoButtonClickListener = listener;
+        this.imageBuilder = new ImageBuilder(context);
     }
 
     @NonNull
@@ -44,7 +48,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         User user = userList.get(position);
         holder.tvUserName.setText(user.getName());
         holder.tvUserEmail.setText(user.getEmail());
-
+        imageBuilder.loadImage(holder.imgUserImage, user);
         holder.btnInfo.setOnClickListener(v -> infoButtonClickListener.onInfoClick(user));
     }
 
