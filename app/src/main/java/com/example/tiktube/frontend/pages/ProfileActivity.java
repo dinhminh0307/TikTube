@@ -69,6 +69,8 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         fetchUserVideo();
         onEditButtonClicked();
         onMessageButtonClicked();
+        onFollowerNumberClicked();
+        onFollowingNumberClicked();
 
         onTabToggle();
     }
@@ -160,6 +162,28 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
             likeCount += v.getLikes().size();
         }
         totalLike.setText(Integer.toString(likeCount));
+    }
+
+    private void onFollowerNumberClicked() {
+        followerNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, FollowerActivity.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void onFollowingNumberClicked() {
+        followingNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, FollowingActivity.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
+            }
+        });
     }
 
     private void onTabToggle() {

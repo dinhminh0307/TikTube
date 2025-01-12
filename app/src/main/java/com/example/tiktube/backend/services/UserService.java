@@ -356,4 +356,53 @@ public class UserService {
         firebaseHelper.findAll(users_collection, User.class, cb);
     }
 
+    public CompletableFuture<List<User>> userGetFollowingList(User user) {
+        CompletableFuture<List<User>> future = new CompletableFuture<>();
+        List<User> followingList = new ArrayList<>();
+
+        // If there are no following IDs, complete the future immediately
+        if (user.getFollowingList() == null || user.getFollowingList().isEmpty()) {
+            future.complete(followingList);
+            return future;
+        }
+
+        // Use a counter to track the number of pending asynchronous calls
+        final int[] pendingRequests = {user.getFollowingList().size()};
+
+        for (String followingId : user.getFollowingList()) {
+            getUserById(
+                    followingId,
+                    new DataFetchCallback<User>() {
+                        @Override
+                        public void onSuccess(List<User> data) {
+                            synchronized (followingList) {
+                                followingList.add(data.get(0)); // Add user to the list
+                            }
+
+                            // Decrement pending requests
+                            synchronized (pendingRequests) {
+                                pendingRequests[0]--;
+                                if (pendingRequests[0] == 0) {
+                                    future.complete(followingList); // Complete the future when all requests are done
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            synchronized (pendingRequests) {
+                                pendingRequests[0]--;
+                                if (pendingRequests[0] == 0) {
+                                    // If there's an error, still complete the future with the data fetched so far
+                                    future.complete(followingList);
+                                }
+                            }
+                        }
+                    }
+            );
+        }
+
+        return future;
+    }
+
 }
