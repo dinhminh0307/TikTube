@@ -3,6 +3,7 @@ package com.example.tiktube.frontend.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.example.tiktube.R;
 import com.example.tiktube.backend.callbacks.DataFetchCallback;
 import com.example.tiktube.backend.controllers.LoginController;
 import com.example.tiktube.backend.controllers.UserController;
+import com.example.tiktube.backend.helpers.ImageBuilder;
 import com.example.tiktube.backend.models.Message;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.pages.MessagePageActivity;
@@ -35,6 +37,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     private LoginController loginController;
 
+    private ImageBuilder imageBuilder;
+
     private String currentUserId = "";
 
     private Map<String, User> userCache = new HashMap<>();
@@ -45,6 +49,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         this.userController = new UserController();
         this.loginController = new LoginController();
         this.currentUserId = currentUserId;
+        imageBuilder = new ImageBuilder(context);
     }
 
     @NonNull
@@ -177,13 +182,55 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         return fetchedUser[0]; // Return fetched user or null
     }
 
+    private void setProfileImage(Message message, MessageViewHolder holder) {
+        String userId = message.getSenderId().equals(currentUserId) ? message.getReceiverId() : message.getSenderId();
+
+        if (userCache.containsKey(userId)) {
+            User cachedUser = userCache.get(userId);
+            if (cachedUser != null && cachedUser.getImageUrl() != null) {
+                Log.d("MessageAdapter", "Loading Image URL: " + cachedUser.getImageUrl());
+                imageBuilder.loadImage(holder.profileImage, cachedUser);
+            } else {
+                Log.d("MessageAdapter", "No Image URL for User: " + userId);
+                holder.profileImage.setImageResource(R.drawable.ic_account_circle_foreground);
+            }
+            return;
+        }
+
+        userController.getUserById(userId, new DataFetchCallback<User>() {
+            @Override
+            public void onSuccess(List<User> data) {
+                if (data != null && !data.isEmpty()) {
+                    User user = data.get(0);
+                    userCache.put(userId, user);
+                    if (user.getImageUrl() != null) {
+                        Log.d("MessageAdapter", "Fetched Image URL: " + user.getImageUrl());
+                        holder.profileImage.post(() -> imageBuilder.loadImage(holder.profileImage, user));
+                    } else {
+                        Log.d("MessageAdapter", "Fetched User with No Image URL");
+                        holder.profileImage.post(() -> holder.profileImage.setImageResource(R.drawable.ic_account_circle_foreground));
+                    }
+                } else {
+                    Log.d("MessageAdapter", "No User Data Found for User ID: " + userId);
+                    holder.profileImage.post(() -> holder.profileImage.setImageResource(R.drawable.ic_account_circle_foreground));
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("MessageAdapter", "Failed to Fetch User: " + userId, e);
+                holder.profileImage.post(() -> holder.profileImage.setImageResource(R.drawable.ic_account_circle_foreground));
+            }
+        });
+    }
+
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message message = messages.get(position);
 
-        // Set profile image (use Glide or Picasso for loading images)
-        holder.profileImage.setImageResource(R.drawable.ic_account_circle_foreground);
+        // Set profile image
+        setProfileImage(message, holder);
 
         // Set sender name
         getSenderName(message, holder);

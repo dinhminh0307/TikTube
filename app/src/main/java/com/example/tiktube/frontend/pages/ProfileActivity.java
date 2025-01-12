@@ -189,26 +189,32 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
     private void onTabToggle() {
         userVideos.setOnClickListener(v -> {
             highlightTab(userVideos);
-            fetchUserVideo();
+            fetchUserVideo(); // Fetch and display user videos
         });
 
         likeVideos.setOnClickListener(v -> {
             highlightTab(likeVideos);
-            fetchLikedVideos();
+            fetchLikedVideos(); // Fetch and display liked videos
         });
 
-        // By default, highlight "User Videos" and fetch user videos
+        // Default: Highlight "User Videos" and fetch them
         highlightTab(userVideos);
         fetchUserVideo();
     }
 
+
+
     private void highlightTab(ImageView activeTab) {
-        userVideos.setAlpha(0.5F); // Deactivate
-        likeVideos.setAlpha(0.5F); // Deactivate
-        privateVideos.setAlpha(0.5F); // Deactivate
-        bookmarkVideos.setAlpha(0.5F); // Deactivate
-        activeTab.setAlpha(1F); // Activate
+        // Deactivate all tabs
+        userVideos.setAlpha(0.5F);
+        likeVideos.setAlpha(0.5F);
+        privateVideos.setAlpha(0.5F);
+        bookmarkVideos.setAlpha(0.5F);
+
+        // Activate the selected tab
+        activeTab.setAlpha(1F);
     }
+
 
 
     @SuppressLint("SetTextI18n")
@@ -231,44 +237,74 @@ public class ProfileActivity extends AppCompatActivity implements VideoGridAdapt
         userController.getAllVideo(new DataFetchCallback<Video>() {
             @Override
             public void onSuccess(List<Video> data) {
-                videoList.clear();
-                for (Video video : data) {
-                    Log.d("Video Activity", "User UID: " + user.getUid());
-                    if (video.getOwner().equals(user.getUid())) {
-                        Log.d("Video Activity", "Video: " + video.getOwner());
-                        videoList.add(video);
+                runOnUiThread(() -> {
+                    videoList.clear(); // Clear the current video list
+                    for (Video video : data) {
+                        if (video.getOwner().equals(user.getUid())) {
+                            videoList.add(video); // Add only the user's videos
+                        }
                     }
-                }
-                displayTotalLikes(); // display total like
-                Log.d("ProfileActivity", "Number of videos: " + videoList.size());
-                videoGridAdapter.notifyDataSetChanged();
+                    displayTotalLikes();
+                    findViewById(R.id.empty_state).setVisibility(videoList.isEmpty() ? View.VISIBLE : View.GONE);
+                    videoGridAdapter.notifyDataSetChanged(); // Notify adapter of changes
+                });
             }
 
             @Override
             public void onFailure(Exception e) {
-                e.printStackTrace();
+                runOnUiThread(() -> {
+                    videoList.clear(); // Clear the list on error
+                    videoGridAdapter.notifyDataSetChanged(); // Notify adapter of changes
+                    findViewById(R.id.empty_state).setVisibility(View.VISIBLE); // Show empty state
+                    Toast.makeText(ProfileActivity.this, "Failed to fetch user videos", Toast.LENGTH_SHORT).show();
+                });
+                Log.e("ProfileActivity", "Failed to fetch user videos", e);
             }
         });
     }
 
-    private void onLikeVideosClicked() {
-        likeVideos.setOnClickListener(v -> {
-            fetchLikedVideos();
-        });
-    }
+
 
     private void fetchLikedVideos() {
         userController.getUserLikeVideo(user)
                 .thenAccept(vids -> {
-                    videoList.clear();
-                    videoList.addAll(vids);
-                    videoGridAdapter.notifyDataSetChanged();
+                    runOnUiThread(() -> {
+                        // Clear the video list
+                        videoList.clear();
+
+                        if (vids != null && !vids.isEmpty()) {
+                            videoList.addAll(vids); // Add liked videos
+                            findViewById(R.id.empty_state).setVisibility(View.GONE); // Hide empty state
+                            videoRecyclerView.setVisibility(View.VISIBLE); // Ensure RecyclerView is visible
+                        } else {
+                            // If no liked videos, show empty state and hide the RecyclerView
+                            findViewById(R.id.empty_state).setVisibility(View.VISIBLE); // Show empty state
+                            videoRecyclerView.setVisibility(View.GONE); // Hide RecyclerView
+                        }
+
+                        // Notify the adapter about the changes
+                        videoGridAdapter.notifyDataSetChanged();
+                    });
                 })
                 .exceptionally(e -> {
+                    runOnUiThread(() -> {
+                        // Handle error by clearing the list and showing the empty state
+                        videoList.clear();
+                        videoGridAdapter.notifyDataSetChanged();
+
+                        findViewById(R.id.empty_state).setVisibility(View.VISIBLE); // Show empty state
+                        videoRecyclerView.setVisibility(View.GONE); // Hide RecyclerView
+
+                        Toast.makeText(ProfileActivity.this, "Failed to fetch liked videos", Toast.LENGTH_SHORT).show();
+                    });
                     Log.e("ProfileActivity", "Failed to fetch liked videos", e);
                     return null;
                 });
     }
+
+
+
+
 
     @Override
     public void onVideoClick(Video video) {

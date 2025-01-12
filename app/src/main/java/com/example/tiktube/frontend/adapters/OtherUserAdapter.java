@@ -26,6 +26,7 @@ import com.example.tiktube.backend.models.User;
 import com.example.tiktube.backend.utils.UidGenerator;
 import com.example.tiktube.frontend.pages.FollowerActivity;
 import com.example.tiktube.frontend.pages.ProfileActivity;
+import com.example.tiktube.frontend.pages.VideoPageActivity;
 
 import java.util.List;
 
@@ -50,8 +51,18 @@ public class OtherUserAdapter  extends RecyclerView.Adapter<OtherUserAdapter.Use
         this.context = context;
         imageBuilder = new ImageBuilder(context);
         userController = new UserController();
-        this.currentUser.setUser(currentUser);
         this.loginController = new LoginController();
+        loginController.getCurrentUser(new GetUserCallback() {
+            @Override
+            public void onSuccess(User owner) {
+                currentUser.setUser(owner);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
         this.notificationController = new NotificationController();
     }
 
@@ -77,6 +88,20 @@ public class OtherUserAdapter  extends RecyclerView.Adapter<OtherUserAdapter.Use
         setButtonState(holder, user);
 
         onFollowButtonClicked(holder, user);
+
+        // Handle user name click to navigate to ProfileActivity
+        holder.userName.setOnClickListener(v -> {
+            // Clear the current stack and start VideoPageActivity
+            Intent videoPageIntent = new Intent(context, VideoPageActivity.class);
+            videoPageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            videoPageIntent.putExtra("user", user); // Pass the clicked user as an extra
+            context.startActivity(videoPageIntent);
+
+            // Start ProfileActivity after VideoPageActivity is added to the stack
+            Intent profileIntent = new Intent(context, ProfileActivity.class);
+            profileIntent.putExtra("user", user); // Pass the clicked user as an extra
+            context.startActivity(profileIntent);
+        });
     }
 
     private void setButtonState(UserViewHolder holder, User user) {
