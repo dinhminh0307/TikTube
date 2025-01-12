@@ -7,14 +7,20 @@
     android:padding="8dp">
 
     <!-- Profile Image -->
-    <ImageView
-        android:id="@+id/profileImage"
-        android:layout_width="73dp"
+    <androidx.cardview.widget.CardView
+        android:layout_width="54dp"
         android:layout_height="54dp"
         android:layout_marginEnd="8dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_account_circle_foreground"
-        app:tint="#7F7F7F" />
+        app:cardBackgroundColor="@color/bgColor"
+        app:cardCornerRadius="50dp">
+
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_account_circle_foreground" />
+    </androidx.cardview.widget.CardView>
 
     <!-- Text Content -->
     <LinearLayout
@@ -26,8 +32,10 @@
         <!-- Sender Name -->
         <TextView
             android:id="@+id/senderName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:maxLines="1"
             android:text="Sender Name"
             android:textColor="@color/textColor"
             android:textSize="16sp"
@@ -39,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="10dp"
             android:alpha="0.6"
             android:ellipsize="end"
             android:maxLines="3"

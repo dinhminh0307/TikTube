@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.config)
+    implementation(libs.gson)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

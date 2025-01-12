@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
@@ -7,18 +8,25 @@
     android:padding="8dp">
 
     <!-- Product Image -->
-    <ImageView
-        android:id="@+id/adminProductImage"
+    <androidx.cardview.widget.CardView
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_account_circle_foreground" /> <!-- Placeholder image -->
+        app:cardBackgroundColor="@color/bgColor"
+        app:cardCornerRadius="50dp">
+
+        <ImageView
+            android:id="@+id/adminProductImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_account_circle_foreground" /> <!-- Placeholder image -->
+    </androidx.cardview.widget.CardView>
 
     <!-- Product Name -->
     <TextView
         android:id="@+id/adminProductName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Product Name"

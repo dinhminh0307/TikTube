@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bgColor"
-    android:paddingTop="60dp">
+    android:background="@color/bgColor">
 
     <ImageView
         android:id="@+id/btnBack"
@@ -64,22 +63,32 @@
             android:orientation="vertical">
 
             <!-- Profile Icon -->
-            <ImageView
-                android:id="@+id/profilePicture"
+            <androidx.cardview.widget.CardView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="24dp"
-                android:contentDescription="profile picture"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_account_circle_foreground" />
+                app:cardBackgroundColor="@color/bgColor"
+                app:cardCornerRadius="50dp">
+
+                <ImageView
+                    android:id="@+id/profilePicture"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="profile picture"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_account_circle_foreground" />
+            </androidx.cardview.widget.CardView>
 
             <!-- Username -->
             <TextView
                 android:id="@+id/username"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="20dp"
                 android:text="@peterparker123"
+                android:textAlignment="center"
                 android:textColor="@color/textColor"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -196,9 +205,11 @@
             <!-- Bio Section -->
             <TextView
                 android:id="@+id/bioText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="20dp"
                 android:text="I heard about it, and I did see it. And it’s a photoshop"
                 android:textColor="@color/textColor"
                 android:textSize="14sp" />
@@ -267,12 +278,12 @@
                 android:id="@+id/empty_state"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No videos to display"
-                android:gravity="center"
-                android:visibility="gone"
                 android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="No videos to display"
                 android:textColor="@color/gray"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>

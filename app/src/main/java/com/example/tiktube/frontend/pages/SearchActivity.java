@@ -1,6 +1,7 @@
 package com.example.tiktube.frontend.pages;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,11 +23,14 @@ import com.example.tiktube.frontend.adapters.PastSearchesAdapter;
 import com.example.tiktube.frontend.adapters.SearchedUsersAdapter;
 import com.example.tiktube.frontend.adapters.SearchedVideosAdapter;
 import com.example.tiktube.frontend.adapters.TrendingSearchesAdapter;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements PastSearchesAdapter.OnEntryRemoveListener {
 
     private SearchController searchController;
     User currentUser;
@@ -39,6 +43,9 @@ public class SearchActivity extends AppCompatActivity {
     GridView videoResults;
     ListView userResults;
     boolean showUserRes = false;
+    ArrayList<String> pastSearchesList;
+    Gson gson;
+    SharedPreferences.Editor editor;
 
     private List<User> searchedUsers = new ArrayList<>();
 
@@ -52,17 +59,18 @@ public class SearchActivity extends AppCompatActivity {
         currentUser = getIntent().getParcelableExtra("user");
         initComponent();
 
-        ArrayList<String> pastSearchesList = new ArrayList<>();
-        pastSearchesList.add("spider-man");
-        pastSearchesList.add("winter soldier");
-        pastSearchesList.add("doctor doom");
-        pastSearchesList.add("batman");
-        pastSearchesList.add("superman");
-        pastSearchesList.add("wonder woman");
-        pastSearchesList.add("darkseid");
-        pastSearchesList.add("black racer");
-        pastSearchesList.add("this is a very long search term that I'm using to test the UI");
-        pastSearchesList.add("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+        SharedPreferences sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        gson = new Gson();
+        String json = sharedPreferences.getString("pastSearchesList", null);
+        Type type = new TypeToken<ArrayList<String>>() {
+        }.getType();
+        if (json != null) {
+            pastSearchesList = gson.fromJson(json, type);
+        } else {
+            pastSearchesList = new ArrayList<>();
+        }
+
         ArrayList<String> trendingSearchesList = new ArrayList<>();
         trendingSearchesList.add("RDJ is back!!");
         trendingSearchesList.add("Dr. Doom");
@@ -76,7 +84,7 @@ public class SearchActivity extends AppCompatActivity {
 
         searchBar.setIconifiedByDefault(false);
 
-        PastSearchesAdapter pastSearchesAdapter = new PastSearchesAdapter(this, pastSearchesList);
+        PastSearchesAdapter pastSearchesAdapter = new PastSearchesAdapter(this, pastSearchesList, this);
         pastSearches.setAdapter(pastSearchesAdapter);
         TrendingSearchesAdapter trendingSearchesAdapter = new TrendingSearchesAdapter(this, trendingSearchesList);
         trendingSearches.setAdapter(trendingSearchesAdapter);
@@ -136,10 +144,11 @@ public class SearchActivity extends AppCompatActivity {
                             });
 
                     // Update past searches
-                    if (pastSearchesList.contains(query)) {
-                        pastSearchesList.remove(query); // Avoid duplicate entries
-                    }
+                    pastSearchesList.remove(query); // Avoid duplicate entries
                     pastSearchesList.add(0, query);
+                    String json2 = gson.toJson(pastSearchesList);
+                    editor.putString("pastSearchesList", json2);
+                    editor.apply();
                     pastSearchesAdapter.notifyDataSetChanged();
 
                     searchBar.clearFocus();
@@ -212,5 +221,12 @@ public class SearchActivity extends AppCompatActivity {
         searchController = new SearchController();
 
         searchBar.requestFocus();
+    }
+
+    @Override
+    public void onEntryRemoved(List<String> updatedList) {
+        String json = gson.toJson(updatedList);
+        editor.putString("pastSearchesList", json);
+        editor.apply();
     }
 }
