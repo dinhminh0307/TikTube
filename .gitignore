@@ -17,3 +17,5 @@ local.properties
 .idea/gradle.xml
 .idea/misc.xml
 gradle/libs.versions.toml
+/app/client_secret_476151552588-nm1h7c8m9mpcdl7009astnej4fhkr05h.apps.googleusercontent.com.json
+/app/google-services.json
