@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "476151552588",
+    "project_id": "tiktube-28b24",
+    "storage_bucket": "tiktube-28b24.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:476151552588:android:b23f30d85f00d43b65b2e9",
+        "android_client_info": {
+          "package_name": "com.example.tiktube"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "476151552588-ik45cb95lobj7vgdroi1lj1rsggj5ek8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tiktube",
+            "certificate_hash": "fbe203dddfd06ac0b2e264522083d2cf96502a97"
+          }
+        },
+        {
+          "client_id": "476151552588-iubp700jv4n85e7r6d914947m7hgmc18.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUpo_4iVOFF3UwW7scStSftyDQBL9FvRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "476151552588-iubp700jv4n85e7r6d914947m7hgmc18.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
