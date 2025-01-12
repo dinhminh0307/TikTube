@@ -72,4 +72,8 @@ public class UserController {
     public CompletableFuture<List<User>> userGetFollowingList(User user) {
         return userService.userGetFollowingList(user);
     }
+
+    public CompletableFuture<List<User>> userGetFollowerList(User user) {
+        return userService.userGetFollowerList(user);
+    }
 }

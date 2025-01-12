@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tiktube.R;
+import com.example.tiktube.backend.controllers.UserController;
 import com.example.tiktube.backend.models.User;
 import com.example.tiktube.frontend.adapters.OtherUserAdapter;
 
@@ -23,6 +24,8 @@ public class FollowerActivity extends AppCompatActivity {
     private OtherUserAdapter userAdapter;
     private List<User> userList;
 
+    private UserController userController;
+
     private User user;
 
     @Override
@@ -31,23 +34,43 @@ public class FollowerActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_follower);
 
+        initComponent();
+
+        fetchAndDisplayFollower();
+    }
+
+    private void initComponent() {
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         user = getIntent().getParcelableExtra("user");
 
         // Initialize user list
         userList = new ArrayList<>();
-
-        // Add sample users
-        userList.add(new User("1", "Hanoi Nèee", "1234567890", "email@example.com",
-                "https://example.com/image1.jpg", new ArrayList<>(), new ArrayList<>()));
-        userList.add(new User("2", "Vic~thor ⚽", "9876543210", "email2@example.com",
-                "https://example.com/image2.jpg", new ArrayList<>(), new ArrayList<>()));
-        userList.add(new User("3", "Tiệm Đồ Chơi 1996", "5556667777", "email3@example.com",
-                "https://example.com/image3.jpg", new ArrayList<>(), new ArrayList<>()));
-
-        // Pass user list to the adapter
-        userAdapter = new OtherUserAdapter(userList, FollowerActivity.this);
+        userAdapter = new OtherUserAdapter(userList, FollowerActivity.this, user);
         recyclerView.setAdapter(userAdapter);
+
+        userController = new UserController();
+    }
+
+    private void fetchAndDisplayFollower() {
+        if (user == null) {
+            return; // Ensure the user object is not null
+        }
+
+        // Fetch the list of users the current user is following
+        userController.userGetFollowerList(user)
+                .thenAccept(following -> {
+                    // Update the user list on the main thread
+                    runOnUiThread(() -> {
+                        userList.clear();
+                        userList.addAll(following);
+                        userAdapter.notifyDataSetChanged(); // Notify adapter about data changes
+                    });
+                })
+                .exceptionally(e -> {
+                    // Handle errors
+                    e.printStackTrace();
+                    return null;
+                });
     }
 }

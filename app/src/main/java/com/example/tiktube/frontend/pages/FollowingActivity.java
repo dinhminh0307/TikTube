@@ -39,17 +39,16 @@ public class FollowingActivity extends AppCompatActivity {
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        // Get the passed user object
+        user = getIntent().getParcelableExtra("user");
         // Initialize user list and adapter
         userList = new ArrayList<>();
-        userAdapter = new OtherUserAdapter(userList, FollowingActivity.this);
+        userAdapter = new OtherUserAdapter(userList, FollowingActivity.this, user);
         recyclerView.setAdapter(userAdapter);
 
         // Initialize UserController
         userController = new UserController();
 
-        // Get the passed user object
-        user = getIntent().getParcelableExtra("user");
     }
 
     private void fetchAndDisplayFollowing() {

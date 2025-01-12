@@ -219,23 +219,32 @@ public class UserService {
     }
 
     public void userFollowingAction(User followingUser, DataFetchCallback<Void> cb) {
-        List<String> followingUserfollower = new ArrayList<>();
-        followingUserfollower.addAll(followingUser.getFollowerList());
-        followingUserfollower.add(loginController.getUserUID());
+        List<String> followingUserFollowerList = new ArrayList<>(followingUser.getFollowerList());
 
-        List<String> currentUserFollowing = new ArrayList<>();
+        // Add the current user UID to the follower list only if not already present
+        if (!followingUserFollowerList.contains(loginController.getUserUID())) {
+            followingUserFollowerList.add(loginController.getUserUID());
+        }
+
+        List<String> currentUserFollowingList = new ArrayList<>();
         loginController.getCurrentUser(new GetUserCallback() {
             @Override
             public void onSuccess(User user) {
-                currentUserFollowing.addAll(user.getFollowingList());
-                currentUserFollowing.add(followingUser.getUid());
-                // update in the target user follower list
-                firebaseHelper.updateField(followingUser.getUid(), users_collection,
-                        "followerList", followingUserfollower);
+                currentUserFollowingList.addAll(user.getFollowingList());
 
-                //update in the current user
+                // Add the target user's UID to the following list only if not already present
+                if (!currentUserFollowingList.contains(followingUser.getUid())) {
+                    currentUserFollowingList.add(followingUser.getUid());
+                }
+
+                // Update in the target user's follower list
+                firebaseHelper.updateField(followingUser.getUid(), users_collection,
+                        "followerList", followingUserFollowerList);
+
+                // Update in the current user's following list
                 firebaseHelper.updateField(loginController.getUserUID(), users_collection,
-                        "followingList", currentUserFollowing);
+                        "followingList", currentUserFollowingList);
+
                 cb.onSuccess(null);
             }
 
@@ -244,8 +253,8 @@ public class UserService {
                 cb.onFailure(e);
             }
         });
-
     }
+
 
     public void userUnfollowAction(User target, DataFetchCallback<Void> cb) {
         List<String> targetFollower = new ArrayList<>();
@@ -404,5 +413,55 @@ public class UserService {
 
         return future;
     }
+
+    public CompletableFuture<List<User>> userGetFollowerList(User user) {
+        CompletableFuture<List<User>> future = new CompletableFuture<>();
+        List<User> followerList = new ArrayList<>();
+
+        // If there are no follower IDs, complete the future immediately
+        if (user.getFollowerList() == null || user.getFollowerList().isEmpty()) {
+            future.complete(followerList);
+            return future;
+        }
+
+        // Use a counter to track the number of pending asynchronous calls
+        final int[] pendingRequests = {user.getFollowerList().size()};
+
+        for (String followerId : user.getFollowerList()) {
+            getUserById(
+                    followerId,
+                    new DataFetchCallback<User>() {
+                        @Override
+                        public void onSuccess(List<User> data) {
+                            synchronized (followerList) {
+                                followerList.add(data.get(0)); // Add user to the list
+                            }
+
+                            // Decrement pending requests
+                            synchronized (pendingRequests) {
+                                pendingRequests[0]--;
+                                if (pendingRequests[0] == 0) {
+                                    future.complete(followerList); // Complete the future when all requests are done
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            synchronized (pendingRequests) {
+                                pendingRequests[0]--;
+                                if (pendingRequests[0] == 0) {
+                                    // If there's an error, still complete the future with the data fetched so far
+                                    future.complete(followerList);
+                                }
+                            }
+                        }
+                    }
+            );
+        }
+
+        return future;
+    }
+
 
 }
