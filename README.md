@@ -40,12 +40,12 @@ tiktok fake
 - Google Drive API
 ### Payment Simulation
 - Stripe API
-
-## Demo link:
-- https://youtu.be/UHA8zb3jXgk
 ### Frontend
 - Video View
 - Handle Async Firebase: Completable Future
 ### Emulator Type:
 - Medium Phone API 35
+
+## Demo link:
+- https://youtu.be/UHA8zb3jXgk
  
